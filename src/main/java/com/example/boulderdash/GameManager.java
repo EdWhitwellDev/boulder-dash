@@ -21,9 +21,9 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class GameManager extends Application {
+    public static Timeline tickTimeline;
     private Level level = new Level();
     private Player player;
-    private Timeline tickTimeline;
     private Scene scene;
     private GridPane grid = new GridPane();
 

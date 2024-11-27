@@ -1,4 +1,10 @@
 package com.example.boulderdash.Actors.Enemies;
 
-public class Frog {
+import com.example.boulderdash.Tiles.Tile;
+
+public class Frog extends Enemy{
+
+    public Frog(Tile startPosition) {
+        super(startPosition);
+    }
 }

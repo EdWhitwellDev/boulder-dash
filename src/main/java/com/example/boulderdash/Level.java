@@ -35,9 +35,9 @@ public class Level {
     }
 
     private void readTiles() {
+        int rowIndex = 0;
+        int colIndex = 0;
         try (Scanner in = new Scanner(new File("src/main/resources/Level1.txt"))) {
-
-
             while (in.hasNextLine()) {
                 List<Tile> row = new ArrayList<>();
                 String rowSymbols = in.nextLine();
@@ -45,29 +45,32 @@ public class Level {
                 for (String symbol : tileSymbols) {
                     switch (symbol) {
                         case "P":
-                            row.add(new Path());
+                            row.add(new Floor(rowIndex, colIndex, true));
                             break;
                         case "D":
-                            row.add(new Dirt());
+                            row.add(new Floor(rowIndex, colIndex, false));
                             break;
                         case "N":
-                            row.add(new NormalWall());
+                            row.add(new NormalWall(rowIndex, colIndex));
                             break;
                         case "T":
-                            row.add(new TitaniumWall());
+                            row.add(new TitaniumWall(rowIndex, colIndex));
                             break;
                         case "M":
-                            row.add(new MagicWall());
+                            row.add(new MagicWall(rowIndex, colIndex));
                             break;
                         case "E":
-                            row.add(new Exit());
+                            row.add(new Exit(rowIndex, colIndex));
                             break;
                         default:
                             break;
 
                     }
+                    colIndex++;
                 }
                 tiles.add(row);
+                rowIndex++;
+                colIndex = 0;
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

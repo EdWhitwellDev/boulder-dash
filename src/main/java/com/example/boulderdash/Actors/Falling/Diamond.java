@@ -1,4 +1,9 @@
 package com.example.boulderdash.Actors.Falling;
 
-public class Diamond {
+import com.example.boulderdash.Tiles.Tile;
+
+public class Diamond extends FallingObject {
+    public Diamond(Tile startPosition) {
+        super(startPosition);
+    }
 }

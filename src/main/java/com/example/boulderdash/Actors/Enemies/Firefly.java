@@ -1,4 +1,9 @@
 package com.example.boulderdash.Actors.Enemies;
 
-public class Firefly {
+import com.example.boulderdash.Tiles.Tile;
+
+public class Firefly extends Enemy{
+    public Firefly(Tile startPosition) {
+        super(startPosition);
+    }
 }
