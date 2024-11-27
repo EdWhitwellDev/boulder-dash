@@ -32,12 +32,14 @@ public class GameManager extends Application {
 
         player = level.getPlayer();
 
+        GameState.setupSate(level, player);
+
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
         grid.setPadding(new Insets(50));
 
 
-        scene = new Scene(grid, 400, 400);  // width: 400, height: 400
+        scene = new Scene(grid, 1500, 1000);  // width: 400, height: 400
 
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));

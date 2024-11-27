@@ -28,10 +28,10 @@ public class Level {
 
         setNeighbors();
 
-        player = new Player(tiles.get(0).get(0));
+        player = new Player(tiles.get(1).get(1));
 
         actors.add(player);
-        actors.add(new Actor(tiles.get(1).get(1)));
+        actors.add(new Actor(tiles.get(2).get(2)));
     }
 
     private void readTiles() {
