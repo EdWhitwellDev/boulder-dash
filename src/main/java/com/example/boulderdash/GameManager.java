@@ -1,0 +1,126 @@
+package com.example.boulderdash;
+
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class GameManager extends Application {
+    private Level level = new Level();
+    private Player player;
+    private Timeline tickTimeline;
+    private Scene scene;
+    private GridPane grid = new GridPane();
+    private Image playerImage;
+    private Image dirtImage;
+    @Override
+    public void start(Stage primaryStage) {
+        // Load images. Note we use png images with a transparent background.
+        playerImage = new Image("player.png");
+        dirtImage = new Image("dirt.png");
+
+        player = level.getPlayer();
+
+        grid.setHgap(0);  // horizontal gap between cells
+        grid.setVgap(0);
+        grid.setPadding(new Insets(50));
+
+
+        scene = new Scene(grid, 400, 400);  // width: 400, height: 400
+
+        scene.setOnKeyPressed(this::processKeyEvent);
+        scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
+
+        tickTimeline = new Timeline(new KeyFrame(Duration.millis(50), event -> tick()));
+        tickTimeline.setCycleCount(Animation.INDEFINITE);
+        tickTimeline.play();
+        //drawGame();
+        // Set the title of the window
+        primaryStage.setTitle("Simple JavaFX Window");
+
+        // Set the scene for the stage
+        primaryStage.setScene(scene);
+
+        // Show the window
+        primaryStage.show();
+    }
+
+    public void drawGame(){
+        List<List<Tile>> tiles = level.getTiles();
+        int rows = level.getRows();
+        int columns = level.getCols();
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                // Create an ImageView for the image
+                Tile tile = tiles.get(row).get(col);
+                StackPane stackPane = new StackPane();
+                ImageView imageView = new ImageView(tile.getImage());
+
+                // Optionally, resize the image to fit the grid cells
+                imageView.setFitWidth(100);  // Resize width
+                imageView.setFitHeight(100); // Resize height
+
+                stackPane.getChildren().add(imageView);
+
+                if (tile.isOccupied()) {
+                    ImageView actorImageView = new ImageView(tile.getOccupier().getImage());
+                    actorImageView.setFitHeight(80);
+                    actorImageView.setFitWidth(80);
+                    stackPane.getChildren().add(actorImageView);
+                }
+                // Add the ImageView to the grid at the specified row and column
+                grid.add(stackPane, col, row);
+            }
+        }
+    }
+
+    public void processKeyEvent(KeyEvent event) {
+        // We change the behaviour depending on the actual key that was pressed.
+        switch (event.getCode()) {
+            case RIGHT:
+                // Right key was pressed. So move the player right by one cell.
+                player.setDirection(Direction.RIGHT);
+                break;
+            case LEFT:
+                // Right key was pressed. So move the player right by one cell.
+                player.setDirection(Direction.LEFT);
+                break;
+            case UP:
+                // Right key was pressed. So move the player right by one cell.
+                player.setDirection(Direction.UP);
+                break;
+            case DOWN:
+                // Right key was pressed. So move the player right by one cell.
+                player.setDirection(Direction.DOWN);
+                break;
+            default:
+                // Do nothing for all other keys.
+                player.setDirection(Direction.STATIONARY);
+                break;
+        }
+        // Consume the event. This means we mark it as dealt with. This stops other GUI nodes (buttons etc) responding to it.
+        event.consume();
+    }
+
+    public void tick(){
+        drawGame();
+        player.move();
+    }
+
+    public static void main(String[] args) {
+        // Launch the JavaFX application
+        launch(args);
+    }
+}
