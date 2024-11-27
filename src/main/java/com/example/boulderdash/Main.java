@@ -1,4 +1,4 @@
-package com.example.boulderdash;
+package main.java.com.example.boulderdash;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
