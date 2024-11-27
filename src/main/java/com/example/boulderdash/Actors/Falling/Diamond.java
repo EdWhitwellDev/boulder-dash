@@ -11,13 +11,13 @@ public class Diamond extends FallingObject {
         return new Boulder(position);
     }
 
-    public void collect(Player player) {
-        player.collectedDiamond(); // Called from Player class (needs to be implemented)
-        position.setOccupant(null); // removes the diamond (needs to be implemented)
+//    public void collect(Player player) {
+//        player.collectedDiamond(); // Called from Player class (needs to be implemented)
+//        position.setOccupant(null); // removes the diamond (needs to be implemented)
+//
+//    }
 
-    }
-
-    public void fall(Tile[][] grid) {
-        super.fall(grid);
-    }
+//    public void fall(Tile[][] grid) {
+//        super.fall(grid);
+//    }
 }
