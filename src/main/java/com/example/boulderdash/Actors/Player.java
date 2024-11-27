@@ -1,11 +1,13 @@
-package com.example.boulderdash;
+package com.example.boulderdash.Actors;
 
+import com.example.boulderdash.Tiles.Tile;
+import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
-public class Player extends Actor{
+public class Player extends Actor {
     private Direction currentDirection = Direction.STATIONARY;
     private int tickCoolDown = 0;
-    private int tickCoolDownReset = 10;
+    private int tickCoolDownReset = 6;
 
     public Player(Tile startingTile){
         super(startingTile);

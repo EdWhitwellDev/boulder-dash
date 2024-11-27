@@ -1,4 +1,4 @@
-package com.example.boulderdash;
+package com.example.boulderdash.enums;
 
 public enum Direction {
     UP,

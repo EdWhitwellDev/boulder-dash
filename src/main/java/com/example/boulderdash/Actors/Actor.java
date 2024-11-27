@@ -1,5 +1,6 @@
-package com.example.boulderdash;
+package com.example.boulderdash.Actors;
 
+import com.example.boulderdash.Tiles.Tile;
 import javafx.scene.image.Image;
 
 public class Actor {

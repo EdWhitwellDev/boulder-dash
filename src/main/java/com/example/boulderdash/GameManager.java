@@ -1,5 +1,8 @@
 package com.example.boulderdash;
 
+import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.Tiles.Tile;
+import com.example.boulderdash.enums.Direction;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,7 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class GameManager extends Application {
@@ -23,13 +26,9 @@ public class GameManager extends Application {
     private Timeline tickTimeline;
     private Scene scene;
     private GridPane grid = new GridPane();
-    private Image playerImage;
-    private Image dirtImage;
+
     @Override
     public void start(Stage primaryStage) {
-        // Load images. Note we use png images with a transparent background.
-        playerImage = new Image("player.png");
-        dirtImage = new Image("dirt.png");
 
         player = level.getPlayer();
 

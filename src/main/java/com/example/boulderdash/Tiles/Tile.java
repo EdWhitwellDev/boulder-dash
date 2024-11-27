@@ -1,5 +1,6 @@
-package com.example.boulderdash;
+package com.example.boulderdash.Tiles;
 
+import com.example.boulderdash.Actors.Actor;
 import javafx.scene.image.Image;
 
 public class Tile {
@@ -8,7 +9,7 @@ public class Tile {
     protected Tile up;
     protected Tile down;
 
-    private Image image = new Image("dirt.png");
+    protected Image image = new Image("dirt.png");
     private boolean occupied = false;
     private Actor occupier;
     public Image getImage(){

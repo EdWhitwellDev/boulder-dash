@@ -1,7 +1,14 @@
 package com.example.boulderdash;
 
+import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.Tiles.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Level {
     private List<List<Tile>> tiles;
@@ -10,23 +17,14 @@ public class Level {
     private int rows;
     private int cols;
 
-    public Level(){
+    public Level() {
         tiles = new ArrayList<>();
         actors = new ArrayList<>();
 
-        rows = 5;
-        cols = 5;
+        readTiles();
 
-        for (int i = 0; i < rows; i++) {
-            List<Tile> row = new ArrayList<>();
-
-            // Initialize each row with specified columns
-            for (int j = 0; j < cols; j++) {
-                row.add(new Tile());  // Default value (can be modified)
-            }
-
-            tiles.add(row);  // Add row to matrix
-        }
+        rows = tiles.size();
+        cols = tiles.get(0).size();
 
         setNeighbors();
 
@@ -34,6 +32,46 @@ public class Level {
 
         actors.add(player);
         actors.add(new Actor(tiles.get(1).get(1)));
+    }
+
+    private void readTiles() {
+        try (Scanner in = new Scanner(new File("src/main/resources/Level1.txt"))) {
+
+
+            while (in.hasNextLine()) {
+                List<Tile> row = new ArrayList<>();
+                String rowSymbols = in.nextLine();
+                String[] tileSymbols = rowSymbols.split(",");
+                for (String symbol : tileSymbols) {
+                    switch (symbol) {
+                        case "P":
+                            row.add(new Path());
+                            break;
+                        case "D":
+                            row.add(new Dirt());
+                            break;
+                        case "N":
+                            row.add(new NormalWall());
+                            break;
+                        case "T":
+                            row.add(new TitaniumWall());
+                            break;
+                        case "M":
+                            row.add(new MagicWall());
+                            break;
+                        case "E":
+                            row.add(new Exit());
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+                tiles.add(row);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setNeighbors() {

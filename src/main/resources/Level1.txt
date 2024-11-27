@@ -1,0 +1,5 @@
+D,D,D,D,D,D,D
+D,D,D,P,P,P,P
+N,N,N,N,P,P,N
+T,T,N,N,P,P,N
+T,T,N,N,M,D,E
