@@ -37,4 +37,4 @@ build/
 ### Mac OS ###
 .DS_Store
 
-*.fxml
+/src/main/resources/com/example/boulderdash/hello-view.fxml
