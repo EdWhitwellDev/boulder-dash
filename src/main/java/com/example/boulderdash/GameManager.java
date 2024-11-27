@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class GameManager extends Application {
-    public static Timeline tickTimeline;
+    private  Timeline tickTimeline;
     private Level level = new Level();
     private Player player;
     private Scene scene;
@@ -118,7 +118,11 @@ public class GameManager extends Application {
         player.move();
     }
 
-    public static void main(String[] args) {
+    public Timeline getTickTimeline(){
+        return tickTimeline;
+    }
+
+    public void run(String[] args) {
         // Launch the JavaFX application
         launch(args);
     }

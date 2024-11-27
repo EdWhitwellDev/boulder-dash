@@ -3,6 +3,7 @@ package com.example.boulderdash.Actors;
 import com.example.boulderdash.Actors.Enemies.Enemy;
 import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.GameManager;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Floor;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -69,13 +70,15 @@ public class Player extends Actor {
             }
         }
         position.setOccupier(this);
+        checkCollisions();
     }
 
     private void checkCollisions(){
+        System.out.println(GameState.manager.toString());
         Actor collisionOther = position.checkAdjacent();
         if (collisionOther != null) {
             if (collisionOther instanceof Enemy) {
-                GameManager.tickTimeline.stop();
+                GameState.manager.getTickTimeline().stop();
             }
         }
     }
