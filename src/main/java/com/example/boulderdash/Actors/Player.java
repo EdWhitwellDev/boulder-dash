@@ -49,29 +49,22 @@ public class Player extends Actor {
                     break;
             }
         }
-
     }
 
     private void validateMove(Tile nextPos){
         if (nextPos != null){
             if (nextPos instanceof Floor){
+                if (nextPos.isOccupied()){
+                    if (nextPos.getOccupier() instanceof Diamond){
+                        diamondsCollected++;
+                    }
+                }
                 changePos(nextPos);
+                checkCollisions();
             }
         }
     }
 
-    private void changePos(Tile nextPos){
-        tickCoolDown = tickCoolDownReset;
-        position.setOccupier(null);
-        position = nextPos;
-        if (nextPos.isOccupied()){
-            if (nextPos.getOccupier() instanceof Diamond){
-                diamondsCollected++;
-            }
-        }
-        position.setOccupier(this);
-        checkCollisions();
-    }
 
     private void checkCollisions(){
         System.out.println(GameState.manager.toString());

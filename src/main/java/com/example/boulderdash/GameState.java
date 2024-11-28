@@ -1,6 +1,7 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.enums.Direction;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

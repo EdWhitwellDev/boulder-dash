@@ -1,8 +1,10 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Enemies.Fly;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.*;
+import com.example.boulderdash.enums.Direction;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,7 +33,8 @@ public class Level {
         player = new Player(tiles.get(1).get(1));
 
         actors.add(player);
-        actors.add(new Actor(tiles.get(2).get(2)));
+        Fly buttery = new Fly(tiles.get(4).get(6), true, true, Direction.UP);
+        actors.add(buttery);
     }
 
     private void readTiles() {

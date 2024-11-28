@@ -13,7 +13,9 @@ public class Tile {
     protected Image image;
     protected int row;
     protected int column;
+    protected boolean isPath = false;
     private boolean occupied = false;
+
     private Actor occupier;
 
     public Tile(int row, int col){
@@ -41,6 +43,7 @@ public class Tile {
     public boolean isOccupied(){
         return occupied;
     }
+    public boolean isPath() { return isPath; }
 
     public Tile getUp() {
         return up;

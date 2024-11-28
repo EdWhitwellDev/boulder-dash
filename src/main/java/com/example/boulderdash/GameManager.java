@@ -1,5 +1,6 @@
 package com.example.boulderdash;
 
+import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -44,7 +45,7 @@ public class GameManager extends Application {
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
-        tickTimeline = new Timeline(new KeyFrame(Duration.millis(50), event -> tick()));
+        tickTimeline = new Timeline(new KeyFrame(Duration.millis(100), event -> tick()));
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
         //drawGame();
@@ -117,7 +118,10 @@ public class GameManager extends Application {
 
     public void tick(){
         drawGame();
-        player.move();
+        for (Actor actor: level.getActors())
+        {
+            actor.move();
+        }
     }
 
     public Timeline getTickTimeline(){
