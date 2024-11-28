@@ -1,6 +1,7 @@
 module com.example.boulderdash {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
 
     opens com.example.boulderdash to javafx.fxml;

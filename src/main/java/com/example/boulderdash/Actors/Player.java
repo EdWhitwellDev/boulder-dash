@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
 public class Player extends Actor {
     private Direction currentDirection = Direction.STATIONARY;
     private int tickCoolDown = 0;
-    private int tickCoolDownReset = 6;
+    private int tickCoolDownReset = 2;
     private int diamondsCollected = 0;
 
     public Player(Tile startingTile){
@@ -23,8 +23,13 @@ public class Player extends Actor {
     public void setDirection(Direction direction){
         currentDirection = direction;
     }
+
     public int getDiamondsCollected(){
         return diamondsCollected;
+    }
+
+    public void collectedDiamond(){
+
     }
 
     public void move(){

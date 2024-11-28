@@ -16,6 +16,20 @@ public class Actor {
         return image;
     }
 
+    public Tile getPosition() {
+        return position;
+    }
+
+    public void setPosition(Tile newTile) {
+        if (position != null) {
+            position.setOccupier(null);
+        }
+        position = newTile;
+        if (newTile != null) {
+            newTile.setOccupier(this);
+        }
+    }
+
     //Hello
 
 }

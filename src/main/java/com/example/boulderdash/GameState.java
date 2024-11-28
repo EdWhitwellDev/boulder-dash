@@ -19,4 +19,7 @@ public class GameState extends Application {
     }
     @Override
     public void start(Stage stage) throws Exception {}
+
+    // BUG: Jumps multiple tiles
+    // BUG: Lots of freezing
 }
