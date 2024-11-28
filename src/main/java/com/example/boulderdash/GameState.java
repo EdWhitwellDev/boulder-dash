@@ -14,4 +14,3 @@ public class GameState extends Application {
     public void start(Stage stage) throws Exception {}
 }
 
-//.
