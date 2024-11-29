@@ -1,16 +1,20 @@
-# boulder-dash
+# Boulder Dash
 
-##To do:
-Actors:
-  Player:
-    move
-    pick up diamonds
-  Enemies:
-  End game on collision
-    Flies:
-      Move
-      respond to enemy - enemy collision
-      explode
-    Frogs:
-      Shortest path movement
-      
+## To Do: 
+
+### Actors:
+
+#### Player:
+- Move
+- Pick up diamonds
+
+#### Enemies:
+- End game on collision
+
+##### Flies:
+- Move
+- Respond to enemy-enemy collision
+- Explode
+
+##### Frogs:
+- Shortest path movement
