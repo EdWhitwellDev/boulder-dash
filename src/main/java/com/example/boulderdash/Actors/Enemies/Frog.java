@@ -12,12 +12,6 @@ public class Frog extends Enemy{
     private static final int TICK_COOL_DOWN_RESET = 16;
     private final Player player;
     private Direction currentDirection;
-    private boolean hasPath;
-    //private Queue<Tile> playerQueue = new LinkedList<>();
-    //private Queue<Tile> frogQueue = new LinkedList<>();
-    //private Dictionary<Tile, Tile> frogParents;
-    //private Dictionary<Tile, Tile> playerParents;
-
 
     private int tickCoolDown = 10;
 
@@ -52,35 +46,24 @@ public class Frog extends Enemy{
 
         Tile nextStep = null;
 
-        hasPath = false;
-
-        while (!frogQueue.isEmpty() && !playerQueue.isEmpty() && !hasPath){
+        while (!frogQueue.isEmpty() && !playerQueue.isEmpty()){
             Tile currentFrogTile = frogQueue.poll();
-            
-            List<Tile> nextPaths = currentFrogTile.adjacentPaths();
-            for (Tile nextPath : nextPaths){
-                if (playerParents.get(nextPath) != null) {
-                    frogParents.put(nextPath, currentFrogTile);
-                    nextStep = getNextStep(frogParents, nextPath);
-                } else if (frogParents.get(nextPath) == null) {
-                    frogParents.put(nextPath, currentFrogTile);
-                    frogQueue.add(nextPath);
-                }
 
+            nextStep = traverse(currentFrogTile, frogQueue, frogParents, playerParents);
+            if (nextStep != null){
+                frogParents.put(nextStep, currentFrogTile);
+                nextStep = getNextStep(frogParents, nextStep);
+                break;
             }
-            if (playerQueue.isEmpty() || hasPath) {
+
+            if (playerQueue.isEmpty()) {
                 break;
             }
             Tile currentPlayerTile = playerQueue.poll();
-            nextPaths = currentPlayerTile.adjacentPaths();
-            for (Tile nextPath : nextPaths){
-                if (frogParents.get(nextPath) != null) {
-                    nextStep = getNextStep(frogParents, nextPath);
-                } else if (playerParents.get(nextPath) == null) {
-                    playerParents.put(nextPath, currentPlayerTile);
-                    playerQueue.add(nextPath);
-                }
-
+            nextStep = traverse(currentPlayerTile, playerQueue, playerParents, frogParents);
+            if (nextStep != null){
+                nextStep = getNextStep(frogParents, nextStep);
+                break;
             }
         }
 
@@ -89,16 +72,29 @@ public class Frog extends Enemy{
         }
     }
 
+    private Tile traverse(Tile currentPath, Queue<Tile> queue,
+                          Dictionary<Tile, Tile> thisParents, Dictionary<Tile, Tile> otherParents) {
+        List<Tile> nextPaths = currentPath.adjacentPaths();
+        for (Tile nextPath : nextPaths){
+            if (otherParents.get(nextPath) != null) {
+                return nextPath;
+            } else if (thisParents.get(nextPath) == null) {
+                thisParents.put(nextPath, currentPath);
+                queue.add(nextPath);
+            }
 
-    public Tile getNextStep(Dictionary<Tile, Tile> frogPath, Tile intersection){
+        }
+        return null;
+    }
+
+
+    private Tile getNextStep(Dictionary<Tile, Tile> frogPath, Tile intersection){
         Tile nextStep = intersection;
         while (frogPath.get(nextStep) != this.position){
-            System.out.println(Integer.toString(nextStep.getRow()) + ", " + Integer.toString(nextStep.getColumn()));
             nextStep = frogPath.get(nextStep);
         }
 
         currentDirection = changeDirection(nextStep);
-        hasPath = true;
         return nextStep;
 
     }

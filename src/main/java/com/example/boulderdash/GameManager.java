@@ -33,7 +33,7 @@ public class GameManager extends Application {
 
         player = level.getPlayer();
 
-        GameState.setupSate(level, player);
+        GameState.setupSate(level, player, this);
 
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
@@ -136,7 +136,7 @@ public class GameManager extends Application {
         // do something
     }
 
-    public void run(String[] args) {
+    public static void main(String[] args) {
         // Launch the JavaFX application
         launch(args);
     }

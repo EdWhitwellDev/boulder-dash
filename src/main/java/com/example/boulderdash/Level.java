@@ -127,6 +127,9 @@ public class Level {
     public List<Actor> getActors() {
         return actors;
     }
+    public void removeActor(Actor actorToRemove) {
+        actors.remove(actorToRemove);
+    }
 
     public List<List<Tile>> getTiles() {
         return tiles;

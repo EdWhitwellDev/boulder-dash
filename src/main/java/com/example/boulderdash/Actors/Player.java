@@ -57,6 +57,7 @@ public class Player extends Actor {
                 if (nextPos.isOccupied()){
                     if (nextPos.getOccupier() instanceof Diamond){
                         diamondsCollected++;
+                        GameState.level.removeActor(nextPos.getOccupier());
                     }
                 }
                 changePos(nextPos);
