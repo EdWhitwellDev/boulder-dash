@@ -84,28 +84,29 @@ public class Tile {
         this.up = up;
     }
 
-    public Actor checkAdjacent(){
+    public List<Actor> checkAdjacent(){
+        List<Actor> adjacentActors = new ArrayList<>();
         if (up != null){
             if (up.isOccupied()){
-                return up.getOccupier();
+                 adjacentActors.add(up.getOccupier());
             }
         }
         if (down != null){
             if (down.isOccupied()){
-                return down.getOccupier();
+                adjacentActors.add(down.getOccupier());
             }
         }
         if (left != null){
             if (left.isOccupied()){
-                return left.getOccupier();
+                adjacentActors.add(left.getOccupier());
             }
         }
         if (right != null){
             if (right.isOccupied()){
-                return right.getOccupier();
+                adjacentActors.add(right.getOccupier());
             }
         }
-        return null;
+        return adjacentActors;
     }
 
     public List<Tile> adjacentPaths(){

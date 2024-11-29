@@ -27,6 +27,7 @@ public class GameManager extends Application {
     private Player player;
     private Scene scene;
     private GridPane grid = new GridPane();
+    private boolean dead = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -118,10 +119,13 @@ public class GameManager extends Application {
 
     public void tick(){
         drawGame();
-        for (Actor actor: level.getActors())
-        {
-            actor.move();
+        if (!dead) {
+            for (Actor actor: level.getActors())
+            {
+                actor.move();
+            }
         }
+
     }
 
     public Timeline getTickTimeline(){
@@ -129,7 +133,7 @@ public class GameManager extends Application {
     }
 
     public void looseGame(){
-        // do something
+        dead = true;
     }
 
     public void winGame(){

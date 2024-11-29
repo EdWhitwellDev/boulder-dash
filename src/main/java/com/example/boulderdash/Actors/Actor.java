@@ -1,9 +1,13 @@
 package com.example.boulderdash.Actors;
 
+import com.example.boulderdash.Actors.Enemies.Enemy;
 import com.example.boulderdash.Actors.Falling.Diamond;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
+
+import java.util.List;
 
 public class Actor {
     protected Tile position;
@@ -32,9 +36,24 @@ public class Actor {
         position = nextPos;
 
         position.setOccupier(this);
+
+        checkCollisions();
     }
 
     public void move(){}
+
+    protected void checkCollisions(){
+        List<Actor> collisionOther = position.checkAdjacent();
+        if (!collisionOther.isEmpty()) {
+            for (Actor collider : collisionOther){
+                if (collider instanceof Enemy && this instanceof Player){
+                    GameState.manager.looseGame();
+                } else if (this instanceof Enemy && collider instanceof Player) {
+                    GameState.manager.looseGame();
+                }
+            }
+        }
+    }
 
     //Hello
 

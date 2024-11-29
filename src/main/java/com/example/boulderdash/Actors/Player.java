@@ -61,18 +61,6 @@ public class Player extends Actor {
                     }
                 }
                 changePos(nextPos);
-                checkCollisions();
-            }
-        }
-    }
-
-
-    private void checkCollisions(){
-        System.out.println(GameState.manager.toString());
-        Actor collisionOther = position.checkAdjacent();
-        if (collisionOther != null) {
-            if (collisionOther instanceof Enemy) {
-                GameState.manager.getTickTimeline().stop();
             }
         }
     }

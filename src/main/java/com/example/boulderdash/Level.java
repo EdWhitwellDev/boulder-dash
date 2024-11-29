@@ -34,11 +34,14 @@ public class Level {
         player = new Player(tiles.get(1).get(1));
 
         actors.add(player);
-        //Fly buttery = new Fly(tiles.get(6).get(6), true, true, Direction.UP);
-        //actors.add(buttery);
+        Fly buttery = new Fly(tiles.get(6).get(6), true, true, Direction.UP);
+        actors.add(buttery);
 
         Frog frogy = new Frog(tiles.get(6).get(5), player);
         actors.add(frogy);
+
+        Fly firey = new Fly(tiles.get(2).get(3), false, false, Direction.UP);
+        actors.add(firey);
     }
 
     private void readTiles() {
