@@ -50,7 +50,7 @@ public class GameManager extends Application {
         tickTimeline.play();
         //drawGame();
         // Set the title of the window
-        primaryStage.setTitle("Simple JavaFX Window");
+        primaryStage.setTitle("Boulder Dash");
 
         // Set the scene for the stage
         primaryStage.setScene(scene);
@@ -126,6 +126,14 @@ public class GameManager extends Application {
 
     public Timeline getTickTimeline(){
         return tickTimeline;
+    }
+
+    public void looseGame(){
+        // do something
+    }
+
+    public void winGame(){
+        // do something
     }
 
     public void run(String[] args) {

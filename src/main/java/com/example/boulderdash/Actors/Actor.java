@@ -23,6 +23,9 @@ public class Actor {
     public Direction getCurrentDirection(){
         return currentDirection;
     }
+    public Tile getPosition(){
+        return position;
+    }
     protected void changePos(Tile nextPos){
         tickCoolDown = tickCoolDownReset;
         position.setOccupier(null);

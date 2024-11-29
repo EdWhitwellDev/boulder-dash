@@ -2,6 +2,7 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Actors.Enemies.Fly;
+import com.example.boulderdash.Actors.Enemies.Frog;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.*;
 import com.example.boulderdash.enums.Direction;
@@ -33,8 +34,11 @@ public class Level {
         player = new Player(tiles.get(1).get(1));
 
         actors.add(player);
-        Fly buttery = new Fly(tiles.get(4).get(6), true, true, Direction.UP);
-        actors.add(buttery);
+        //Fly buttery = new Fly(tiles.get(6).get(6), true, true, Direction.UP);
+        //actors.add(buttery);
+
+        Frog frogy = new Frog(tiles.get(6).get(5), player);
+        actors.add(frogy);
     }
 
     private void readTiles() {

@@ -3,6 +3,7 @@ package com.example.boulderdash.Tiles;
 import com.example.boulderdash.Actors.Actor;
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Tile {
@@ -39,6 +40,12 @@ public class Tile {
     }
     public Actor getOccupier(){
         return occupier;
+    }
+    public int getRow(){
+        return row;
+    }
+    public int getColumn(){
+        return column;
     }
     public boolean isOccupied(){
         return occupied;
@@ -99,5 +106,30 @@ public class Tile {
             }
         }
         return null;
+    }
+
+    public List<Tile> adjacentPaths(){
+        List<Tile> paths = new ArrayList<>();
+        if (up != null){
+            if (up.isPath()){
+                paths.add(up);
+            }
+        }
+        if (down != null){
+            if (down.isPath()){
+                paths.add(down);
+            }
+        }
+        if (left != null){
+            if (left.isPath()){
+                paths.add(left);
+            }
+        }
+        if (right != null){
+            if (right.isPath()){
+                paths.add(right);
+            }
+        }
+        return paths;
     }
 }

@@ -10,8 +10,9 @@ import java.util.List;
 
 public class Fly extends Enemy{
     public static final Direction[] CARDINAL_DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
-    private static final int TICK_COOL_DOWN_RESET = 12;
+    private static final int TICK_COOL_DOWN_RESET = 8;
     private final boolean rightHanded;
+    private final boolean buttery;
     private Direction currentDirection;
     private Direction handSide;
     private int tickCoolDown = 6;
@@ -19,6 +20,7 @@ public class Fly extends Enemy{
     public Fly(Tile startPosition, boolean turnRight, boolean butter, Direction startDirection) {
         super(startPosition);
         this.rightHanded = turnRight;
+        this.buttery = butter;
         this.currentDirection = startDirection;
         this.handSide = findHand(rightHanded);
         this.image = butter ? new Image("butterfly.png") : new Image("firefly.png");
