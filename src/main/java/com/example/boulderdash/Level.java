@@ -1,8 +1,12 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Amoeba;
+import com.example.boulderdash.Actors.Enemies.Fly;
+import com.example.boulderdash.Actors.Enemies.Frog;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.*;
+import com.example.boulderdash.enums.Direction;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +18,7 @@ public class Level {
     private List<List<Tile>> tiles;
     private List<Actor> actors;
     private Player player;
+    private Amoeba amoeba;
     private int rows;
     private int cols;
 
@@ -28,10 +33,19 @@ public class Level {
 
         setNeighbors();
 
-        player = new Player(tiles.get(0).get(0));
+        player = new Player(tiles.get(1).get(1));
+
+        //Amoeba
+        amoeba = new Amoeba(tiles.get(3).get(5), 0);
+        actors.add(amoeba);
 
         actors.add(player);
-        actors.add(new Actor(tiles.get(1).get(1)));
+
+        //Fly buttery = new Fly(tiles.get(6).get(6), true, true, Direction.UP);
+        //actors.add(buttery);
+
+        Frog frogy = new Frog(tiles.get(6).get(5), player);
+        actors.add(frogy);
     }
 
     private void readTiles() {
