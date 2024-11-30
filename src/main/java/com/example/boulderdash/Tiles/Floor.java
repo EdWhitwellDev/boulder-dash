@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 
 public class Floor extends Tile{
     public Floor(int row, int col, boolean isPath) {
-        super(row, col);
+        super(row, col, isPath);
         this.isPath = isPath;
         image = isPath ? new Image("path.png") : new Image("dirt.png");
     }

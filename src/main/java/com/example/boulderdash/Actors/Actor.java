@@ -11,14 +11,16 @@ import java.util.List;
 
 public class Actor {
     protected Tile position;
-    protected Image image = new Image("diamond.png");
     protected int tickCoolDown;
     protected int tickCoolDownReset;
     protected Direction currentDirection;
+    protected Image image;
 
     public Actor(Tile startPosition){
         position = startPosition;
-        position.setOccupier(this);
+        if (position != null) {
+            position.setOccupier(this);
+        }
     }
 
     public Image getImage(){
@@ -52,6 +54,20 @@ public class Actor {
                     GameState.manager.looseGame();
                 }
             }
+        }
+    }
+
+    public Tile getPosition() {
+        return position;
+    }
+
+    public void setPosition(Tile newTile) {
+        if (position != null) {
+            position.setOccupier(null);
+        }
+        position = newTile;
+        if (newTile != null) {
+            newTile.setOccupier(this);
         }
     }
 

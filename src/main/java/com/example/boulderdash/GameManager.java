@@ -36,13 +36,12 @@ public class GameManager extends Application {
 
         GameState.setupSate(level, player, this);
 
+
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
         grid.setPadding(new Insets(50));
 
-
         scene = new Scene(grid, 1500, 1000);  // width: 400, height: 400
-
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
@@ -50,6 +49,7 @@ public class GameManager extends Application {
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
         //drawGame();
+
         // Set the title of the window
         primaryStage.setTitle("Boulder Dash");
 
@@ -61,9 +61,12 @@ public class GameManager extends Application {
     }
 
     public void drawGame(){
+        grid.getChildren().clear(); // Clears the grid first
+
         List<List<Tile>> tiles = level.getTiles();
         int rows = level.getRows();
         int columns = level.getCols();
+
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 // Create an ImageView for the image

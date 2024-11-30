@@ -1,8 +1,13 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+
 import com.example.boulderdash.Actors.Enemies.Fly;
 import com.example.boulderdash.Actors.Enemies.Frog;
+
+import com.example.boulderdash.Actors.Falling.Boulder;
+import com.example.boulderdash.Actors.Falling.Diamond;
+
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.*;
 import com.example.boulderdash.enums.Direction;
@@ -19,6 +24,8 @@ public class Level {
     private Player player;
     private int rows;
     private int cols;
+    private Diamond diamond;
+    private Boulder boulder;
 
     public Level() {
         tiles = new ArrayList<>();
@@ -32,8 +39,11 @@ public class Level {
         setNeighbors();
 
         player = new Player(tiles.get(1).get(1));
+        diamond = new Diamond(tiles.get(2).get(1));
+        boulder = new Boulder(tiles.get(2).get(5));
 
         actors.add(player);
+
         Fly buttery = new Fly(tiles.get(6).get(6), true, true, Direction.UP);
         actors.add(buttery);
 
@@ -42,6 +52,10 @@ public class Level {
 
         Fly firey = new Fly(tiles.get(2).get(3), false, false, Direction.UP);
         actors.add(firey);
+
+        actors.add(diamond);
+        actors.add(new Actor(tiles.get(2).get(2)));
+
     }
 
     private void readTiles() {
@@ -120,6 +134,9 @@ public class Level {
 
     public Player getPlayer(){
         return player;
+    }
+    public Diamond getDiamond(){
+        return diamond;
     }
     public int getCols() {
         return cols;

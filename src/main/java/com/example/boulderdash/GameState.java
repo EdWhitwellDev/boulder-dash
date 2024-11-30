@@ -19,6 +19,5 @@ public class GameState{
         player = currentPlayer;
         manager = management;
     }
-    //@Override
-    //public void start(Stage stage) throws Exception {}
+
 }

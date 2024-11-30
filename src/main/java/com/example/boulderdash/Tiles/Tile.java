@@ -1,6 +1,7 @@
 package com.example.boulderdash.Tiles;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
 import java.util.ArrayList;
@@ -18,37 +19,44 @@ public class Tile {
     private boolean occupied = false;
 
     private Actor occupier;
+    private boolean isPath;
 
-    public Tile(int row, int col){
+    public Tile(int row, int col, boolean isPath){
         this.row = row;
         this.column = col;
+        this.isPath = isPath;
+        this.occupier = null;
     }
 
     public Image getImage(){
         return image;
     }
 
-    public void setOccupied(boolean occupy){
-        occupied = occupy;
-    }
-    public void setOccupier(Actor occupant){
-        occupier = occupant;
-        occupied = true;
-        if (occupant == null){
-            occupied = false;
-        }
-    }
     public Actor getOccupier(){
         return occupier;
     }
+
     public int getRow(){
         return row;
     }
     public int getColumn(){
         return column;
     }
+
     public boolean isOccupied(){
-        return occupied;
+        return occupier != null;
+    }
+
+    public boolean isPath() {
+        return isPath;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
     }
     public boolean isPath() { return isPath; }
 
@@ -83,9 +91,17 @@ public class Tile {
     public void setUp(Tile up) {
         this.up = up;
     }
+    public void setOccupied(boolean occupy){
+        occupied = occupy;
+    }
+
+    public void setOccupier(Actor occupier){
+        this.occupier = occupier;
+    }
 
     public List<Actor> checkAdjacent(){
         List<Actor> adjacentActors = new ArrayList<>();
+
         if (up != null){
             if (up.isOccupied()){
                  adjacentActors.add(up.getOccupier());
@@ -132,5 +148,30 @@ public class Tile {
             }
         }
         return paths;
+    }
+
+    // Returns corresponding tile (Needed to push boulder in certain directions)
+    public Tile getNeighbour(Direction direction) {
+        switch (direction) {
+            case UP:
+                return up;
+            case DOWN:
+                return down;
+            case LEFT:
+                return left;
+            case RIGHT:
+                return right;
+            default:
+                return null;
+        }
+    }
+
+    // Turns tile into path (e.g when an explosion happens)
+    public void destroy() {
+        if (isOccupied()) {
+            occupier.setPosition(null);
+        }
+        isPath = true;
+        occupier = null;
     }
 }

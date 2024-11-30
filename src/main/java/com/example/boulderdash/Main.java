@@ -111,7 +111,7 @@ public class Main extends Application {
 		    case RIGHT:
 		    	// Right key was pressed. So move the player right by one cell.
 	        	playerX = playerX + 1;
-	        	break;		        
+	        	break;
 	        default:
 	        	// Do nothing for all other keys.
 	        	break;
