@@ -4,6 +4,7 @@ import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Tiles.Tile;
 
 public class FallingObject extends Actor {
+
     protected boolean isFalling = false;
 
     public FallingObject(Tile startPosition) {
@@ -19,6 +20,7 @@ public class FallingObject extends Actor {
         } else {
             isFalling = false;
         }
+        onPath(underTile);
     }
 
     public void explosion() {
@@ -26,11 +28,15 @@ public class FallingObject extends Actor {
         // Logic for explosion goes here
     }
 
-    public boolean getIsFalling() {
+    public boolean isFalling() {
         return isFalling;
     }
 
     private boolean isAbleToFall(Tile underTile) {
-        return underTile != null && underTile.isOccupied(); // Checks if the tile under is a tile and is empty
+        return underTile != null && !underTile.isOccupied(); // Checks if the tile under is a tile and is empty
+    }
+
+    private void onPath(Tile underTile) {
+
     }
 }

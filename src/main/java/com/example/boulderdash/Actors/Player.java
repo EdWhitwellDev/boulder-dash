@@ -1,6 +1,7 @@
 package com.example.boulderdash.Actors;
 
 import com.example.boulderdash.Actors.Enemies.Enemy;
+import com.example.boulderdash.Actors.Falling.Boulder;
 import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.GameManager;
 import com.example.boulderdash.GameState;
@@ -37,25 +38,47 @@ public class Player extends Actor {
             tickCoolDown--;
         }
         else {
-            switch (currentDirection) {
-                case UP:
-                    validateMove(position.getUp());
-                    break;
-                case DOWN:
-                    validateMove(position.getDown());
-                    break;
-                case LEFT:
-                    validateMove(position.getLeft());
-                    break;
-                case RIGHT:
-                    validateMove(position.getRight());
-                    break;
-                default:
-                    break;
+            Tile nextTile = getNextTile(currentDirection);
+            if (nextTile != null) {
+                processMove(nextTile);
             }
         }
-
     }
+
+    private Tile getNextTile(Direction direction) {
+        switch (direction) {
+            case UP:
+                return position.getUp();
+            case DOWN:
+                return position.getDown();
+            case LEFT:
+                return position.getLeft();
+            case RIGHT:
+                return position.getRight();
+            default:
+                return null;
+        }
+    }
+
+    private void processMove(Tile nextTile) {
+        if (nextTile instanceof Floor) {
+            if (nextTile.isOccupied()) {
+                Actor occupier = nextTile.getOccupier();
+
+                if (occupier instanceof Diamond) {
+                    diamondsCollected++;
+                    occupier.setPosition(null);
+                } else if (occupier instanceof Boulder) {
+                    Boulder boulder = (Boulder) occupier;
+                    if (!boulder.push(currentDirection)) {
+                        return;
+                    }
+                }
+            }
+            changePos(nextTile);
+        }
+    }
+
 
     private void validateMove(Tile nextPos){
         if (nextPos != null){
@@ -69,22 +92,27 @@ public class Player extends Actor {
         tickCoolDown = tickCoolDownReset;
         position.setOccupier(null);
         position = nextPos;
-        if (nextPos.isOccupied()){
-            if (nextPos.getOccupier() instanceof Diamond){
-                diamondsCollected++;
-            }
-        }
+//        if (nextPos.isOccupied()){
+//            if (nextPos.getOccupier() instanceof Diamond){
+//                diamondsCollected++;
+//            }
+//        }
         position.setOccupier(this);
         checkCollisions();
     }
 
+    // Initiates game over (death)
     private void checkCollisions(){
         System.out.println(GameState.manager.toString());
         Actor collisionOther = position.checkAdjacent();
-        if (collisionOther != null) {
-            if (collisionOther instanceof Enemy) {
-                GameState.manager.getTickTimeline().stop();
-            }
+        if (collisionOther instanceof Enemy) {
+            gameOver();
         }
+    }
+
+    // Handles game over (death)
+    private void gameOver() {
+        System.out.println("You died noob");
+        GameState.manager.getTickTimeline().stop();
     }
 }

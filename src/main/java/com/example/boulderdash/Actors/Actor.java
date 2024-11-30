@@ -5,11 +5,13 @@ import javafx.scene.image.Image;
 
 public class Actor {
     protected Tile position;
-    protected Image image = new Image("diamond.png");
+    protected Image image;
 
     public Actor(Tile startPosition){
         position = startPosition;
-        position.setOccupier(this);
+        if (position != null) {
+            position.setOccupier(this);
+        }
     }
 
     public Image getImage(){

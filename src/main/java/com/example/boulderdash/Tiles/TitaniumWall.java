@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 public class TitaniumWall extends Tile{
 
     public TitaniumWall(int row, int col){
-        super(row, col);
+        super(row, col, false);
         image = new Image("titanium_wall.png");
     }
 }
