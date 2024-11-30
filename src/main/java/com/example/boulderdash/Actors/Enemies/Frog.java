@@ -27,11 +27,30 @@ public class Frog extends Enemy{
             tickCoolDown--;
         }
         else {
-            biDirectionalSearch(player.getPosition());
+            if(!biDirectionalSearch(player.getPosition())){
+                Random random = new Random();
+                List<Tile> options = position.adjacentPaths();
+                if (!options.isEmpty()){
+                    Tile nextMove = null;
+                    do {
+                        int randomPath = random.nextInt(options.size());
+                        if (!options.get(randomPath).isOccupied()){
+                            nextMove = options.get(randomPath);
+                        }
+                        options.remove(randomPath);
+                    } while (nextMove == null && !options.isEmpty());
+
+                    if (nextMove != null) {
+                        currentDirection = changeDirection(nextMove);
+                        changePos(nextMove);
+                    }
+
+                }
+            }
         }
     }
 
-    public void biDirectionalSearch(Tile target){
+    public boolean biDirectionalSearch(Tile target){
         Queue<Tile> playerQueue = new LinkedList<>();
         Queue<Tile> frogQueue = new LinkedList<>();
 
@@ -49,10 +68,10 @@ public class Frog extends Enemy{
         while (!frogQueue.isEmpty() && !playerQueue.isEmpty()){
             Tile currentFrogTile = frogQueue.poll();
 
-            nextStep = traverse(currentFrogTile, frogQueue, frogParents, playerParents);
-            if (nextStep != null){
-                frogParents.put(nextStep, currentFrogTile);
-                nextStep = getNextStep(frogParents, nextStep);
+            Tile potNextStep = traverse(currentFrogTile, frogQueue, frogParents, playerParents);
+            if (potNextStep != null){
+                frogParents.put(potNextStep, currentFrogTile);
+                nextStep = getNextStep(frogParents, potNextStep);
                 break;
             }
 
@@ -60,16 +79,18 @@ public class Frog extends Enemy{
                 break;
             }
             Tile currentPlayerTile = playerQueue.poll();
-            nextStep = traverse(currentPlayerTile, playerQueue, playerParents, frogParents);
-            if (nextStep != null){
-                nextStep = getNextStep(frogParents, nextStep);
+            potNextStep = traverse(currentPlayerTile, playerQueue, playerParents, frogParents);
+            if (potNextStep != null){
+                nextStep = getNextStep(frogParents, potNextStep);
                 break;
             }
         }
 
         if (nextStep != null){
             this.changePos(nextStep);
+            return true;
         }
+        return false;
     }
 
     private Tile traverse(Tile currentPath, Queue<Tile> queue,
