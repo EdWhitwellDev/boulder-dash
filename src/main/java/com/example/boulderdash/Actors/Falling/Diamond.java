@@ -21,7 +21,7 @@ public class Diamond extends FallingObject {
 
     }
 
-    public void fall(Tile[][] grid) {
-        super.fall(grid);
+    public void fall() {
+        super.fall();
     }
 }

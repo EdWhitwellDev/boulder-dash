@@ -42,6 +42,7 @@ public class Level {
         diamond = new Diamond(tiles.get(2).get(1));
         boulder = new Boulder(tiles.get(2).get(5));
 
+        actors.add(boulder);
         actors.add(player);
 
         Fly buttery = new Fly(tiles.get(6).get(6), true, true, Direction.UP);
@@ -61,7 +62,7 @@ public class Level {
     private void readTiles() {
         int rowIndex = 0;
         int colIndex = 0;
-        try (Scanner in = new Scanner(new File("src/main/resources/Level1.txt"))) {
+        try (Scanner in = new Scanner(new File("C:\\Users\\viraj\\Documents\\Computer-Science-University\\Year 2\\Semester-2\\CS230\\CourseworkA2\\Merge\\boulder-dash\\src\\main\\resources\\Level1.txt"))) {
             while (in.hasNextLine()) {
                 List<Tile> row = new ArrayList<>();
                 String rowSymbols = in.nextLine();

@@ -1,5 +1,6 @@
 package com.example.boulderdash.Actors.Enemies;
 
+import com.example.boulderdash.Actors.Falling.Boulder;
 import com.example.boulderdash.Tiles.Floor;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -32,26 +33,31 @@ public class Fly extends Enemy{
         }
         else {
             Tile side = findTile(handSide);
-            if (side != null){
-                if (side.isPath()){
-                    currentDirection = handSide;
-                    handSide = findHand(rightHanded);
-                }
+            if (side != null && isAbleToMoveToTile(side)){
+                currentDirection = handSide;
+                handSide = findHand(rightHanded);
+
             }
             Tile forward = findTile(currentDirection);
-            if (forward != null){
-                if (forward.isPath()){
-                    changePos(forward);
-                    tickCoolDown = TICK_COOL_DOWN_RESET;
-                } else {
-                    currentDirection = findHand(!rightHanded);
-                    handSide = findHand(rightHanded);
-                }
+            if (forward != null && isAbleToMoveToTile(forward)) {
+                changePos(forward);
+                tickCoolDown = TICK_COOL_DOWN_RESET;
             } else {
                 currentDirection = findHand(!rightHanded);
                 handSide = findHand(rightHanded);
             }
         }
+    }
+
+    private boolean isAbleToMoveToTile(Tile tile) {
+        if (!tile.isPath()) {
+            return false;
+        }
+
+        if (tile.getOccupier() instanceof Boulder && tile.isOccupied()) {
+            return false;
+        }
+        return true;
     }
 
     private Tile findTile(Direction direction){

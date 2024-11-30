@@ -1,6 +1,7 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Falling.FallingObject;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -22,7 +23,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class GameManager extends Application {
-    private  Timeline tickTimeline;
+    private Timeline tickTimeline;
     private Level level = new Level();
     private Player player;
     private Scene scene;
@@ -120,7 +121,13 @@ public class GameManager extends Application {
         event.consume();
     }
 
-    public void tick(){
+    public void tick() {
+        for (Actor actor : level.getActors()) {
+            if (actor instanceof FallingObject) {
+                FallingObject fallingObject = (FallingObject) actor;
+                fallingObject.fall();
+            }
+        }
         drawGame();
         if (!dead) {
             for (Actor actor: level.getActors())
