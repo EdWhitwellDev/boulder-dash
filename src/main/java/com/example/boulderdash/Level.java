@@ -12,8 +12,8 @@ import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.*;
 import com.example.boulderdash.enums.Direction;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -62,42 +62,49 @@ public class Level {
     private void readTiles() {
         int rowIndex = 0;
         int colIndex = 0;
-        try (Scanner in = new Scanner(new File("C:\\Users\\viraj\\Documents\\Computer-Science-University\\Year 2\\Semester-2\\CS230\\CourseworkA2\\Merge\\boulder-dash\\src\\main\\resources\\Level1.txt"))) {
-            while (in.hasNextLine()) {
-                List<Tile> row = new ArrayList<>();
-                String rowSymbols = in.nextLine();
-                String[] tileSymbols = rowSymbols.split(",");
-                for (String symbol : tileSymbols) {
-                    switch (symbol) {
-                        case "P":
-                            row.add(new Floor(rowIndex, colIndex, true));
-                            break;
-                        case "D":
-                            row.add(new Floor(rowIndex, colIndex, false));
-                            break;
-                        case "N":
-                            row.add(new NormalWall(rowIndex, colIndex));
-                            break;
-                        case "T":
-                            row.add(new TitaniumWall(rowIndex, colIndex));
-                            break;
-                        case "M":
-                            row.add(new MagicWall(rowIndex, colIndex));
-                            break;
-                        case "E":
-                            row.add(new Exit(rowIndex, colIndex));
-                            break;
-                        default:
-                            break;
-
-                    }
-                    colIndex++;
-                }
-                tiles.add(row);
-                rowIndex++;
-                colIndex = 0;
+        try (InputStream inputStream = Level.class.getClassLoader().getResourceAsStream("Level1.txt")) {
+            if (inputStream == null){
+                throw new IllegalArgumentException("File not found");
             }
-        } catch (FileNotFoundException e) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+                String line;
+                while ((line = in.readLine()) != null) {
+                    List<Tile> row = new ArrayList<>();
+                    String[] tileSymbols = line.split(",");
+                    for (String symbol : tileSymbols) {
+                        switch (symbol) {
+                            case "P":
+                                row.add(new Floor(rowIndex, colIndex, true));
+                                break;
+                            case "D":
+                                row.add(new Floor(rowIndex, colIndex, false));
+                                break;
+                            case "N":
+                                row.add(new NormalWall(rowIndex, colIndex));
+                                break;
+                            case "T":
+                                row.add(new TitaniumWall(rowIndex, colIndex));
+                                break;
+                            case "M":
+                                row.add(new MagicWall(rowIndex, colIndex));
+                                break;
+                            case "E":
+                                row.add(new Exit(rowIndex, colIndex));
+                                break;
+                            default:
+                                break;
+
+                        }
+                        colIndex++;
+                    }
+                    tiles.add(row);
+                    rowIndex++;
+                    colIndex = 0;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error wtf");
             e.printStackTrace();
         }
     }

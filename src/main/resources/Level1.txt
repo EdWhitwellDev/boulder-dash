@@ -1,7 +1,7 @@
 T,T,T,T,T,T,T,T,T,T
 T,D,D,D,D,D,D,D,P,T
 T,D,D,D,P,P,P,P,P,T
-T,D,D,D,D,D,D,P,P,T
+T,D,D,D,P,P,P,P,P,T
 T,D,D,D,P,P,P,P,P,T
 T,D,D,D,P,P,P,P,P,T
 T,N,N,N,N,P,P,N,P,T
