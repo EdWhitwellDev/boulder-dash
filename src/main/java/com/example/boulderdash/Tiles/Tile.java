@@ -19,7 +19,6 @@ public class Tile {
     private boolean occupied = false;
 
     private Actor occupier;
-    private boolean isPath;
 
     public Tile(int row, int col, boolean isPath){
         this.row = row;
@@ -50,15 +49,6 @@ public class Tile {
     public boolean isPath() {
         return isPath;
     }
-
-    public int getRow() {
-        return row;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-    public boolean isPath() { return isPath; }
 
     public Tile getUp() {
         return up;
