@@ -36,8 +36,12 @@ public class Boulder extends FallingObject{
         Tile underTile = position.getDown();
 
         if (underTile != null && underTile.isOccupied() && underTile.getOccupier() instanceof Player) {
-            isFalling = false;
-            return;
+            if (isFalling) {
+                kill((Player) underTile.getOccupier());
+            } else {
+                isFalling = false;
+                return;
+            }
         }
         super.fall();
         if (!isFalling) {
