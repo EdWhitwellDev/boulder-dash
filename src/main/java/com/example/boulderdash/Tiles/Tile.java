@@ -178,4 +178,29 @@ public class Tile {
         isPath = true;
         occupier = null;
     }
+
+    public List<Tile> adjacentPaths(){
+        List<Tile> paths = new ArrayList<>();
+        if (up != null){
+            if (up.isPath()){
+                paths.add(up);
+            }
+        }
+        if (down != null){
+            if (down.isPath()){
+                paths.add(down);
+            }
+        }
+        if (left != null){
+            if (left.isPath()){
+                paths.add(left);
+            }
+        }
+        if (right != null){
+            if (right.isPath()){
+                paths.add(right);
+            }
+        }
+        return paths;
+    }
 }

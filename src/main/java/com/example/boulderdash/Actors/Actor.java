@@ -1,5 +1,6 @@
 package com.example.boulderdash.Actors;
 
+
 import com.example.boulderdash.Actors.Enemies.Enemy;
 import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.GameState;
@@ -26,6 +27,21 @@ public class Actor {
     public Image getImage() {
         return image;
     }
+    public Direction getCurrentDirection(){
+        return currentDirection;
+    }
+    public Tile getPosition(){
+        return position;
+    }
+    protected void changePos(Tile nextPos){
+        tickCoolDown = tickCoolDownReset;
+        position.setOccupier(null);
+        position = nextPos;
+
+        position.setOccupier(this);
+    }
+
+    public void move(){}
 
     public Direction getCurrentDirection() {
         return currentDirection;

@@ -70,6 +70,7 @@ public class Player extends Actor {
 
     }
 
+
     private void processMove(Tile nextTile) {
         if (nextTile instanceof Floor) {
             if (nextTile.isOccupied()) {
@@ -83,6 +84,7 @@ public class Player extends Actor {
                         return;
                     }
                 }
+
             }
             changePos(nextTile);
         }
@@ -103,5 +105,6 @@ public class Player extends Actor {
             }
         }
     }
+
 
 }

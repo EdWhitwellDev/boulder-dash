@@ -1,5 +1,6 @@
 package com.example.boulderdash.Actors.Falling;
 
+
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import javafx.scene.image.Image;
@@ -23,5 +24,6 @@ public class Diamond extends FallingObject {
 
     public void move() {
         super.fall();
+
     }
 }

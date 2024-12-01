@@ -2,11 +2,15 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 
+import com.example.boulderdash.Actors.Amoeba;
+
+
 import com.example.boulderdash.Actors.Enemies.Fly;
 import com.example.boulderdash.Actors.Enemies.Frog;
 
 import com.example.boulderdash.Actors.Falling.Boulder;
 import com.example.boulderdash.Actors.Falling.Diamond;
+
 
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.*;
@@ -22,6 +26,7 @@ public class Level {
     private List<List<Tile>> tiles;
     private List<Actor> actors;
     private Player player;
+    private Amoeba amoeba;
     private int rows;
     private int cols;
     private Diamond diamond;
@@ -39,11 +44,19 @@ public class Level {
         setNeighbors();
 
         player = new Player(tiles.get(1).get(1));
+
+
+        //Amoeba
+        amoeba = new Amoeba(tiles.get(3).get(5), 0);
+        actors.add(amoeba);
+
         diamond = new Diamond(tiles.get(2).get(1));
         boulder = new Boulder(tiles.get(2).get(5));
 
+
         actors.add(boulder);
         actors.add(player);
+
 
         Fly buttery = new Fly(tiles.get(6).get(6), true, true, Direction.UP);
         actors.add(buttery);
@@ -56,6 +69,7 @@ public class Level {
 
         actors.add(diamond);
         actors.add(new Actor(tiles.get(2).get(2)));
+
 
     }
 

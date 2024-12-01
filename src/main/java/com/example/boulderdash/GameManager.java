@@ -1,7 +1,9 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+
 import com.example.boulderdash.Actors.Falling.FallingObject;
+
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -37,14 +39,16 @@ public class GameManager extends Application {
 
         player = level.getPlayer();
 
-        GameState.setupSate(level, player, this);
 
+        GameState.setupSate(level, player, this);
 
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
         grid.setPadding(new Insets(50));
 
+
         scene = new Scene(grid, 1500, 1000);  // width: 400, height: 400
+
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
@@ -136,6 +140,7 @@ public class GameManager extends Application {
     public void tick() {
         removeActors();
         drawGame();
+
         if (!dead) {
             for (Actor actor: level.getActors())
             {
@@ -150,12 +155,15 @@ public class GameManager extends Application {
     }
 
     public void looseGame(){
+
         dead = true;
+
     }
 
     public void winGame(){
         // do something
     }
+
 
     public static void main(String[] args) {
         // Launch the JavaFX application
