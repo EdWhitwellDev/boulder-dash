@@ -133,7 +133,7 @@ public class GameManager extends Application {
                 player.setDirection(Direction.STATIONARY);
                 break;
         }
-        // Consume the event. This means we mark it as dealt with. This stops other GUI nodes (buttons etc) responding to it.
+        // Consume the event. This means we mark it as dealt with. This stops other GUI nodes (buttons etc.) responding to it.
         event.consume();
     }
 
