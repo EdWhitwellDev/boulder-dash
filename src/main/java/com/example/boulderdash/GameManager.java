@@ -220,8 +220,6 @@ public class GameManager extends Application {
     }
 
 
-
-
     public void tick() {
         removeActors();
         drawGame();
