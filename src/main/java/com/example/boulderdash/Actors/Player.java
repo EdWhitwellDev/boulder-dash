@@ -44,7 +44,7 @@ public class Player extends Actor {
     }
 
     public void collectedDiamond(){
-
+        diamondsCollected++;
     }
 
     public void move(){
@@ -57,6 +57,12 @@ public class Player extends Actor {
                 processMove(nextTile);
             }
         }
+    }
+
+    private void collectDiamond(Diamond diamond) {
+        collectedDiamond();
+        diamond.setPosition(null);
+        GameState.level.removeActor(diamond);
     }
 
     private Tile getNextTile(Direction direction) {
@@ -77,14 +83,12 @@ public class Player extends Actor {
                 Actor occupier = nextTile.getOccupier();
 
                 if (occupier instanceof Diamond) {
-                    diamondsCollected++;
-                    GameState.manager.killActor(occupier);
+                    collectDiamond((Diamond) occupier);
                 } else if (occupier instanceof Boulder boulder) {
                     if (!boulder.push(currentDirection)) {
                         return;
                     }
                 }
-
             }
             changePos(nextTile);
         }

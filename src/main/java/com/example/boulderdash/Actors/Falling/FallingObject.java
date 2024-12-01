@@ -7,7 +7,7 @@ public class FallingObject extends Actor {
 
     protected boolean isFalling = false;
     private int fallDelay = 0;
-    private final int fallDelayReset = 3;
+    private final int fallDelayReset = 8;
     private int rollDelay = 0;
     private final int rollDelayReset = 3;
 

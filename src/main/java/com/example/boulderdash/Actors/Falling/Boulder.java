@@ -11,7 +11,7 @@ public class Boulder extends FallingObject{
 
     private boolean isPushed = false;
     private int rollDelay = 0;
-    private final int rollDelayReset = 3;
+    private final int rollDelayReset = 8;
 
     public Boulder(Tile startPosition) {
         super(startPosition);
@@ -61,6 +61,7 @@ public class Boulder extends FallingObject{
         }
     }
 
+    // Work on inheritance for this (same for diamond)
     private void roll() {
         if (rollDelay > 0) {
             rollDelay--;
