@@ -47,7 +47,7 @@ public class Level {
 
 
         //Amoeba
-        amoeba = new Amoeba(tiles.get(3).get(5), 0);
+        amoeba = new Amoeba(tiles.get(3).get(5), 10);
         actors.add(amoeba);
 
         diamond = new Diamond(tiles.get(2).get(1));
@@ -64,7 +64,7 @@ public class Level {
         Frog frogy = new Frog(tiles.get(6).get(5), player);
         actors.add(frogy);
 
-        Fly firey = new Fly(tiles.get(2).get(3), false, false, Direction.UP);
+        Fly firey = new Fly(tiles.get(2).get(8), false, false, Direction.UP);
         actors.add(firey);
 
         actors.add(diamond);

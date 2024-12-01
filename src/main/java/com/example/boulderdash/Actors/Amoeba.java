@@ -16,7 +16,6 @@ public class Amoeba extends Actor {
         super(startTile);  // Call the Actor constructor with the starting tile
         this.image = new Image("amoeba.png");  // Set the amoeba image path
         this.growthRate = growthRate;
-        this.tickCoolDownReset = growthRate;  // Set growth rate as the cooldown reset
         this.tickCoolDown = growthRate;
         this.isBlocked = false;
     }
@@ -35,7 +34,7 @@ public class Amoeba extends Actor {
         }
 
         // Reset tick cooldown for the next growth cycle
-        tickCoolDown = tickCoolDownReset;
+        tickCoolDown = growthRate;
     }
 
     private void grow() {
