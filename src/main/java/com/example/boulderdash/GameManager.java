@@ -131,14 +131,13 @@ public class GameManager extends Application {
                 // Right key was pressed. So move the player right by one cell.
                 player.setDirection(Direction.DOWN);
                 break;
-            default:
-                // Do nothing for all other keys.
-                player.setDirection(Direction.STATIONARY);
-                break;
-                
             case ESCAPE:
                 // Escape key was pressed, so the game will be paused.
                 togglePause();
+                break;
+            default:
+                // Do nothing for all other keys.
+                player.setDirection(Direction.STATIONARY);
                 break;
         }
         // Consume the event. This means we mark it as dealt with. This stops other GUI nodes (buttons etc.) responding to it.
