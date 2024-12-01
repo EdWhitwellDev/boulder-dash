@@ -4,6 +4,8 @@ import com.example.boulderdash.Actors.Actor;
 
 import com.example.boulderdash.Actors.Falling.FallingObject;
 
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -33,6 +35,7 @@ public class GameManager extends Application {
     private Scene scene;
     private GridPane grid = new GridPane();
     private boolean dead = false;
+    private boolean isPaused = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -132,10 +135,91 @@ public class GameManager extends Application {
                 // Do nothing for all other keys.
                 player.setDirection(Direction.STATIONARY);
                 break;
+                
+            case ESCAPE:
+                // Escape key was pressed, so the game will be paused.
+                togglePause();
+                break;
         }
         // Consume the event. This means we mark it as dealt with. This stops other GUI nodes (buttons etc.) responding to it.
         event.consume();
     }
+
+    private void togglePause() {
+        isPaused = !isPaused;
+        if (isPaused) {
+            tickTimeline.pause();  // pause game loop
+            showPauseMenu();
+        } else {
+            tickTimeline.play();   // resume game loop
+            hidePauseMenu();
+        }
+    }
+    private void showPauseMenu() {
+        if (pauseMenu == null) {
+            createPauseMenu();
+        }
+        if (!grid.getChildren().contains(pauseMenu)) {
+            // centres the pause menu ( total dimensions / 2 )
+            pauseMenu.setTranslateX((scene.getWidth() - 200) / 2);
+            pauseMenu.setTranslateY((scene.getHeight() - 200) / 2);
+            grid.getChildren().add(pauseMenu);
+        }
+    }
+
+    private void hidePauseMenu() {
+        if (pauseMenu != null) {
+            grid.getChildren().remove(pauseMenu);
+        }
+    }
+
+    private VBox pauseMenu;
+
+    private void createPauseMenu() {
+        pauseMenu = new VBox(15);
+        // background color of the pause menu
+        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 10;");
+
+        Button resumeButton = new Button("Resume");
+        Button saveButton = new Button("Save Game");
+        Button loadButton = new Button("Load Game");
+        Button exitButton = new Button("Exit Game");
+
+        resumeButton.setOnAction(e -> togglePause());
+        saveButton.setOnAction(e -> saveGame());
+        loadButton.setOnAction(e -> loadGame());
+        exitButton.setOnAction(e -> exitGame());
+
+        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
+        pauseMenu.setTranslateX(scene.getWidth()/ 2 );
+        pauseMenu.setTranslateY(scene.getHeight()/ 2 );
+
+        GridPane.setColumnSpan(pauseMenu, 1);
+        GridPane.setRowSpan(pauseMenu, 2);
+        GridPane.setHalignment(pauseMenu, javafx.geometry.HPos.CENTER);
+        GridPane.setValignment(pauseMenu, javafx.geometry.VPos.CENTER);
+
+    }
+
+    private void saveGame() {
+        // saveGame code ...
+        System.out.println("Game saved!");
+    }
+
+    private void loadGame() {
+        // loadGame code ...
+        System.out.println("Game loaded!");
+    }
+
+    private void exitGame() {
+        // save before exit
+        saveGame();
+        Stage stage = (Stage) grid.getScene().getWindow();
+        stage.close();
+    }
+
+
+
 
     public void tick() {
         removeActors();
