@@ -230,10 +230,12 @@ public class GameManager extends Application {
         loadButton.setOnAction(e -> loadGame());
         exitButton.setOnAction(e -> exitGame());
 
+        //centres buttons to pauseMenu Vbox
         pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
         pauseMenu.setTranslateX(scene.getWidth()/ 2 );
         pauseMenu.setTranslateY(scene.getHeight()/ 2 );
 
+        // this changes background pane size of pauseMenu
         GridPane.setColumnSpan(pauseMenu, 1);
         GridPane.setRowSpan(pauseMenu, 2);
         GridPane.setHalignment(pauseMenu, javafx.geometry.HPos.CENTER);
