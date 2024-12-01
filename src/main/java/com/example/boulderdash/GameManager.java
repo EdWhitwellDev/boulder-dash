@@ -1,5 +1,6 @@
 package com.example.boulderdash;
 
+import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -32,22 +33,24 @@ public class GameManager extends Application {
 
         player = level.getPlayer();
 
+        GameState.setupSate(level, player);
+
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
         grid.setPadding(new Insets(50));
 
 
-        scene = new Scene(grid, 400, 400);  // width: 400, height: 400
+        scene = new Scene(grid, 1500, 1000);  // width: 400, height: 400
 
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
-        tickTimeline = new Timeline(new KeyFrame(Duration.millis(50), event -> tick()));
+        tickTimeline = new Timeline(new KeyFrame(Duration.millis(100), event -> tick()));
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
         //drawGame();
         // Set the title of the window
-        primaryStage.setTitle("Simple JavaFX Window");
+        primaryStage.setTitle("Boulder Dash");
 
         // Set the scene for the stage
         primaryStage.setScene(scene);
@@ -115,11 +118,22 @@ public class GameManager extends Application {
 
     public void tick(){
         drawGame();
-        player.move();
+        for (Actor actor: level.getActors())
+        {
+            actor.move();
+        }
     }
 
     public Timeline getTickTimeline(){
         return tickTimeline;
+    }
+
+    public void looseGame(){
+        // do something
+    }
+
+    public void winGame(){
+        // do something
     }
 
     public void run(String[] args) {

@@ -60,7 +60,7 @@ public class Player extends Actor {
         }
     }
 
-    private void changePos(Tile nextPos){
+    protected void changePos(Tile nextPos){
         tickCoolDown = tickCoolDownReset;
         position.setOccupier(null);
         position = nextPos;
@@ -81,5 +81,8 @@ public class Player extends Actor {
                 GameState.manager.getTickTimeline().stop();
             }
         }
+    }
+
+    public void collectedDiamond() {
     }
 }
