@@ -17,8 +17,20 @@ public class Tile {
     protected int column;
     protected boolean isPath = false;
     private boolean occupied = false;
-
     private Actor occupier;
+    protected boolean isFloor = false;
+    protected boolean isWall = false;
+    protected boolean isExit = false;
+    protected boolean isKey = false;
+    protected boolean isLockedDoor = false;
+
+     public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 
 
     public Tile(int row, int col, boolean isPath){
