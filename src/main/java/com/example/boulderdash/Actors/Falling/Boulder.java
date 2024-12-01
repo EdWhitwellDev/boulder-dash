@@ -1,66 +1,94 @@
 package com.example.boulderdash.Actors.Falling;
 
 import com.example.boulderdash.Actors.Actor;
+
+import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.Tiles.Tile;
+import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
-import java.util.Objects;
+public class Boulder extends FallingObject{
 
-public class Boulder extends Actor {
-    private int x;
-    private int y;
-    private boolean isFalling;
-    private final ImageView imageView;
+    private boolean isPushed = false;
+    private int rollDelay = 0;
+    private final int rollDelayReset = 3;
 
-    public Boulder(int startX, int startY) {
-        this.x = startX;
-        this.y = startY;
-        this.isFalling = false;
-
-        // Load the boulder image
-        Image boulderImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/boulder.png")));
-        this.imageView = new ImageView(boulderImage);
-        updateImageViewPosition();
+    public Boulder(Tile startPosition) {
+        super(startPosition);
+        image = new Image("boulder.png");
     }
 
-    // Method to update the position of the boulder
-    public void moveDown() {
-        if (canMoveDown()) {
-            y++;
-            isFalling = true;
-            updateImageViewPosition();
-        } else {
-            isFalling = false;
+    public boolean push(Direction direction) {
+        Tile nextTile = position.getNeighbour(direction); // Gets a direction to push to
+
+        // Checks if the next tile is a path and sets the position of boulder to that path
+        if (isAbleToPushTo(nextTile)) {
+            setPosition(nextTile);
+            return true;
+        }
+        return false;
+    }
+
+    public Diamond transformToDiamond() {
+        return new Diamond(position);
+    }
+
+    public void move() {
+        Tile underTile = position.getDown();
+
+        if (underTile != null && underTile.isOccupied() && underTile.getOccupier() instanceof Player) {
+            if (isFalling) {
+                kill((Player) underTile.getOccupier());
+            } else {
+                isFalling = false;
+                return;
+            }
+        }
+        super.fall();
+        if (!isFalling) {
+            roll();
         }
     }
 
-    // Check if the boulder can move down
-    private boolean canMoveDown() {
-        // Logic to check if the boulder can fall (e.g., check for empty space below)
-        // This would depend on the game grid or map state
-        return true; // Placeholder, implement proper check
+    // Ignore for now
+    protected void onPath(Tile underTile) {
+        if (underTile != null && underTile.isOccupied()) {
+            Actor occupier = underTile.getOccupier();
+
+            if (occupier instanceof Player) {
+                kill((Player) occupier);
+            }
+        }
     }
 
-    // Update the position of the ImageView to reflect the new coordinates
-    private void updateImageViewPosition() {
-        imageView.setX(x * 32); // Assuming each tile is 32x32 pixels
-        imageView.setY(y * 32);
+    private void roll() {
+        if (rollDelay > 0) {
+            rollDelay--;
+            return;
+        }
+        rollDelay = rollDelayReset;
+        Tile leftTile = position.getLeft();
+        Tile rightTile = position.getRight();
+
+        if (isAbleToRollTo(leftTile)) {
+            setPosition(leftTile);
+        } else if (isAbleToRollTo(rightTile)) {
+            setPosition(rightTile);
+        }
     }
 
-    // Getters and setters
-    public int getX() {
-        return x;
+    // Helper for push()
+    private boolean isAbleToPushTo(Tile tile) {
+        return tile != null && tile.isPath() && !tile.isOccupied();
     }
 
-    public int getY() {
-        return y;
+    // Helper for roll()
+    private boolean isAbleToRollTo(Tile tile) {
+        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
+                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 
-    public boolean isFalling() {
-        return isFalling;
-    }
-
-    public ImageView getImageView() {
-        return imageView;
+    private void kill(Player player) {
+        player.setPosition(null);
     }
 }

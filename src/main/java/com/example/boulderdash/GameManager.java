@@ -1,6 +1,9 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+
+import com.example.boulderdash.Actors.Falling.FallingObject;
+
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -19,21 +22,25 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameManager extends Application {
-    private  Timeline tickTimeline;
+    private List<Actor> deadActors = new ArrayList<>();
+    private Timeline tickTimeline;
     private Level level = new Level();
     private Player player;
     private Scene scene;
     private GridPane grid = new GridPane();
+    private boolean dead = false;
 
     @Override
     public void start(Stage primaryStage) {
 
         player = level.getPlayer();
 
-        GameState.setupSate(level, player);
+
+        GameState.setupSate(level, player, this);
 
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
@@ -49,6 +56,7 @@ public class GameManager extends Application {
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
         //drawGame();
+
         // Set the title of the window
         primaryStage.setTitle("Boulder Dash");
 
@@ -59,10 +67,23 @@ public class GameManager extends Application {
         primaryStage.show();
     }
 
+    public void killActor(Actor actor){
+        deadActors.add(actor);
+    }
+
+    private void removeActors(){
+        for (Actor actor : deadActors){
+            level.removeActor(actor);
+        }
+    }
+
     public void drawGame(){
+        grid.getChildren().clear(); // Clears the grid first
+
         List<List<Tile>> tiles = level.getTiles();
         int rows = level.getRows();
         int columns = level.getCols();
+
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 // Create an ImageView for the image
@@ -116,12 +137,17 @@ public class GameManager extends Application {
         event.consume();
     }
 
-    public void tick(){
+    public void tick() {
+        removeActors();
         drawGame();
-        for (Actor actor: level.getActors())
-        {
-            actor.move();
+
+        if (!dead) {
+            for (Actor actor: level.getActors())
+            {
+                actor.move();
+            }
         }
+
     }
 
     public Timeline getTickTimeline(){
@@ -129,14 +155,17 @@ public class GameManager extends Application {
     }
 
     public void looseGame(){
-        // do something
+
+        dead = true;
+
     }
 
     public void winGame(){
         // do something
     }
 
-    public void run(String[] args) {
+
+    public static void main(String[] args) {
         // Launch the JavaFX application
         launch(args);
     }
