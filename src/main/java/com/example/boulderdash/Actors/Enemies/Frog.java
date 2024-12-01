@@ -9,8 +9,8 @@ import javafx.scene.image.Image;
 import java.util.*;
 
 public class Frog extends Enemy{
-    private static final int TICK_COOL_DOWN_RESET = 16;
     private final Player player;
+    private final static int TICK_COOL_DOWN_RESET = 16;
     private Direction currentDirection;
 
     private int tickCoolDown = 10;
@@ -27,6 +27,7 @@ public class Frog extends Enemy{
             tickCoolDown--;
         }
         else {
+            tickCoolDown = TICK_COOL_DOWN_RESET;
             if(!biDirectionalSearch(player.getPosition())){
                 Random random = new Random();
                 List<Tile> options = position.adjacentPaths();

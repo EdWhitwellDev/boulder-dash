@@ -10,7 +10,17 @@ import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
+import java.util.Dictionary;
+import java.util.Map;
+
 public class Player extends Actor {
+    private static Map<Direction, Image> orientation = Map.of(
+            Direction.STATIONARY, new Image("player_down.png"),
+            Direction.UP, new Image("player_up.png"),
+            Direction.DOWN, new Image("player_down.png"),
+            Direction.LEFT, new Image("player_left.png"),
+            Direction.RIGHT, new Image("player_right.png")
+    );
     private Direction currentDirection = Direction.STATIONARY;
     private int tickCoolDown = 0;
     private int tickCoolDownReset = 2;
@@ -18,11 +28,15 @@ public class Player extends Actor {
 
     public Player(Tile startingTile){
         super(startingTile);
-        image = new Image("player.png");
+        image = orientation.get(currentDirection);
     }
 
     public void setDirection(Direction direction){
         currentDirection = direction;
+        if (currentDirection != Direction.STATIONARY) {
+            image = orientation.get(currentDirection);
+        }
+
     }
 
     public int getDiamondsCollected(){
@@ -46,18 +60,13 @@ public class Player extends Actor {
     }
 
     private Tile getNextTile(Direction direction) {
-        switch (direction) {
-            case UP:
-                return position.getUp();
-            case DOWN:
-                return position.getDown();
-            case LEFT:
-                return position.getLeft();
-            case RIGHT:
-                return position.getRight();
-            default:
-                return null;
-        }
+        return switch (direction) {
+            case UP -> position.getUp();
+            case DOWN -> position.getDown();
+            case LEFT -> position.getLeft();
+            case RIGHT -> position.getRight();
+            default -> null;
+        };
 
     }
 
@@ -68,9 +77,8 @@ public class Player extends Actor {
 
                 if (occupier instanceof Diamond) {
                     diamondsCollected++;
-                    occupier.setPosition(null);
-                } else if (occupier instanceof Boulder) {
-                    Boulder boulder = (Boulder) occupier;
+                    GameState.manager.killActor(occupier);
+                } else if (occupier instanceof Boulder boulder) {
                     if (!boulder.push(currentDirection)) {
                         return;
                     }
@@ -91,6 +99,7 @@ public class Player extends Actor {
                     }
                 }
                 changePos(nextPos);
+                tickCoolDown = tickCoolDownReset;
             }
         }
     }

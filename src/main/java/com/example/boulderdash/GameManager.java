@@ -20,9 +20,11 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameManager extends Application {
+    private List<Actor> deadActors = new ArrayList<>();
     private Timeline tickTimeline;
     private Level level = new Level();
     private Player player;
@@ -59,6 +61,16 @@ public class GameManager extends Application {
 
         // Show the window
         primaryStage.show();
+    }
+
+    public void killActor(Actor actor){
+        deadActors.add(actor);
+    }
+
+    private void removeActors(){
+        for (Actor actor : deadActors){
+            level.removeActor(actor);
+        }
     }
 
     public void drawGame(){
@@ -122,12 +134,7 @@ public class GameManager extends Application {
     }
 
     public void tick() {
-        for (Actor actor : level.getActors()) {
-            if (actor instanceof FallingObject) {
-                FallingObject fallingObject = (FallingObject) actor;
-                fallingObject.fall();
-            }
-        }
+        removeActors();
         drawGame();
         if (!dead) {
             for (Actor actor: level.getActors())

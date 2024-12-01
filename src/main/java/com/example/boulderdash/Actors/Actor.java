@@ -12,7 +12,7 @@ import java.util.List;
 public class Actor {
     protected Tile position;
     protected int tickCoolDown;
-    protected int tickCoolDownReset;
+    protected int TICK_COOL_DOWN_RESET;
     protected Direction currentDirection;
     protected Image image;
 
@@ -36,7 +36,6 @@ public class Actor {
     }
 
     protected void changePos(Tile nextPos) {
-        tickCoolDown = tickCoolDownReset;
         position.setOccupier(null);
         position = nextPos;
 

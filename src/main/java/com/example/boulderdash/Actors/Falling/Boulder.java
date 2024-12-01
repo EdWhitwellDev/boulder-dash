@@ -32,7 +32,7 @@ public class Boulder extends FallingObject{
         return new Diamond(position);
     }
 
-    public void fall() {
+    public void move() {
         Tile underTile = position.getDown();
 
         if (underTile != null && underTile.isOccupied() && underTile.getOccupier() instanceof Player) {

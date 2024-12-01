@@ -1,13 +1,9 @@
 package com.example.boulderdash.Actors.Enemies;
 
-import com.example.boulderdash.Actors.Falling.Boulder;
-import com.example.boulderdash.Tiles.Floor;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Fly extends Enemy{
     public static final Direction[] CARDINAL_DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
@@ -17,6 +13,7 @@ public class Fly extends Enemy{
     private Direction currentDirection;
     private Direction handSide;
     private int tickCoolDown = 6;
+    private int consecutiveTurning = 0;
 
     public Fly(Tile startPosition, boolean turnRight, boolean butter, Direction startDirection) {
         super(startPosition);
@@ -32,19 +29,27 @@ public class Fly extends Enemy{
             tickCoolDown--;
         }
         else {
-            Tile side = findTile(handSide);
-            if (side != null && isAbleToMoveToTile(side)){
-                currentDirection = handSide;
-                handSide = findHand(rightHanded);
-
-            }
-            Tile forward = findTile(currentDirection);
-            if (forward != null && isAbleToMoveToTile(forward)) {
-                changePos(forward);
-                tickCoolDown = TICK_COOL_DOWN_RESET;
+            boolean turnFlag = false;
+            if (consecutiveTurning > 5) {
+                explode();
+                GameState.manager.killActor(this);
+                position.setOccupier(null);
             } else {
-                currentDirection = findHand(!rightHanded);
-                handSide = findHand(rightHanded);
+                Tile side = findTile(handSide);
+                if (side != null && isAbleToMoveToTile(side)) {
+                    currentDirection = handSide;
+                    handSide = findHand(rightHanded);
+                    turnFlag = true;
+                }
+                Tile forward = findTile(currentDirection);
+                if (forward != null && isAbleToMoveToTile(forward)) {
+                    changePos(forward);
+                    tickCoolDown = TICK_COOL_DOWN_RESET;
+                } else {
+                    currentDirection = findHand(!rightHanded);
+                    handSide = findHand(rightHanded);
+                }
+                consecutiveTurning = turnFlag ? consecutiveTurning + 1 : 0;
             }
         }
     }
@@ -54,10 +59,7 @@ public class Fly extends Enemy{
             return false;
         }
 
-        if (tile.getOccupier() instanceof Boulder && tile.isOccupied()) {
-            return false;
-        }
-        return true;
+        return !tile.isOccupied();
     }
 
     private Tile findTile(Direction direction){
@@ -88,5 +90,9 @@ public class Fly extends Enemy{
             }
         }
         return 0;
+    }
+
+    public void explode(){
+        System.out.println("Kaboom");
     }
 }

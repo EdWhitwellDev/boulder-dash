@@ -86,6 +86,7 @@ public class Tile {
 
     public void setOccupier(Actor occupier){
         this.occupier = occupier;
+        occupied = occupier != null;
     }
 
     public List<Actor> checkAdjacent(){
@@ -137,6 +138,20 @@ public class Tile {
             }
         }
         return paths;
+    }
+
+    public List<Tile> getAdjacentHorizontal(){
+        return List.of(new Tile[]{left, this, right});
+    }
+    public List<Tile> get3x3(){
+        List<Tile> surrounding = this.getAdjacentHorizontal();
+        if (up != null) {
+            surrounding.addAll(up.getAdjacentHorizontal());
+        }
+        if (down != null) {
+            surrounding.addAll(down.getAdjacentHorizontal());
+        }
+        return surrounding;
     }
 
     // Returns corresponding tile (Needed to push boulder in certain directions)
