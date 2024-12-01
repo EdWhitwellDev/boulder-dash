@@ -9,7 +9,7 @@ public class FallingObject extends Actor {
     private int fallDelay = 0;
     private final int fallDelayReset = 8;
     private int rollDelay = 0;
-    private final int rollDelayReset = 3;
+    private final int rollDelayReset = 8;
 
     public FallingObject(Tile startPosition) {
         super(startPosition);
@@ -33,6 +33,22 @@ public class FallingObject extends Actor {
         }
     }
 
+    protected void roll() {
+        if (rollDelay > 0) {
+            rollDelay--;
+            return;
+        }
+        rollDelay = rollDelayReset;
+        Tile leftTile = position.getLeft();
+        Tile rightTile = position.getRight();
+
+        if (isAbleToRollTo(leftTile)) {
+            setPosition(leftTile);
+        } else if (isAbleToRollTo(rightTile)) {
+            setPosition(rightTile);
+        }
+    }
+
     public void explosion() {
         isFalling = false;
         // Logic for explosion goes here
@@ -48,5 +64,10 @@ public class FallingObject extends Actor {
 
     private void onPath(Tile underTile) {
 
+    }
+
+    private boolean isAbleToRollTo(Tile tile) {
+        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
+                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 }

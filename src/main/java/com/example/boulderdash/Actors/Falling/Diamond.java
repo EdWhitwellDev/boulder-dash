@@ -7,8 +7,6 @@ import javafx.scene.image.Image;
 
 
 public class Diamond extends FallingObject {
-    private int rollDelay = 0;
-    private final int rollDelayReset = 8;
 
     public Diamond(Tile startPosition) {
         super(startPosition);
@@ -30,26 +28,5 @@ public class Diamond extends FallingObject {
         if (!isFalling) {
             roll();
         }
-    }
-
-    private void roll() {
-        if (rollDelay > 0) {
-            rollDelay--;
-            return;
-        }
-        rollDelay = rollDelayReset;
-        Tile leftTile = position.getLeft();
-        Tile rightTile = position.getRight();
-
-        if (isAbleToRollTo(leftTile)) {
-            setPosition(leftTile);
-        } else if (isAbleToRollTo(rightTile)) {
-            setPosition(rightTile);
-        }
-    }
-
-    private boolean isAbleToRollTo(Tile tile) {
-        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
-                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 }

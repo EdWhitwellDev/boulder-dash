@@ -9,10 +9,6 @@ import javafx.scene.image.Image;
 
 public class Boulder extends FallingObject{
 
-    private boolean isPushed = false;
-    private int rollDelay = 0;
-    private final int rollDelayReset = 8;
-
     public Boulder(Tile startPosition) {
         super(startPosition);
         image = new Image("boulder.png");
@@ -61,32 +57,9 @@ public class Boulder extends FallingObject{
         }
     }
 
-    // Work on inheritance for this (same for diamond)
-    private void roll() {
-        if (rollDelay > 0) {
-            rollDelay--;
-            return;
-        }
-        rollDelay = rollDelayReset;
-        Tile leftTile = position.getLeft();
-        Tile rightTile = position.getRight();
-
-        if (isAbleToRollTo(leftTile)) {
-            setPosition(leftTile);
-        } else if (isAbleToRollTo(rightTile)) {
-            setPosition(rightTile);
-        }
-    }
-
     // Helper for push()
     private boolean isAbleToPushTo(Tile tile) {
         return tile != null && tile.isPath() && !tile.isOccupied();
-    }
-
-    // Helper for roll()
-    private boolean isAbleToRollTo(Tile tile) {
-        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
-                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 
     private void kill(Player player) {
