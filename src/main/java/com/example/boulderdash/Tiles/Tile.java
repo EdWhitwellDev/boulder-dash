@@ -118,22 +118,22 @@ public class Tile {
     public List<Tile> adjacentPaths(){
         List<Tile> paths = new ArrayList<>();
         if (up != null){
-            if (up.isPath()){
+            if (up.isPath() && !up.isOccupied()){
                 paths.add(up);
             }
         }
         if (down != null){
-            if (down.isPath()){
+            if (down.isPath()  && !down.isOccupied()){
                 paths.add(down);
             }
         }
         if (left != null){
-            if (left.isPath()){
+            if (left.isPath()  && !left.isOccupied()){
                 paths.add(left);
             }
         }
         if (right != null){
-            if (right.isPath()){
+            if (right.isPath()  && !right.isOccupied()){
                 paths.add(right);
             }
         }
