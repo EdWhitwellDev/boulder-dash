@@ -4,6 +4,7 @@ import com.example.boulderdash.Actors.Actor;
 
 import com.example.boulderdash.Actors.Falling.FallingObject;
 
+import com.example.boulderdash.Tiles.Exit;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import com.example.boulderdash.Actors.Player;
@@ -213,12 +214,11 @@ public class GameManager extends Application {
     }
 
     private void exitGame() {
-        // save before exit
-        saveGame();
-        Stage stage = (Stage) grid.getScene().getWindow();
-        stage.close();
-    }
-
+            // save before exit
+            saveGame();
+            Stage stage = (Stage) grid.getScene().getWindow();
+            stage.close();
+        }
 
 
 
@@ -233,6 +233,16 @@ public class GameManager extends Application {
             }
         }
 
+    }
+
+    public void checkLevelCompletion() {
+        Tile playerTile = player.getPosition();
+        if (playerTile instanceof Exit) {
+            Exit exitTile = (Exit) playerTile;
+            if (exitTile.canExit(player.getDiamondsCollected())) {
+                winGame(); // Mark the level as complete
+            }
+        }
     }
 
     public Timeline getTickTimeline(){
