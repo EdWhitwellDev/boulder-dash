@@ -91,20 +91,4 @@ public class Player extends Actor {
     }
 
 
-    private void validateMove(Tile nextPos){
-        if (nextPos != null){
-            if (nextPos instanceof Floor){
-                if (nextPos.isOccupied()){
-                    if (nextPos.getOccupier() instanceof Diamond){
-                        diamondsCollected++;
-                        GameState.level.removeActor(nextPos.getOccupier());
-                    }
-                }
-                changePos(nextPos);
-                tickCoolDown = tickCoolDownReset;
-            }
-        }
-    }
-
-
 }

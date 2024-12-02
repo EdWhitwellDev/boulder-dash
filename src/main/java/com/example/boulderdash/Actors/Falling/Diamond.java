@@ -24,6 +24,5 @@ public class Diamond extends FallingObject {
 
     public void move() {
         super.fall();
-
     }
 }

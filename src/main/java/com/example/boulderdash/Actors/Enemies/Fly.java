@@ -1,5 +1,6 @@
 package com.example.boulderdash.Actors.Enemies;
 
+import com.example.boulderdash.Actors.Explosion;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -12,7 +13,7 @@ public class Fly extends Enemy{
     private final boolean buttery;
     private Direction currentDirection;
     private Direction handSide;
-    private int tickCoolDown = 6;
+    private int tickCoolDown = 60;
     private int consecutiveTurning = 0;
 
     public Fly(Tile startPosition, boolean turnRight, boolean butter, Direction startDirection) {
@@ -25,6 +26,9 @@ public class Fly extends Enemy{
     }
 
     public void move(){
+        if (crushed){
+            explode();
+        }
         if (tickCoolDown > 0){
             tickCoolDown--;
         }
@@ -33,7 +37,6 @@ public class Fly extends Enemy{
             if (consecutiveTurning > 5) {
                 explode();
                 GameState.manager.killActor(this);
-                position.setOccupier(null);
             } else {
                 Tile side = findTile(handSide);
                 if (side != null && isAbleToMoveToTile(side)) {
@@ -93,6 +96,7 @@ public class Fly extends Enemy{
     }
 
     public void explode(){
-        System.out.println("Kaboom");
+        Explosion explosion = new Explosion(position);
+        GameState.manager.addActor(explosion);
     }
 }

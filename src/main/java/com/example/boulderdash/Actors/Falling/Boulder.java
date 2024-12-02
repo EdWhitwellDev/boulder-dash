@@ -34,19 +34,21 @@ public class Boulder extends FallingObject{
     }
 
     public void move() {
-        Tile underTile = position.getDown();
+        if (!exploded) {
+            Tile underTile = position.getDown();
 
-        if (underTile != null && underTile.isOccupied() && underTile.getOccupier() instanceof Player) {
-            if (isFalling) {
-                kill((Player) underTile.getOccupier());
-            } else {
-                isFalling = false;
-                return;
+            if (underTile != null && underTile.isOccupied() && underTile.getOccupier() instanceof Player) {
+                if (isFalling) {
+                    kill((Player) underTile.getOccupier());
+                } else {
+                    isFalling = false;
+                    return;
+                }
             }
-        }
-        super.fall();
-        if (!isFalling) {
-            roll();
+            super.fall();
+            if (!isFalling) {
+                roll();
+            }
         }
     }
 

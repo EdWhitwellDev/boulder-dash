@@ -1,6 +1,7 @@
 package com.example.boulderdash.Tiles;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
@@ -144,7 +145,7 @@ public class Tile {
         return List.of(new Tile[]{left, this, right});
     }
     public List<Tile> get3x3(){
-        List<Tile> surrounding = this.getAdjacentHorizontal();
+        List<Tile> surrounding = new ArrayList<>(this.getAdjacentHorizontal());
         if (up != null) {
             surrounding.addAll(up.getAdjacentHorizontal());
         }
@@ -171,12 +172,14 @@ public class Tile {
     }
 
     // Turns tile into path (e.g when an explosion happens)
-    public void destroy() {
-        if (isOccupied()) {
-            occupier.setPosition(null);
+    public Tile destroy() {
+        if (occupier != null) {
+            GameState.manager.killActor(occupier);
         }
-        isPath = true;
-        occupier = null;
+
+        Tile remains = new Floor(row, column, true);
+        GameState.level.replaceTile(remains, this);
+        return remains;
     }
 
 

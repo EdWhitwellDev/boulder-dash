@@ -47,10 +47,10 @@ public class Level {
 
 
         //Amoeba
-        amoeba = new Amoeba(tiles.get(3).get(5), 10);
-        actors.add(amoeba);
+        //amoeba = new Amoeba(tiles.get(3).get(5), 10);
+        //actors.add(amoeba);
 
-        diamond = new Diamond(tiles.get(2).get(1));
+        //diamond = new Diamond(tiles.get(2).get(1));
         boulder = new Boulder(tiles.get(2).get(5));
 
 
@@ -67,7 +67,7 @@ public class Level {
         Fly firey = new Fly(tiles.get(2).get(8), false, false, Direction.UP);
         actors.add(firey);
 
-        actors.add(diamond);
+        //actors.add(diamond);
         actors.add(new Actor(tiles.get(2).get(2)));
 
 
@@ -171,6 +171,31 @@ public class Level {
     }
     public void removeActor(Actor actorToRemove) {
         actors.remove(actorToRemove);
+    }
+    public void addActors(List<Actor> actor) {
+        actors.addAll(actor);
+    }
+
+    public void replaceTile(Tile newTile, Tile oldTile){
+        if (oldTile.getDown() != null) {
+            oldTile.getDown().setUp(newTile);
+        }
+        if (oldTile.getUp() != null) {
+            oldTile.getUp().setDown(newTile);
+        }
+        if (oldTile.getLeft() != null) {
+            oldTile.getLeft().setRight(newTile);
+        }
+        if (oldTile.getRight() != null) {
+            oldTile.getRight().setLeft(newTile);
+        }
+
+        newTile.setLeft(oldTile.getLeft());
+        newTile.setRight(oldTile.getRight());
+        newTile.setUp(oldTile.getUp());
+        newTile.setDown(oldTile.getDown());
+
+        tiles.get(oldTile.getRow()).set(oldTile.getColumn(), newTile);
     }
 
     public List<List<Tile>> getTiles() {
