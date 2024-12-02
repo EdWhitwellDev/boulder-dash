@@ -11,6 +11,8 @@ public class Boulder extends FallingObject{
 
     public Boulder(Tile startPosition) {
         super(startPosition);
+        startPosition.setType("Boulder");
+        startPosition.setOccupier(this);
         image = new Image("boulder.png");
     }
 

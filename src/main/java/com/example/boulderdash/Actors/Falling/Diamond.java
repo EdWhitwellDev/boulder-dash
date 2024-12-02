@@ -10,6 +10,8 @@ public class Diamond extends FallingObject {
 
     public Diamond(Tile startPosition) {
         super(startPosition);
+        startPosition.setType("Diamond");
+        startPosition.setOccupier(this);
         image = new Image("diamond.png");
     }
 
