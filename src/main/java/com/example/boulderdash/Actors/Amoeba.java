@@ -23,14 +23,12 @@ public class Amoeba extends Actor {
     /**
      * Constructs an Amoeba object at the given start position.
      * @param startPosition the initial position of the amoeba.
-     * @param connectedAmoebas list of all connected amoebas.
      */
-    public Amoeba(Tile startPosition, List<Amoeba> connectedAmoebas) {
+    public Amoeba(Tile startPosition) {
         super(startPosition);
         this.random = new Random();
         this.growthDelay = 5; // Growth frequency delay
         this.growthCounter = 0;
-        this.connectedAmoebas = connectedAmoebas;
 
         // Load the amoeba image from resources
         this.image = new Image("amoeba.png");
@@ -39,15 +37,6 @@ public class Amoeba extends Actor {
 
         // Set this tile to occupied and add this amoeba to the connected list
         startPosition.setOccupier(this);
-        connectedAmoebas.add(this);
-    }
-
-    /**
-     * Constructs an Amoeba object at the given start position.
-     * @param startPosition the initial position of the amoeba.
-     */
-    public Amoeba(Tile startPosition) {
-        this(startPosition, new ArrayList<>());
     }
 
     /**
@@ -96,7 +85,7 @@ public class Amoeba extends Actor {
      * @param tile the tile to be checked and potentially added.
      */
     private void addIfValid(List<Tile> moves, Tile tile) {
-        if (tile != null && (tile.isPath() || tile.isDirt()) && !tile.isOccupied()) {
+        if (tile != null && (tile.isPath() || tile.isOccupied()) && !tile.isOccupied()) {
             moves.add(tile);
         }
     }
@@ -107,7 +96,7 @@ public class Amoeba extends Actor {
      */
     private void createNewAmoeba(Tile targetTile) {
         if (!targetTile.isOccupied() && connectedAmoebas.size() < MAX_GROWTH_SIZE) {
-            Amoeba newAmoeba = new Amoeba(targetTile, connectedAmoebas);
+            Amoeba newAmoeba = new Amoeba(targetTile);
             targetTile.setOccupier(newAmoeba);
             newAmoeba.updateImageViewPosition(); // Set the new amoeba's image position correctly
             connectedAmoebas.add(newAmoeba);

@@ -47,7 +47,7 @@ public class Level {
 
 
         //Amoeba
-        amoeba = new Amoeba(tiles.get(3).get(5), 10);
+        amoeba = new Amoeba(tiles.get(3).get(5));
         actors.add(amoeba);
 
         diamond = new Diamond(tiles.get(2).get(1));
