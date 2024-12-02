@@ -35,6 +35,9 @@ public class Amoeba extends Actor {
         this.imageView = new ImageView(image);
         updateImageViewPosition(); // Initial positioning
 
+        // Initialize the connectedAmoebas list
+        this.connectedAmoebas = new ArrayList<>();
+
         // Set this tile to occupied and add this amoeba to the connected list
         startPosition.setOccupier(this);
     }

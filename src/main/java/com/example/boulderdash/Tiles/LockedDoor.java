@@ -1,10 +1,14 @@
 package com.example.boulderdash.Tiles;
-
+import com.example.boulderdash.Actors.Falling.Boulder;
+import com.example.boulderdash.Actors.Falling.Diamond;
 import javafx.scene.image.Image;
 
 public class LockedDoor extends Tile{
-    public LockedDoor(int row, int col){
-        super(row, col, false)
-;        image = new Image("red_door.png");
+    private final String colour;
+    public LockedDoor(int row, int col, String colour){
+        super(row, col, false);
+        this.colour = colour;
+        this.isLockedDoor = true;
+        image = new Image(colour.toLowerCase() + "_door.png");
     }
 }

@@ -18,23 +18,32 @@ public class Tile {
     protected boolean isPath = false;
     private boolean occupied = false;
     private Actor occupier;
-    protected boolean isFloor = false;
-    protected boolean isWall = false;
-    protected boolean isExit = false;
     protected boolean isKey = false;
     protected boolean isLockedDoor = false;
+    private String type;
 
 
     public Tile(int row, int col, boolean isPath){
         this.row = row;
         this.column = col;
         this.isPath = isPath;
+        this.type = "Tile";
         this.occupier = null;
     }
 
     public Image getImage(){
         return image;
     }
+    public void setImage(Image image) {
+        this.image = image;
+    }
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+
 
     public Actor getOccupier(){
         return occupier;
