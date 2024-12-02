@@ -235,12 +235,17 @@ public class GameManager extends Application {
 
     }
 
+    /*this method checks when the player lands on exit tile
+    it will check the players number of diamonds. If it matches
+    the requirement diamond it will activate canExit and win the game
+    It is set to 3 diamonds and can be changed at Exit.java
+     */
     public void checkLevelCompletion() {
         Tile playerTile = player.getPosition();
         if (playerTile instanceof Exit) {
             Exit exitTile = (Exit) playerTile;
             if (exitTile.canExit(player.getDiamondsCollected())) {
-                winGame(); // Mark the level as complete
+                winGame();
             }
         }
     }
