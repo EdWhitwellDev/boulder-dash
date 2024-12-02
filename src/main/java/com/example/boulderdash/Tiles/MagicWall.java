@@ -22,6 +22,6 @@ public class MagicWall extends Tile{
 
     public boolean canBeEntered(Tile fallingTile) {
         Tile tileBelow = this.getDown();
-        return tileBelow != null && tileBelow.isPath() && !tileBelow.isOccupied();
+        return tileBelow != null && (tileBelow.isPath() || !tileBelow.isOccupied());
     }
 }

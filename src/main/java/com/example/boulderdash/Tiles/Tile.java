@@ -192,5 +192,7 @@ public class Tile {
         occupier = null;
     }
 
-
+    public void setPath(boolean isPath) {
+        this.isPath = isPath;
+    }
 }

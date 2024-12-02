@@ -7,6 +7,7 @@ import com.example.boulderdash.GameManager;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Floor;
 import com.example.boulderdash.Tiles.Key;
+import com.example.boulderdash.Tiles.LockedDoor;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
@@ -67,6 +68,17 @@ public class Player extends Actor {
             return true;
         }
         return false;
+    }
+
+
+    public boolean unlock(LockedDoor door) {
+        String doorColour = door.getColour().toLowerCase(); // Get the door's color
+        if (hasKey(doorColour)) {
+            useKey(doorColour, doorColour);
+            door.unlock(); // Unlock the door
+            System.out.println("Unlocked the " + doorColour + " door!");
+            return true;
+        }return false;
     }
 
     public void setDirection(Direction direction){
