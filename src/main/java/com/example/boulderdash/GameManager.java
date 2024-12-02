@@ -22,6 +22,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -237,14 +239,16 @@ public class GameManager extends Application {
         return tickTimeline;
     }
 
-    public void looseGame(){
-
+    public void loseGame(){
+        Text gameOverText = new Text("Game Over");
+        gameOverText.setFont(new Font("Arial", 75));
         dead = true;
 
     }
 
     public void winGame(){
-        // do something
+        Text gameOverText = new Text("Level Complete");
+        gameOverText.setFont(new Font("Arial", 75));
     }
 
 
