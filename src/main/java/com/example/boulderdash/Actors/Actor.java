@@ -60,15 +60,7 @@ public class Actor {
         }
     }
 
-    public void setPosition(Tile newTile) {
-        if (position != null) {
-            position.setOccupier(null);
-        }
-        position = newTile;
-        if (newTile != null) {
-            newTile.setOccupier(this);
-        }
-    }
+
 
     //Hello
 

@@ -64,7 +64,7 @@ public class Level {
         Frog frogy = new Frog(tiles.get(6).get(5), player);
         actors.add(frogy);
 
-        Fly firey = new Fly(tiles.get(2).get(8), false, false, Direction.UP);
+        Fly firey = new Fly(tiles.get(2).get(7), false, false, Direction.RIGHT);
         actors.add(firey);
 
         //actors.add(diamond);

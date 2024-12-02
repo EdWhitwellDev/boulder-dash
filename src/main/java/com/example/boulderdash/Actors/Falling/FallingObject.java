@@ -7,7 +7,7 @@ import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.MagicWall;
 import com.example.boulderdash.Tiles.Tile;
 
-public class FallingObject extends Actor {
+public abstract class FallingObject extends Actor {
 
     protected boolean isFalling = false;
     private int fallDelay = 0;
@@ -35,6 +35,21 @@ public class FallingObject extends Actor {
             onPath(underTile);
         }
 
+    }
+
+    public abstract void transform();
+
+    public void setPosition(Tile newTile) {
+        if (position != null) {
+            position.setOccupier(null);
+        }
+        position = newTile;
+        if (newTile != null) {
+            newTile.setOccupier(this);
+            if (newTile instanceof MagicWall) {
+                transform();
+            }
+        }
     }
 
     public void explode() {

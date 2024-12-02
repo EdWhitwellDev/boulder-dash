@@ -2,6 +2,7 @@ package com.example.boulderdash.Actors.Falling;
 
 
 import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import javafx.scene.image.Image;
 
@@ -12,8 +13,9 @@ public class Diamond extends FallingObject {
         image = new Image("diamond.png");
     }
 
-    public Boulder transformToBoulder() {
-        return new Boulder(position);
+    public void transform() {
+        GameState.manager.killActor(this);
+        GameState.manager.addActor(new Boulder(position));
     }
 
     public void collect(Player player) {
