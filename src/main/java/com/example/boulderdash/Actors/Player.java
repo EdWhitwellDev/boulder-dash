@@ -6,11 +6,13 @@ import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.GameManager;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Floor;
+import com.example.boulderdash.Tiles.Key;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Player extends Actor {
@@ -25,10 +27,46 @@ public class Player extends Actor {
     private int tickCoolDown = 0;
     private int tickCoolDownReset = 2;
     private int diamondsCollected = 0;
+    private final Map<String, Integer> keyInventory = new HashMap<>();
 
     public Player(Tile startingTile){
         super(startingTile);
         image = orientation.get(currentDirection);
+    }
+
+    public void collectKey(Key key) {
+        String colour = key.getColour().toLowerCase();
+        if (!keyInventory.containsKey(colour)) {
+            keyInventory.put(colour, 0);
+        }
+        keyInventory.put(colour, keyInventory.get(colour) + 1);
+        key.setOccupier(null);
+        key.setImage(new Image("path.png"));
+    }
+
+    public boolean hasKey(String colour) {
+        return keyInventory.containsKey(colour.toLowerCase()) && keyInventory.get(colour.toLowerCase()) > 0;
+    }
+
+    public boolean useKey(String keyColour, String doorColour) {
+        String newKeyColour = keyColour.toLowerCase();
+        String newDoorColour = doorColour.toLowerCase();
+
+        if (hasKey(newKeyColour) && keyColour.equals(newDoorColour)) {
+            int newCount = keyInventory.get(newKeyColour) - 1;
+
+            /* makes sure that the keyInventory takes out the key of the colour
+            and when count of the inventory is more than one than update the key
+            inventory with current number
+             */
+            if (newCount <= 0) {
+                keyInventory.remove(newKeyColour);
+            } else {
+                keyInventory.put(newDoorColour, newCount);
+            }
+            return true;
+        }
+        return false;
     }
 
     public void setDirection(Direction direction){

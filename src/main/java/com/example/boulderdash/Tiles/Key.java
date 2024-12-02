@@ -11,7 +11,7 @@ public class Key extends Floor{
         this.isKey = true;
         image = new Image(colour.toLowerCase() + "_key.png");
     }
-    public String getColor() {
+    public String getColour() {
         return colour;
     }
 }
