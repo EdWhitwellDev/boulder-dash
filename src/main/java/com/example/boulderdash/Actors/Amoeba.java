@@ -1,90 +1,145 @@
 package com.example.boulderdash.Actors;
 
-import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.Tiles.Tile;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+/**
+ * The Amoeba class represents an amoeba entity in the Boulder Dash game.
+ * Amoebas can grow into adjacent tiles, following specific rules and growth delay.
+ */
 public class Amoeba extends Actor {
+    private Random random;
+    private ImageView imageView;
+    private int growthDelay; // Controls how often amoeba grows
+    private int growthCounter; // Counts ticks to determine when to grow
+    private static final int MAX_GROWTH_SIZE = 100; // Limit on how many amoebas can exist
+    private List<Amoeba> connectedAmoebas; // Keeps track of connected amoebas
 
-    private int growthRate;       // Number of ticks required between growth attempts
-    private boolean isBlocked;    // True if the amoeba is surrounded and cannot grow
+    /**
+     * Constructs an Amoeba object at the given start position.
+     * @param startPosition the initial position of the amoeba.
+     * @param connectedAmoebas list of all connected amoebas.
+     */
+    public Amoeba(Tile startPosition, List<Amoeba> connectedAmoebas) {
+        super(startPosition);
+        this.random = new Random();
+        this.growthDelay = 5; // Growth frequency delay
+        this.growthCounter = 0;
+        this.connectedAmoebas = connectedAmoebas;
 
-    public Amoeba(Tile startTile, int growthRate) {
-        super(startTile);  // Call the Actor constructor with the starting tile
-        this.image = new Image("amoeba.png");  // Set the amoeba image path
-        this.growthRate = growthRate;
-        this.tickCoolDown = growthRate;
-        this.isBlocked = false;
+        // Load the amoeba image from resources
+        this.image = new Image("amoeba.png");
+        this.imageView = new ImageView(image);
+        updateImageViewPosition(); // Initial positioning
+
+        // Set this tile to occupied and add this amoeba to the connected list
+        startPosition.setOccupier(this);
+        connectedAmoebas.add(this);
     }
 
+    /**
+     * Constructs an Amoeba object at the given start position.
+     * @param startPosition the initial position of the amoeba.
+     */
+    public Amoeba(Tile startPosition) {
+        this(startPosition, new ArrayList<>());
+    }
+
+    /**
+     * Handles the amoeba's movement, including growth.
+     */
     @Override
     public void move() {
-        // Use tickCoolDown to control the growth rate
-        if (tickCoolDown > 0) {
-            tickCoolDown--;
-            return;  // Wait until the cooldown reaches zero
-        }
-
-        // If cooldown is over, attempt to grow
-        if (!isBlocked) {
+        if (growthCounter >= growthDelay) {
             grow();
-        }
-
-        // Reset tick cooldown for the next growth cycle
-        tickCoolDown = growthRate;
-    }
-
-    private void grow() {
-        List<Tile> availableGrowthTiles = getAvailableGrowthTiles();
-
-        if (availableGrowthTiles.isEmpty()) {
-            // If no available tiles, mark the amoeba as blocked
-            isBlocked = true;
-            System.out.println("Amoeba is blocked and can no longer grow!");
+            growthCounter = 0;
         } else {
-            // Choose a random tile to grow into
-            Tile growthTile = availableGrowthTiles.get((int) (Math.random() * availableGrowthTiles.size()));
-
-            // Create a new Amoeba on the new tile using the correct constructor
-            Amoeba newAmoeba = new Amoeba(growthTile, this.growthRate);
-            growthTile.setOccupier(newAmoeba);
-
-            System.out.println("Amoeba grew to row " + growthTile.getRow() + ", column " + growthTile.getColumn());
+            growthCounter++;
         }
     }
 
-    // Helper method to get all available tiles where the amoeba can grow
-    private List<Tile> getAvailableGrowthTiles() {
-        List<Tile> availableTiles = new ArrayList<>();
-        Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
+    /**
+     * Grows the amoeba by expanding into a random adjacent valid tile.
+     * Limits growth to one tile per cycle to prevent runaway expansion.
+     */
+    private void grow() {
+        List<Tile> availableTiles = getPossibleExpansionTiles();
 
-        for (Tile tile : adjacentTiles) {
-            if (tile != null && canGrowInto(tile)) {
-                availableTiles.add(tile);
-            }
+        if (!availableTiles.isEmpty() && connectedAmoebas.size() < MAX_GROWTH_SIZE) {
+            // Select a random tile to grow into
+            Tile selectedTile = availableTiles.get(random.nextInt(availableTiles.size()));
+            createNewAmoeba(selectedTile);
         }
-        return availableTiles;
     }
 
-    // Determine if the amoeba can grow into a particular tile
-    private boolean canGrowInto(Tile tile) {
-        return !tile.isOccupied() || tile.getOccupier() instanceof Player;
+    /**
+     * Gets the possible tiles where the amoeba can expand.
+     * @return a list of valid expansion tiles.
+     */
+    private List<Tile> getPossibleExpansionTiles() {
+        List<Tile> moves = new ArrayList<>();
+        addIfValid(moves, position.getUp());
+        addIfValid(moves, position.getDown());
+        addIfValid(moves, position.getLeft());
+        addIfValid(moves, position.getRight());
+        return moves;
     }
 
-    // Method to transform all amoebas into diamonds
-    public void transformToDiamonds() {
-        System.out.println("Amoeba transforming into diamonds!");
-
-        // Replace the amoeba in the current tile with a Diamond
-        position.setOccupier(new Diamond(position));
+    /**
+     * Adds a tile to the list of possible moves if it is valid for expansion.
+     * @param moves the list of possible moves.
+     * @param tile the tile to be checked and potentially added.
+     */
+    private void addIfValid(List<Tile> moves, Tile tile) {
+        if (tile != null && (tile.isPath() || tile.isDirt()) && !tile.isOccupied()) {
+            moves.add(tile);
+        }
     }
 
-    @Override
-    public void changePos(Tile nextPos) {
-        // Amoeba does not "move" like normal actors; instead, it grows
-        // This method should not be used directly but is inherited from Actor
+    /**
+     * Creates a new amoeba at the specified target tile.
+     * @param targetTile the tile where the new amoeba should be created.
+     */
+    private void createNewAmoeba(Tile targetTile) {
+        if (!targetTile.isOccupied() && connectedAmoebas.size() < MAX_GROWTH_SIZE) {
+            Amoeba newAmoeba = new Amoeba(targetTile, connectedAmoebas);
+            targetTile.setOccupier(newAmoeba);
+            newAmoeba.updateImageViewPosition(); // Set the new amoeba's image position correctly
+            connectedAmoebas.add(newAmoeba);
+        }
+    }
+
+    /**
+     * Moves the amoeba to a new position.
+     * @param targetTile the target tile to move to.
+     */
+    private void moveTo(Tile targetTile) {
+        if (position != null) {
+            position.setOccupier(null);
+        }
+        targetTile.setOccupier(this);
+        this.position = targetTile;
+        updateImageViewPosition();
+    }
+
+    /**
+     * Updates the position of the ImageView to reflect the new coordinates.
+     */
+    private void updateImageViewPosition() {
+        imageView.setX(position.getColumn() * 32); // Assuming each tile is 32x32 pixels
+        imageView.setY(position.getRow() * 32);
+    }
+
+    /**
+     * Gets the ImageView representing the amoeba.
+     * @return the ImageView of the amoeba.
+     */
+    public ImageView getImageView() {
+        return imageView;
     }
 }
