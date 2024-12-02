@@ -1,6 +1,5 @@
 package com.example.boulderdash.Tiles;
 import javafx.scene.image.Image;
-package com.example.boulderdash.Actors;
 
 public class LockedDoor extends Tile{
     private final String colour;
