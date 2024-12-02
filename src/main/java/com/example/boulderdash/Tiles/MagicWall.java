@@ -19,4 +19,9 @@ public class MagicWall extends Tile{
             fallingTile.setImage(new Image("boulder.png"));
         }
     }
+
+    public boolean canBeEntered(Tile fallingTile) {
+        Tile tileBelow = this.getDown();
+        return tileBelow != null && tileBelow.isPath() && !tileBelow.isOccupied();
+    }
 }
