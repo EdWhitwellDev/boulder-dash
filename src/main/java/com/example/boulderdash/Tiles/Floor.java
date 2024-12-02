@@ -10,11 +10,6 @@ public class Floor extends Tile{
         this.isPath = isPath;
         image = isPath ? new Image("path.png") : new Image("dirt.png");
     }
-    
-     @Override
-    public boolean getCanBeOccupied() {
-        return occupant == null; // Floor tiles are occupiable unless occupied
-    }
 
     @Override
     public void setOccupier(Actor occupant) {

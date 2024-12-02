@@ -24,14 +24,6 @@ public class Tile {
     protected boolean isKey = false;
     protected boolean isLockedDoor = false;
 
-     public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
 
     public Tile(int row, int col, boolean isPath){
         this.row = row;
