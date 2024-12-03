@@ -32,6 +32,7 @@ import java.util.List;
 
 public class GameManager extends Application {
     private List<Actor> deadActors = new ArrayList<>();
+    private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
     private Level level = new Level();
     private Player player;
@@ -81,6 +82,15 @@ public class GameManager extends Application {
         for (Actor actor : deadActors){
             level.removeActor(actor);
         }
+        deadActors = new ArrayList<>();
+    }
+    private void createNewActors(){
+        level.addActors(newBorns);
+        newBorns = new ArrayList<>();
+    }
+
+    public void addActor(Actor actor) {
+        newBorns.add(actor);
     }
 
     public void drawGame(){

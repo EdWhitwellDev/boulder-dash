@@ -1,10 +1,10 @@
 package com.example.boulderdash.Actors.Enemies;
 
+import com.example.boulderdash.Actors.Explosion;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
-
 public class Fly extends Enemy{
     public static final Direction[] CARDINAL_DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
     private static final int TICK_COOL_DOWN_RESET = 8;
@@ -12,7 +12,7 @@ public class Fly extends Enemy{
     private final boolean buttery;
     private Direction currentDirection;
     private Direction handSide;
-    private int tickCoolDown = 6;
+    private int tickCoolDown = 60;
     private int consecutiveTurning = 0;
 
     public Fly(Tile startPosition, boolean turnRight, boolean butter, Direction startDirection) {
@@ -25,6 +25,9 @@ public class Fly extends Enemy{
     }
 
     public void move(){
+        if (crushed){
+            explode();
+        }
         if (tickCoolDown > 0){
             tickCoolDown--;
         }
@@ -33,7 +36,6 @@ public class Fly extends Enemy{
             if (consecutiveTurning > 5) {
                 explode();
                 GameState.manager.killActor(this);
-                position.setOccupier(null);
             } else {
                 Tile side = findTile(handSide);
                 if (side != null && isAbleToMoveToTile(side)) {
@@ -53,15 +55,12 @@ public class Fly extends Enemy{
             }
         }
     }
-
     private boolean isAbleToMoveToTile(Tile tile) {
         if (!tile.isPath()) {
             return false;
         }
-
         return !tile.isOccupied();
     }
-
     private Tile findTile(Direction direction){
         switch (direction) {
             case UP:
@@ -76,13 +75,11 @@ public class Fly extends Enemy{
                 return null;
         }
     }
-
     private Direction findHand(boolean turnRight){
         int currentDirIndex = getDirectionIndex(currentDirection);
         currentDirIndex += turnRight ? 1 : -1;
         return CARDINAL_DIRECTIONS[(currentDirIndex + CARDINAL_DIRECTIONS.length)%CARDINAL_DIRECTIONS.length];
     }
-
     private int getDirectionIndex(Direction direction){
         for (int index = 0; index < CARDINAL_DIRECTIONS.length; index++){
             if (CARDINAL_DIRECTIONS[index] == direction){
@@ -93,6 +90,7 @@ public class Fly extends Enemy{
     }
 
     public void explode(){
-        System.out.println("Kaboom");
+        Explosion explosion = new Explosion(position);
+        GameState.manager.addActor(explosion);
     }
 }

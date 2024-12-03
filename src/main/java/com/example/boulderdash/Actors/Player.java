@@ -10,6 +10,7 @@ import com.example.boulderdash.Tiles.Key;
 import com.example.boulderdash.Tiles.LockedDoor;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
+import com.example.boulderdash.enums.KeyColour;
 import javafx.scene.image.Image;
 
 import java.util.Dictionary;
@@ -28,7 +29,7 @@ public class Player extends Actor {
     private int tickCoolDown = 0;
     private int tickCoolDownReset = 2;
     private int diamondsCollected = 0;
-    private final Map<String, Integer> keyInventory = new HashMap<>();
+    private Map<KeyColour, Integer> keyInventory = new HashMap<>();
 
     public Player(Tile startingTile){
         super(startingTile);
@@ -36,7 +37,7 @@ public class Player extends Actor {
     }
 
     public void collectKey(Key key) {
-        String colour = key.getColour().toLowerCase();
+        KeyColour colour = key.getColour();
         if (!keyInventory.containsKey(colour)) {
             keyInventory.put(colour, 0);
         }

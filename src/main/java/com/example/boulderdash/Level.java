@@ -64,7 +64,7 @@ public class Level {
         Frog frogy = new Frog(tiles.get(6).get(5), player);
         actors.add(frogy);
 
-        Fly firey = new Fly(tiles.get(2).get(8), false, false, Direction.UP);
+        Fly firey = new Fly(tiles.get(2).get(7), false, false, Direction.RIGHT);
         actors.add(firey);
 
         actors.add(diamond);
@@ -173,7 +173,34 @@ public class Level {
         actors.remove(actorToRemove);
     }
 
+    public void addActors(List<Actor> actor) {
+        actors.addAll(actor);
+    }
+
+    public void replaceTile(Tile newTile, Tile oldTile){
+        if (oldTile.getDown() != null) {
+            oldTile.getDown().setUp(newTile);
+        }
+        if (oldTile.getUp() != null) {
+            oldTile.getUp().setDown(newTile);
+        }
+        if (oldTile.getLeft() != null) {
+            oldTile.getLeft().setRight(newTile);
+        }
+        if (oldTile.getRight() != null) {
+            oldTile.getRight().setLeft(newTile);
+        }
+
+        newTile.setLeft(oldTile.getLeft());
+        newTile.setRight(oldTile.getRight());
+        newTile.setUp(oldTile.getUp());
+        newTile.setDown(oldTile.getDown());
+
+        tiles.get(oldTile.getRow()).set(oldTile.getColumn(), newTile);
+    }
+
     public List<List<Tile>> getTiles() {
         return tiles;
     }
+
 }
