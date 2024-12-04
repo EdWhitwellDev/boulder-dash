@@ -11,7 +11,7 @@ public abstract class FallingObject extends Actor {
 
     protected boolean isFalling = false;
     private int fallDelay = 0;
-    private final int fallDelayReset = 3;
+    private final int fallDelayReset = 2;
     private int rollDelay = 0;
     private final int rollDelayReset = 3;
     protected boolean exploded = false;
@@ -21,20 +21,47 @@ public abstract class FallingObject extends Actor {
     }
 
     public void fall() {
-        if (fallDelay > 0) {
-            fallDelay--;
-            return;
+        if (exploded) {
+            GameState.manager.killActor(this);
         }
-        fallDelay = fallDelayReset;
-        Tile underTile = position.getDown();
-        if (isAbleToFall(underTile)) {
-            setPosition(underTile);
-            isFalling = true;
-        } else {
-            isFalling = false;
-            onPath(underTile);
+        else {
+            if (fallDelay > 0) {
+                fallDelay--;
+                return;
+            }
+            fallDelay = fallDelayReset;
+            Tile underTile = position.getDown();
+            if (isAbleToFall(underTile)) {
+                setPosition(underTile);
+                isFalling = true;
+            } else {
+                isFalling = false;
+                onPath(underTile);
+            }
+            if (!isFalling) {
+                roll();
+            }
         }
 
+    }
+    private void roll() {
+        if (rollDelay > 0) {
+            rollDelay--;
+            return;
+        }
+        rollDelay = rollDelayReset;
+        Tile leftTile = position.getLeft();
+        Tile rightTile = position.getRight();
+
+        if (isAbleToRollTo(leftTile)) {
+            setPosition(leftTile);
+        } else if (isAbleToRollTo(rightTile)) {
+            setPosition(rightTile);
+        }
+    }
+    private boolean isAbleToRollTo(Tile tile) {
+        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
+                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 
     public abstract void transform();
@@ -54,8 +81,7 @@ public abstract class FallingObject extends Actor {
 
     public void explode() {
         exploded = true;
-        GameState.manager.killActor(this);
-        // Logic for explosion goes here
+
     }
 
     public boolean isFalling() {

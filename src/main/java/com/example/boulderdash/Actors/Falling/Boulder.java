@@ -36,7 +36,7 @@ public class Boulder extends FallingObject{
     }
 
     public void move() {
-        if (!exploded) {
+
             //Tile underTile = position.getDown();
 //
             //if (underTile != null && underTile.isOccupied() && underTile.getOccupier() instanceof Player) {
@@ -47,11 +47,11 @@ public class Boulder extends FallingObject{
             //        return;
             //    }
             //}
-            super.fall();
-            if (!isFalling) {
-                roll();
-            }
-        }
+        super.fall();
+        //if (!isFalling) {
+        //    roll();
+        //}
+
     }
 
     // Ignore for now
@@ -65,21 +65,21 @@ public class Boulder extends FallingObject{
     //    }
     //}
 
-    private void roll() {
-        if (rollDelay > 0) {
-            rollDelay--;
-            return;
-        }
-        rollDelay = rollDelayReset;
-        Tile leftTile = position.getLeft();
-        Tile rightTile = position.getRight();
-
-        if (isAbleToRollTo(leftTile)) {
-            setPosition(leftTile);
-        } else if (isAbleToRollTo(rightTile)) {
-            setPosition(rightTile);
-        }
-    }
+    //private void roll() {
+    //    if (rollDelay > 0) {
+    //        rollDelay--;
+    //        return;
+    //    }
+    //    rollDelay = rollDelayReset;
+    //    Tile leftTile = position.getLeft();
+    //    Tile rightTile = position.getRight();
+//
+    //    if (isAbleToRollTo(leftTile)) {
+    //        setPosition(leftTile);
+    //    } else if (isAbleToRollTo(rightTile)) {
+    //        setPosition(rightTile);
+    //    }
+    //}
 
     // Helper for push()
     private boolean isAbleToPushTo(Tile tile) {
@@ -87,10 +87,10 @@ public class Boulder extends FallingObject{
     }
 
     // Helper for roll()
-    private boolean isAbleToRollTo(Tile tile) {
-        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
-                && tile.getDown().isPath() && !tile.getDown().isOccupied();
-    }
+    //private boolean isAbleToRollTo(Tile tile) {
+    //    return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
+    //            && tile.getDown().isPath() && !tile.getDown().isOccupied();
+    //}
 
     //private void kill(Player player) {
     //    player.setPosition(null);

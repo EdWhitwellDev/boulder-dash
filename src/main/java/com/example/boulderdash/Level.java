@@ -15,6 +15,7 @@ import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.*;
 import com.example.boulderdash.enums.Direction;
+import com.example.boulderdash.enums.KeyColours;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -106,6 +107,30 @@ public class Level {
                             case "E":
                                 row.add(new Exit(rowIndex, colIndex));
                                 break;
+                            case "R":
+                                row.add(new LockedDoor(rowIndex, colIndex, KeyColours.RED));
+                                break;
+                            case "G":
+                                row.add(new LockedDoor(rowIndex, colIndex, KeyColours.GREEN));
+                                break;
+                            case "B":
+                                row.add(new LockedDoor(rowIndex, colIndex, KeyColours.BLUE));
+                                break;
+                            case "Y":
+                                row.add(new LockedDoor(rowIndex, colIndex, KeyColours.YELLOW));
+                                break;
+                            case "r":
+                                row.add(new Key(rowIndex, colIndex, KeyColours.RED));
+                                break;
+                            case "g":
+                                row.add(new Key(rowIndex, colIndex, KeyColours.GREEN));
+                                break;
+                            case "b":
+                                row.add(new Key(rowIndex, colIndex, KeyColours.BLUE));
+                                break;
+                            case "y":
+                                row.add(new Key(rowIndex, colIndex, KeyColours.YELLOW));
+                                break;
                             default:
                                 break;
 
@@ -171,6 +196,9 @@ public class Level {
     }
     public void removeActor(Actor actorToRemove) {
         actors.remove(actorToRemove);
+        if (actorToRemove.getPosition() != null && actorToRemove.getPosition().getOccupier() == actorToRemove){
+            actorToRemove.getPosition().setOccupier(null);
+        }
     }
     public void addActors(List<Actor> actor) {
         actors.addAll(actor);

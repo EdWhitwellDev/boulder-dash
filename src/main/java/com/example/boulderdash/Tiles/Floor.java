@@ -18,6 +18,7 @@ public class Floor extends Tile{
             isPath = true;
             image = new Image("path.png");
         }
+
     }
 
     public boolean getIsPath(){

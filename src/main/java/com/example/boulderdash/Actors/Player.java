@@ -6,11 +6,14 @@ import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.GameManager;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Floor;
+import com.example.boulderdash.Tiles.LockedDoor;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
+import com.example.boulderdash.enums.KeyColours;
 import javafx.scene.image.Image;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Player extends Actor {
@@ -21,6 +24,7 @@ public class Player extends Actor {
             Direction.LEFT, new Image("player_left.png"),
             Direction.RIGHT, new Image("player_right.png")
     );
+    private Map<KeyColours, Integer> keys = new HashMap<>();
     private Direction currentDirection = Direction.STATIONARY;
     private int tickCoolDown = 0;
     private int tickCoolDownReset = 2;
@@ -29,6 +33,10 @@ public class Player extends Actor {
     public Player(Tile startingTile){
         super(startingTile);
         image = orientation.get(currentDirection);
+        keys.put(KeyColours.RED, 0);
+        keys.put(KeyColours.BLUE, 0);
+        keys.put(KeyColours.GREEN, 0);
+        keys.put(KeyColours.YELLOW, 0);
     }
 
     public void setDirection(Direction direction){
@@ -86,8 +94,20 @@ public class Player extends Actor {
                 }
 
             }
+            if (nextTile instanceof LockedDoor) {
+                KeyColours requiredKey = ((LockedDoor) nextTile).getColour();
+                Integer noKeys = keys.get(requiredKey);
+                if (noKeys <= 0) {
+                    return;
+                }
+                keys.put(requiredKey, keys.get(requiredKey)-1);
+            }
             changePos(nextTile);
         }
+    }
+
+    public void collectKey(KeyColours keyColour){
+        keys.put(keyColour, keys.get(keyColour) + 1);
     }
 
 

@@ -6,14 +6,30 @@ import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
+import java.util.Map;
+
 public class Fly extends Enemy{
     public static final Direction[] CARDINAL_DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
-    private static final int TICK_COOL_DOWN_RESET = 8;
+    private static Map<Direction, Image> orientationButterFly = Map.of(
+            Direction.STATIONARY, new Image("butterfly.png"),
+            Direction.UP, new Image("butterfly.png"),
+            Direction.DOWN, new Image("butterfly_down.png"),
+            Direction.LEFT, new Image("butterfly_left.png"),
+            Direction.RIGHT, new Image("butterfly_right.png")
+    );
+    private static Map<Direction, Image> orientationFireFly = Map.of(
+            Direction.STATIONARY, new Image("firefly.png"),
+            Direction.UP, new Image("firefly.png"),
+            Direction.DOWN, new Image("firefly_down.png"),
+            Direction.LEFT, new Image("firefly_left.png"),
+            Direction.RIGHT, new Image("firefly_right.png")
+    );
+    private static final int TICK_COOL_DOWN_RESET = 4;
     private final boolean rightHanded;
     private final boolean buttery;
     private Direction currentDirection;
     private Direction handSide;
-    private int tickCoolDown = 60;
+    private int tickCoolDown = 1;
     private int consecutiveTurning = 0;
 
     public Fly(Tile startPosition, boolean turnRight, boolean butter, Direction startDirection) {
@@ -40,7 +56,7 @@ public class Fly extends Enemy{
             } else {
                 Tile side = findTile(handSide);
                 if (side != null && isAbleToMoveToTile(side)) {
-                    currentDirection = handSide;
+                    changeDirection(handSide);
                     handSide = findHand(rightHanded);
                     turnFlag = true;
                 }
@@ -49,11 +65,21 @@ public class Fly extends Enemy{
                     changePos(forward);
                     tickCoolDown = TICK_COOL_DOWN_RESET;
                 } else {
-                    currentDirection = findHand(!rightHanded);
+                    changeDirection(findHand(!rightHanded));
                     handSide = findHand(rightHanded);
                 }
                 consecutiveTurning = turnFlag ? consecutiveTurning + 1 : 0;
             }
+        }
+    }
+
+    private void changeDirection(Direction newDirection){
+        currentDirection = newDirection;
+        if (buttery){
+            image = orientationButterFly.get(newDirection);
+        }
+        else {
+            image = orientationFireFly.get(newDirection);
         }
     }
 
