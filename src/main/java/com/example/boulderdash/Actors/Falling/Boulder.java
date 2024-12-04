@@ -1,8 +1,5 @@
 package com.example.boulderdash.Actors.Falling;
 
-import com.example.boulderdash.Actors.Actor;
-
-import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.MagicWall;
 import com.example.boulderdash.Tiles.Tile;
@@ -16,9 +13,7 @@ import javafx.scene.image.Image;
  * @version 1.3
  */
 
-public class Boulder extends FallingObject{
-
-    private final int rollDelayReset = 3;
+public class Boulder extends FallingObject {
 
     /**
      * Constructor for a boulder at a specific tile.
@@ -48,6 +43,7 @@ public class Boulder extends FallingObject{
     /**
      * Transforms and removes the boulder into a {@link Diamond} when interacting with a {@link MagicWall}
      */
+    @Override
     public void transform() {
         GameState.manager.killActor(this);
         GameState.manager.addActor(new Diamond(position));
@@ -56,35 +52,15 @@ public class Boulder extends FallingObject{
     /**
      * Handles the falling and rolling of the boulder.
      */
+    @Override
     public void move() {
         if (!exploded) {
-            //Tile underTile = position.getDown();
-//
-            //if (underTile != null && underTile.isOccupied() && underTile.getOccupier() instanceof Player) {
-            //    if (isFalling) {
-            //        kill((Player) underTile.getOccupier());
-            //    } else {
-            //        isFalling = false;
-            //        return;
-            //    }
-            //}
             super.fall();
             if (!isFalling) {
                 roll();
             }
         }
     }
-
-    // Ignore for now
-    //protected void onPath(Tile underTile) {
-    //    if (underTile != null && underTile.isOccupied()) {
-    //        Actor occupier = underTile.getOccupier();
-//
-    //        if (occupier instanceof Player) {
-    //            kill((Player) occupier);
-    //        }
-    //    }
-    //}
 
     /**
      * Handles the pushing behaviour.
@@ -94,8 +70,4 @@ public class Boulder extends FallingObject{
     private boolean isAbleToPushTo(Tile tile) {
         return tile != null && tile.isPath() && !tile.isOccupied();
     }
-
-    //private void kill(Player player) {
-    //    player.setPosition(null);
-    //}
 }

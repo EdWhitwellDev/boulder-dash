@@ -16,9 +16,7 @@ public abstract class FallingObject extends Actor {
 
     protected boolean isFalling = false;
     private int fallDelay = 0;
-    private final int fallDelayReset = 3;
     private int rollDelay = 0;
-    private final int rollDelayReset = 3;
     protected boolean exploded = false;
 
     /**
@@ -38,14 +36,13 @@ public abstract class FallingObject extends Actor {
             fallDelay--;
             return;
         }
-        fallDelay = fallDelayReset;
+        fallDelay = 3;
         Tile underTile = position.getDown();
         if (isAbleToFall(underTile)) {
             setPosition(underTile);
             isFalling = true;
         } else {
             isFalling = false;
-            onPath(underTile);
         }
     }
 
@@ -81,10 +78,6 @@ public abstract class FallingObject extends Actor {
         // Logic for explosion goes here
     }
 
-    public boolean isFalling() {
-        return isFalling;
-    }
-
     /**
      * Defines the object's rolling behaviour.
      * If an object can roll, it's position is updated either left or right.
@@ -94,7 +87,7 @@ public abstract class FallingObject extends Actor {
             rollDelay--;
             return;
         }
-        rollDelay = rollDelayReset;
+        rollDelay = 3;
         Tile leftTile = position.getLeft();
         Tile rightTile = position.getRight();
 
@@ -114,12 +107,12 @@ public abstract class FallingObject extends Actor {
         if (underTile == null) {
             return false;
         }
-        if (underTile.isPath() || underTile instanceof MagicWall){
+        if (underTile.isPath() || underTile instanceof MagicWall) {
             Actor occupant = underTile.getOccupier();
             if (occupant == null) {
                 return true;
             }
-            if (isFalling){
+            if (isFalling) {
                 if (occupant instanceof Enemy) {
                     ((Enemy) occupant).crush();
                     explode();
@@ -135,20 +128,16 @@ public abstract class FallingObject extends Actor {
     }
 
     /**
-     * Handles the object when it is not falling.
-     * @param underTile is the {@link Tile} below the specific object.
-     */
-    private void onPath(Tile underTile) {
-
-    }
-
-    /**
      * Handles the rolling behaviour
      * @param tile is the {@link Tile} to check if it can be occupied.
      * @return {@code True} if the object can roll to the tile.
      */
     private boolean isAbleToRollTo(Tile tile) {
-        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
-                && tile.getDown().isPath() && !tile.getDown().isOccupied();
+        return tile != null
+                && tile.isPath()
+                && !tile.isOccupied()
+                && tile.getDown() != null
+                && tile.getDown().isPath()
+                && !tile.getDown().isOccupied();
     }
 }

@@ -1,6 +1,5 @@
 package com.example.boulderdash.Actors.Falling;
 
-
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
@@ -28,6 +27,7 @@ public class Diamond extends FallingObject {
     /**
      * Transforms and removes the diamond into a {@link Boulder} when interacting with a {@link MagicWall}
      */
+    @Override
     public void transform() {
         GameState.manager.killActor(this);
         GameState.manager.addActor(new Boulder(position));
