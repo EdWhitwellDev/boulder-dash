@@ -50,7 +50,7 @@ public class Level {
         //amoeba = new Amoeba(tiles.get(3).get(5), 10);
         //actors.add(amoeba);
 
-        //diamond = new Diamond(tiles.get(2).get(1));
+        diamond = new Diamond(tiles.get(2).get(1));
         boulder = new Boulder(tiles.get(2).get(5));
 
 
@@ -67,7 +67,7 @@ public class Level {
         Fly firey = new Fly(tiles.get(2).get(7), false, false, Direction.RIGHT);
         actors.add(firey);
 
-        //actors.add(diamond);
+        actors.add(diamond);
         actors.add(new Actor(tiles.get(2).get(2)));
 
 

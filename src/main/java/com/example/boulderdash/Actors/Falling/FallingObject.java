@@ -62,6 +62,22 @@ public abstract class FallingObject extends Actor {
         return isFalling;
     }
 
+    protected void roll() {
+        if (rollDelay > 0) {
+            rollDelay--;
+            return;
+        }
+        rollDelay = rollDelayReset;
+        Tile leftTile = position.getLeft();
+        Tile rightTile = position.getRight();
+
+        if (isAbleToRollTo(leftTile)) {
+            setPosition(leftTile);
+        } else if (isAbleToRollTo(rightTile)) {
+            setPosition(rightTile);
+        }
+    }
+
     private boolean isAbleToFall(Tile underTile) {
         if (underTile == null) {
             return false;
@@ -88,5 +104,11 @@ public abstract class FallingObject extends Actor {
 
     private void onPath(Tile underTile) {
 
+    }
+
+    // Helper for roll()
+    private boolean isAbleToRollTo(Tile tile) {
+        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
+                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 }
