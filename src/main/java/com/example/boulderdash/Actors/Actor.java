@@ -57,10 +57,15 @@ public class Actor {
      * @param nextPos is the next {@link Tile} to move to.
      */
     protected void changePos(Tile nextPos) {
-        position.setOccupier(null);
+        if (position != null) {
+            position.setOccupier(null);
+        }
+
         position = nextPos;
 
-        position.setOccupier(this);
+        if (position != null) {
+            position.setOccupier(this);
+        }
 
         checkCollisions();
     }
