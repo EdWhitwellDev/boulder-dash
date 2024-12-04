@@ -10,6 +10,12 @@ import javafx.scene.image.Image;
 
 import java.util.List;
 
+/**
+ * Handles the actions of any Actor. An actor being an entity that can move on the grid and interact with other actors.
+ * @author Viraj Shah & Ed Whitwell
+ * @version 1.3
+ */
+
 public class Actor {
     protected Tile position;
     protected int tickCoolDown;
@@ -17,6 +23,10 @@ public class Actor {
     protected Direction currentDirection;
     protected Image image;
 
+    /**
+     * Constructor for an Actor at a specific starting tile.
+     * @param startPosition is the initial {@link Tile} position of the Actor.
+     */
     public Actor(Tile startPosition){
         position = startPosition;
         if (position != null) {
@@ -36,6 +46,10 @@ public class Actor {
         return position;
     }
 
+    /**
+     * Changes the position of an Actor to a new tile and detects any collisions.
+     * @param nextPos is the next {@link Tile} to move to.
+     */
     protected void changePos(Tile nextPos) {
         position.setOccupier(null);
         position = nextPos;
@@ -45,8 +59,15 @@ public class Actor {
         checkCollisions();
     }
 
-    public void move(){}
+    /**
+     * Specifies how the actor moves on the grid.
+     * Overridden by subclasses for specific movement.
+     */
+    public void move() {}
 
+    /**
+     * Detects collisions with other actors in neighbouring tiles.
+     */
     protected void checkCollisions(){
         List<Actor> collisionOther = position.checkAdjacent();
         if (!collisionOther.isEmpty()) {
