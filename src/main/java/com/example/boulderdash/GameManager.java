@@ -216,6 +216,7 @@ public class GameManager extends Application {
             }
         }
         transitionPane.getChildren().clear();
+        ParallelTransition parallelTransition = new ParallelTransition();
         for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
             ImageView actorImageView = entry.getKey();
             Actor actor = entry.getValue();
@@ -229,14 +230,19 @@ public class GameManager extends Application {
             translateTransition.setToX(currentPosition.getColumn() * 100);
             translateTransition.setToY(currentPosition.getRow() * 100);
 
-            translateTransition.setOnFinished(e -> {
-                actor.checkCollisions();
-            });
+            parallelTransition.getChildren().add(translateTransition);
 
-            translateTransition.play();
             transitionPane.getChildren().add(actorImageView);
         }
-
+        parallelTransition.setOnFinished(e -> {
+            for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
+                ImageView actorImageView = entry.getKey();
+                Actor actor = entry.getValue();
+                actor.checkCollisions();
+                transitionPane.getChildren().remove(actorImageView);
+            }
+        });
+        parallelTransition.play();
     }
 
     /**
@@ -434,11 +440,11 @@ public class GameManager extends Application {
      */
     public void winGame() {
         dead = true;
-        tickTimeline.stop();
         showLevelCompleteScreen();
     }
 
     private void showLevelCompleteScreen() {
+        tickTimeline.stop();
         if (levelCompleteMenu == null) {
             levelCompleteMenu = new VBox(20);
             levelCompleteMenu.setStyle("-fx-background-color: grey; " +
