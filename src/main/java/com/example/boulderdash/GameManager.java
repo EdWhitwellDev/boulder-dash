@@ -17,6 +17,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -37,6 +39,7 @@ public class GameManager extends Application {
     private Level level;
     private Player player;
     private Scene scene;
+    private VBox pauseMenu;
     private final GridPane grid = new GridPane();
     private final Pane transitionPane = new Pane();
     private final HBox infoBar = new HBox(20);
@@ -341,11 +344,6 @@ public class GameManager extends Application {
         createNewActors();
         drawGame();// Redraw the grid
 
-    public void tick() {
-        removeActors(); 
-        drawGame(); 
-
-
         if (!dead) {
             for (Actor actor : level.getActors()) {
                 actor.move(); // Move all active actors
@@ -360,7 +358,7 @@ public class GameManager extends Application {
     /**
      * Ends the game, marked it as a loss
      */
-    public void loseGame() {
+    public void looseGame() {
         Text gameOverText = new Text("Game Over");
         gameOverText.setFont(new Font("Arial", 75));
         dead = true;
