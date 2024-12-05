@@ -153,17 +153,6 @@ public class GameManager extends Application {
             transitionPane.getChildren().add(actorImageView);
         }
 
-
-        // use ParallelTransition to animate all the actors that are transferring
-        //ParallelTransition parallelTransition = new ParallelTransition();
-        //for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
-        //    ImageView actorImageView = entry.getKey();
-        //    Actor actor = entry.getValue();
-        //    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), actorImageView);
-        //    translateTransition.setToX();
-        //    translateTransition.setByY(actor.getOffset());
-        //    parallelTransition.getChildren().add(translateTransition);
-        //}
     }
 
     public void processKeyEvent(KeyEvent event) {
