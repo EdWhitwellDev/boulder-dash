@@ -406,6 +406,7 @@ public class GameManager extends Application {
         gameOverMenu.setTranslateY((scene.getHeight() - 200) / 2);
 
         grid.getChildren().add(gameOverMenu);
+
     }
 
 
