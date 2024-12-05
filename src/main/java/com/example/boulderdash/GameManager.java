@@ -2,8 +2,6 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 
-import com.example.boulderdash.Actors.Falling.FallingObject;
-
 import javafx.animation.*;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -11,9 +9,7 @@ import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -22,7 +18,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.FileNotFoundException;
 import java.util.*;
 
 public class GameManager extends Application {
@@ -30,11 +25,11 @@ public class GameManager extends Application {
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
-    private Level level = new Level();
+    private final Level level = new Level();
     private Player player;
     private Scene scene;
-    private GridPane grid = new GridPane();
-    private Pane transitionPane = new Pane();
+    private final GridPane grid = new GridPane();
+    private final Pane transitionPane = new Pane();
     private boolean dead = false;
     private boolean isPaused = false;
 
@@ -54,7 +49,10 @@ public class GameManager extends Application {
         stackPane.getChildren().add(grid);
         stackPane.getChildren().add(transitionPane);
 
-        scene = new Scene(stackPane, 1500, 1000);  // width: 400, height: 400
+        int rows = level.getRows();
+        int columns = level.getCols();
+
+        scene = new Scene(stackPane, columns*100, rows*100);  // width: 400, height: 400
 
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
@@ -260,9 +258,6 @@ public class GameManager extends Application {
         stage.close();
     }
 
-
-
-
     public void tick() {
         removeActors();
         createNewActors();
@@ -275,10 +270,6 @@ public class GameManager extends Application {
             }
         }
 
-    }
-
-    public Timeline getTickTimeline(){
-        return tickTimeline;
     }
 
     public void looseGame(){

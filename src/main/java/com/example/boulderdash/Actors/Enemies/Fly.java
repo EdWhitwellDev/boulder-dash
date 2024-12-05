@@ -10,14 +10,14 @@ import java.util.Map;
 
 public class Fly extends Enemy{
     public static final Direction[] CARDINAL_DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
-    private static Map<Direction, Image> orientationButterFly = Map.of(
+    private static final Map<Direction, Image> orientationButterFly = Map.of(
             Direction.STATIONARY, new Image("butterfly.png"),
             Direction.UP, new Image("butterfly.png"),
             Direction.DOWN, new Image("butterfly_down.png"),
             Direction.LEFT, new Image("butterfly_left.png"),
             Direction.RIGHT, new Image("butterfly_right.png")
     );
-    private static Map<Direction, Image> orientationFireFly = Map.of(
+    private static final Map<Direction, Image> orientationFireFly = Map.of(
             Direction.STATIONARY, new Image("firefly.png"),
             Direction.UP, new Image("firefly.png"),
             Direction.DOWN, new Image("firefly_down.png"),
@@ -85,23 +85,17 @@ public class Fly extends Enemy{
         if (!tile.isPath()) {
             return false;
         }
-
         return !tile.isOccupied();
     }
 
     private Tile findTile(Direction direction){
-        switch (direction) {
-            case UP:
-                return position.getUp();
-            case DOWN:
-                return position.getDown();
-            case LEFT:
-                return position.getLeft();
-            case RIGHT:
-                return position.getRight();
-            default:
-                return null;
-        }
+        return switch (direction) {
+            case UP -> position.getUp();
+            case DOWN -> position.getDown();
+            case LEFT -> position.getLeft();
+            case RIGHT -> position.getRight();
+            default -> null;
+        };
     }
 
     private Direction findHand(boolean turnRight){

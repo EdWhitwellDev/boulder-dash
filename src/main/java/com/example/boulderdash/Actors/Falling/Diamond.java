@@ -18,12 +18,6 @@ public class Diamond extends FallingObject {
         GameState.manager.addActor(new Boulder(position));
     }
 
-    public void collect(Player player) {
-        player.collectedDiamond(); // Called from Player class (needs to be implemented)
-        position.setOccupier(null); // removes the diamond (needs to be implemented)
-
-    }
-
     public void move() {
         super.fall();
     }

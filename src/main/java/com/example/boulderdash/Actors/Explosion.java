@@ -36,8 +36,6 @@ public class Explosion extends Actor {
                 Diamond drops = new Diamond(remains);
                 GameState.manager.addActor(drops);
             }
-
-
         }
         image = getExplosionVariant();
     }

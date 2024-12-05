@@ -21,15 +21,13 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Level {
-    private List<List<Tile>> tiles;
-    private List<Actor> actors;
-    private Player player;
-    private Amoeba amoeba;
-    private int rows;
-    private int cols;
+    private final List<List<Tile>> tiles;
+    private final List<Actor> actors;
+    private final Player player;
+    private final int rows;
+    private final int cols;
     private int diamondsRequired = 3;
     private Boulder boulder;
 

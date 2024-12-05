@@ -12,7 +12,6 @@ import java.util.List;
 public class Actor {
     protected Tile position;
     protected int tickCoolDown;
-    protected int TICK_COOL_DOWN_RESET;
     protected Direction currentDirection = Direction.STATIONARY;
     protected Image image;
     private boolean isTransferring;
@@ -27,10 +26,6 @@ public class Actor {
 
     public Image getImage() {
         return image;
-    }
-
-    public Direction getCurrentDirection() {
-        return currentDirection;
     }
 
     public Tile getPosition() {
@@ -74,9 +69,5 @@ public class Actor {
         isTransferring = false;
     }
 
-    public int getOffset(){
-        return 25;
-    }
-    //Hello
 
 }

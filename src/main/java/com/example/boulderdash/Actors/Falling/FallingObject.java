@@ -83,11 +83,6 @@ public abstract class FallingObject extends Actor {
         exploded = true;
 
     }
-
-    public boolean isFalling() {
-        return isFalling;
-    }
-
     private boolean isAbleToFall(Tile underTile) {
         if (underTile == null) {
             return false;

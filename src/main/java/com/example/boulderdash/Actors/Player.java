@@ -18,14 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player extends Actor {
-    private static Map<Direction, Image> orientation = Map.of(
+    private static final Map<Direction, Image> orientation = Map.of(
             Direction.STATIONARY, new Image("player_down.png"),
             Direction.UP, new Image("player_up.png"),
             Direction.DOWN, new Image("player_down.png"),
             Direction.LEFT, new Image("player_left.png"),
             Direction.RIGHT, new Image("player_right.png")
     );
-    private Map<KeyColours, Integer> keys = new HashMap<>();
+    private final Map<KeyColours, Integer> keys = new HashMap<>();
     private int tickCoolDown = 0;
     private int tickCoolDownReset = 2;
     private int diamondsCollected = 0;
@@ -45,15 +45,6 @@ public class Player extends Actor {
         if (currentDirection != Direction.STATIONARY) {
             image = orientation.get(currentDirection);
         }
-
-    }
-
-    public int getDiamondsCollected(){
-        return diamondsCollected;
-    }
-
-    public void collectedDiamond(){
-
     }
 
     public void move(){
@@ -76,9 +67,7 @@ public class Player extends Actor {
             case RIGHT -> position.getRight();
             default -> null;
         };
-
     }
-
 
     private void processMove(Tile nextTile) {
         if (nextTile instanceof Floor) {

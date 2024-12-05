@@ -81,9 +81,6 @@ public class Tile {
     public void setUp(Tile up) {
         this.up = up;
     }
-    public void setOccupied(boolean occupy){
-        occupied = occupy;
-    }
 
     public void setOccupier(Actor occupier){
         this.occupier = occupier;

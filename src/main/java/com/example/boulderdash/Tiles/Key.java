@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Key extends Floor{
 
-    private static Map<KeyColours, Image> colours = Map.of(
+    private static final Map<KeyColours, Image> colours = Map.of(
             KeyColours.RED, new Image("red_key.png"),
             KeyColours.BLUE, new Image("blue_key.png"),
             KeyColours.GREEN, new Image("green_key.png"),

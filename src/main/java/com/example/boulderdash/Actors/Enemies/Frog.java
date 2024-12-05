@@ -12,7 +12,7 @@ public class Frog extends Enemy{
     private final Player player;
     private final static int TICK_COOL_DOWN_RESET = 16;
 
-    private int tickCoolDown = 100;
+    private int tickCoolDown = 1;
 
 
     public Frog(Tile startPosition, Player player) {
@@ -120,7 +120,6 @@ public class Frog extends Enemy{
 
         currentDirection = changeDirection(nextStep);
         return nextStep;
-
     }
 
     private Direction changeDirection(Tile nextTile){
