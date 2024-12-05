@@ -27,7 +27,7 @@ public class Player extends Actor {
     );
     private final Map<KeyColours, Integer> keys = new HashMap<>();
     private int tickCoolDown = 0;
-    private int tickCoolDownReset = 2;
+    private int tickCoolDownReset = 3;
     private int diamondsCollected = 0;
 
     public Player(Tile startingTile){

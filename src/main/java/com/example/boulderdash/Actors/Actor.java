@@ -53,6 +53,8 @@ public class Actor {
         position.setOccupier(this);
 
         isTransferring = true;
+
+
     }
 
     /**
