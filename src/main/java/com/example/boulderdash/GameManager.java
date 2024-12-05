@@ -1,11 +1,10 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
-
+import javafx.scene.control.Label;
 import com.example.boulderdash.enums.KeyColours;
 import javafx.animation.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import com.example.boulderdash.Actors.Player;
@@ -22,6 +21,7 @@ import java.util.*;
 
 public class GameManager extends Application {
 
+    private VBox gameOverMenu;
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
@@ -329,7 +329,46 @@ public class GameManager extends Application {
 
     public void looseGame(){
         dead = true;
+        tickTimeline.stop();
+        showGameOverScreen();
+
     }
+
+    private void showGameOverScreen() {
+        if (gameOverMenu == null) {
+            gameOverMenu = new VBox(40);
+            gameOverMenu.setStyle("-fx-background-color: grey;" +
+                    "-fx-alignment: center;");
+
+            Label messageLabel = new Label("Game Over!");
+            messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16;" +
+                    "-fx-font-family: monospace;");
+
+            Button exitButton = new Button("Exit Game");
+            exitButton.setStyle(
+                    "-fx-background-color: grey;" +
+                            "-fx-border-color: white darkgrey darkgrey white;" +
+                            "-fx-border-width: 4;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-font-family: monospace;" +
+                            "-fx-font-size: 12;" +
+                            "-fx-padding: 0 0;"
+
+            );
+
+            exitButton.setOnAction(e -> exitGame());
+
+
+            gameOverMenu.getChildren().addAll(messageLabel, exitButton);
+        }
+
+        gameOverMenu.setTranslateX((scene.getWidth() - 200) / 2);
+        gameOverMenu.setTranslateY((scene.getHeight() - 200) / 2);
+
+        grid.getChildren().add(gameOverMenu);
+    }
+
+
 
     public void winGame(){
         dead = true;
