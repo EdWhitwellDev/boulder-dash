@@ -29,6 +29,7 @@ public class Level {
     private final int cols;// Number of columns in the level
     private int timeLimit;
     private int diamondsRequired;
+    private int tileSize;
     private Boulder boulder;
 
 
@@ -91,6 +92,7 @@ public class Level {
         String[] winConditions = levelSections.get("WIN CONDITIONS").get(0).split(",");
         diamondsRequired = Integer.parseInt(winConditions[0]);
         timeLimit = Integer.parseInt(winConditions[1]);
+        tileSize = Integer.parseInt(winConditions[2]);
         System.out.println(actors);
     }
 
@@ -260,6 +262,9 @@ public class Level {
     }
     public int getTimeLimit(){
         return timeLimit;
+    }
+    public int getTileSize(){
+        return tileSize;
     }
 
     /**

@@ -39,7 +39,7 @@ public class GameManager extends Application {
     private Scene scene;
     private Pane levelCompleteMenu;
     private Pane gameOverMenu;
-    private Pane pauseMenu;
+    private VBox pauseMenu;
     StackPane stackPane = new StackPane();
     private final GridPane grid = new GridPane();
     private final Pane transitionPane = new Pane();
@@ -58,9 +58,9 @@ public class GameManager extends Application {
     private static final ImageView keyIconYellow = new ImageView(new Image("yellow_key_icon.png"));
     private float timeElapsed;
     private final float tickTime = 0.1f;
+    private int tileSize = 80;
     private boolean dead = false;
     private boolean isPaused = false;
-
     private Stage primaryStage;
     private Scene homeScene;
     private VBox homeScreen;
@@ -70,87 +70,14 @@ public class GameManager extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        level = new Level();
-        player = level.getPlayer();
-        timeElapsed = 0;
-
-
-
-        GameState.setupSate(level, player, this);
-
-        // Create grid layout for the game board
-        grid.setHgap(0);
-        grid.setVgap(0);
-
-        diamondCountIcon.setFitHeight(50);
-        diamondCountIcon.setFitWidth(50);
-        clockIcon.setFitHeight(50);
-        clockIcon.setFitWidth(40);
-        keyIconBlue.setFitHeight(50);
-        keyIconBlue.setFitWidth(50);
-        keyIconRed.setFitHeight(50);
-        keyIconRed.setFitWidth(50);
-        keyIconGreen.setFitHeight(50);
-        keyIconGreen.setFitWidth(50);
-        keyIconYellow.setFitHeight(50);
-        keyIconYellow.setFitWidth(50);
-
-
-        infoBar.getChildren().addAll(clockIcon, timeLabel, diamondCountIcon, diamondsLabel, keyIconBlue, keyLabelBlue,
-                keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen, keyIconYellow, keyLabelYellow);
-        infoBar.setPrefHeight(70);
-        infoBar.setAlignment(javafx.geometry.Pos.CENTER);
-        infoBar.setStyle("-fx-padding: 5; -fx-background-color: #333; -fx-text-fill: white;");
-        timeLabel.setStyle("-fx-text-fill: white;");
-        diamondsLabel.setStyle("-fx-text-fill: white;");
-        keyLabelBlue.setStyle("-fx-text-fill: white;");
-        keyLabelRed.setStyle("-fx-text-fill: white;");
-        keyLabelGreen.setStyle("-fx-text-fill: white;");
-        keyLabelYellow.setStyle("-fx-text-fill: white;");
-        diamondCountIcon.setStyle("-fx-padding: 10;");
-
-
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(infoBar);
-        stackPane.getChildren().addAll(grid, transitionPane, borderPane);
-
-
-
-
-
-        int rows = level.getRows();
-        int columns = level.getCols();
-
-        scene = new Scene(stackPane, columns*100, rows*100);  // width: 400, height: 400
-
-        scene.setOnKeyPressed(this::processKeyEvent);
-
-        scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
-
-        tickTimeline = new Timeline(new KeyFrame(Duration.seconds(tickTime), event -> tick()));
-        tickTimeline.setCycleCount(Animation.INDEFINITE);
-        tickTimeline.play();
-        //drawGame();
-
         // Set the title of the window
         primaryStage.setTitle("Boulder Dash");
-
-        // Set the scene for the stage
-        primaryStage.setScene(scene);
-
-        // Show the window
-        primaryStage.show();
-
-        // Show the window
-        primaryStage.show();
 
         this.primaryStage = primaryStage;
         highScores = new ArrayList<>();
 
         setupHomeScreen();
 
-        primaryStage.setTitle("Boulder Dash");
         primaryStage.setScene(homeScene);
         primaryStage.show();
     }
@@ -189,6 +116,50 @@ public class GameManager extends Application {
         homeScene = new Scene(homeScreen, 600, 600);
     }
 
+    private void UIsetUp() {
+        grid.setHgap(0);
+        grid.setVgap(0);
+
+        diamondCountIcon.setFitHeight(50);
+        diamondCountIcon.setFitWidth(50);
+        clockIcon.setFitHeight(50);
+        clockIcon.setFitWidth(40);
+        keyIconBlue.setFitHeight(50);
+        keyIconBlue.setFitWidth(50);
+        keyIconRed.setFitHeight(50);
+        keyIconRed.setFitWidth(50);
+        keyIconGreen.setFitHeight(50);
+        keyIconGreen.setFitWidth(50);
+        keyIconYellow.setFitHeight(50);
+        keyIconYellow.setFitWidth(50);
+        infoBar.getChildren().addAll(clockIcon, timeLabel, diamondCountIcon,
+                diamondsLabel, keyIconBlue, keyLabelBlue,
+                keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen,
+                keyIconYellow, keyLabelYellow);
+        infoBar.setPrefHeight(70);
+        infoBar.setAlignment(javafx.geometry.Pos.CENTER);
+        infoBar.setStyle("-fx-padding: 5; -fx-background-color: #333; -fx-text-fill: white;");
+        timeLabel.setStyle("-fx-text-fill: white;");
+        diamondsLabel.setStyle("-fx-text-fill: white;");
+        keyLabelBlue.setStyle("-fx-text-fill: white;");
+        keyLabelRed.setStyle("-fx-text-fill: white;");
+        keyLabelGreen.setStyle("-fx-text-fill: white;");
+        keyLabelYellow.setStyle("-fx-text-fill: white;");
+        diamondCountIcon.setStyle("-fx-padding: 10;");
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(infoBar);
+
+        stackPane.getChildren().addAll(grid, transitionPane, borderPane);
+
+        scene = new Scene(stackPane, 600, 600);  // width: 400, height: 400
+        scene.setOnKeyPressed(this::processKeyEvent);
+        scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
+
+        tickTimeline = new Timeline(new KeyFrame(Duration.seconds(tickTime), event -> tick()));
+        tickTimeline.setCycleCount(Animation.INDEFINITE);
+    }
+
     // High scoreboard
     private VBox createHighScoreBoard() {
         VBox highScoreBoard = new VBox(10); // Vertical spacing between scores
@@ -215,11 +186,17 @@ public class GameManager extends Application {
         level = new Level();
         player = level.getPlayer();
         timeElapsed = 0;
+        tileSize = level.getTileSize();
+
+        UIsetUp();
 
         GameState.setupSate(level, player, this);
+        tickTimeline.play();
 
         drawGame();
         primaryStage.setScene(scene);
+        primaryStage.setHeight(level.getRows() * tileSize);
+        primaryStage.setWidth(level.getCols() * tileSize);
     }
 
     /**
@@ -239,7 +216,6 @@ public class GameManager extends Application {
         for (Actor actor : deadActors) {
             level.removeActor(actor);
         }
-
         deadActors = new ArrayList<>();
     }
     private void createNewActors(){
@@ -275,8 +251,8 @@ public class GameManager extends Application {
                 ImageView imageView = new ImageView(tile.getImage()); // Tile background
 
                 // Scale tile images to match grid size
-                imageView.setFitWidth(100);
-                imageView.setFitHeight(100);
+                imageView.setFitWidth(tileSize);
+                imageView.setFitHeight(tileSize);
 
                 stackPane.getChildren().add(imageView);
 
@@ -284,8 +260,8 @@ public class GameManager extends Application {
                 if (tile.isOccupied()) {
                     Actor occupier = tile.getOccupier();
                     ImageView actorImageView = new ImageView(occupier.getImage());
-                    actorImageView.setFitHeight(80);
-                    actorImageView.setFitWidth(80);
+                    actorImageView.setFitHeight(tileSize*0.8);
+                    actorImageView.setFitWidth(tileSize*0.8);
                     if (occupier.getIsTransferring()){
                         // if the actor is transferring animate the transfer
                         actorsToAnimate.put(actorImageView, occupier);   // add the actor to the offset map
@@ -309,13 +285,13 @@ public class GameManager extends Application {
             Actor actor = entry.getValue();
             Tile previousPosition = actor.getPreviousPosition();
             Tile currentPosition = actor.getPosition();
-            actorImageView.setTranslateX(previousPosition.getColumn() * 100); // Set the initial X position
-            actorImageView.setTranslateY(previousPosition.getRow() * 100);
+            actorImageView.setTranslateX(previousPosition.getColumn() * tileSize); // Set the initial X position
+            actorImageView.setTranslateY(previousPosition.getRow() * tileSize);
             TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), actorImageView);
-            translateTransition.setFromX(previousPosition.getColumn() * 100);
-            translateTransition.setFromY(previousPosition.getRow() * 100);
-            translateTransition.setToX(currentPosition.getColumn() * 100);
-            translateTransition.setToY(currentPosition.getRow() * 100);
+            translateTransition.setFromX(previousPosition.getColumn() * tileSize);
+            translateTransition.setFromY(previousPosition.getRow() * tileSize);
+            translateTransition.setToX(currentPosition.getColumn() * tileSize);
+            translateTransition.setToY(currentPosition.getRow() * tileSize);
 
             translateTransition.setOnFinished(e -> {
                 actor.checkCollisions();
@@ -398,9 +374,10 @@ public class GameManager extends Application {
      * Creates the pause menu
      */
     private void createPauseMenu() {
-        pauseMenu = new Pane();
+        pauseMenu = new VBox();
         pauseMenu.setStyle("-fx-padding: 20;");
         pauseMenu.setMaxSize(200,200);
+        pauseMenu.setAlignment(javafx.geometry.Pos.CENTER);
 
 
         String buttonStyle =  "-fx-border-color: white darkgrey darkgrey white;" +
@@ -477,13 +454,12 @@ public class GameManager extends Application {
             }
         }
 
-        if (player.getDiamondsCollected() >= level.getDiamondsRequired()) {
-            winGame();
-        }
+        //if (player.getDiamondsCollected() >= level.getDiamondsRequired()) {
+        //    winGame();
+        //}
 
         if (timeElapsed > level.getTimeLimit()){
             looseGame();
-
         }
     }
 
@@ -528,15 +504,12 @@ public class GameManager extends Application {
         stackPane.getChildren().add(gameOverMenu);
     }
 
-
-
-
-
     /**
      * Ends the current level
      */
     public void winGame() {
         dead = true;
+        drawGame();
         showLevelCompleteScreen();
     }
 

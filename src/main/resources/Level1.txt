@@ -1,5 +1,5 @@
 [WIN CONDITIONS]
-3,60
+3,60,80
 [TILES]
 T,T,T,T,T,T,T,T,T,T
 T,D,D,D,D,D,D,D,P,T
