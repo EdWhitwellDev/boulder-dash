@@ -226,6 +226,10 @@ public class GameManager extends Application {
             translateTransition.setToX(currentPosition.getColumn() * 100);
             translateTransition.setToY(currentPosition.getRow() * 100);
 
+            translateTransition.setOnFinished(e -> {
+                actor.checkCollisions();
+            });
+
             translateTransition.play();
             transitionPane.getChildren().add(actorImageView);
         }

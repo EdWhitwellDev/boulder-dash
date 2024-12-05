@@ -53,8 +53,6 @@ public class Actor {
         position.setOccupier(this);
 
         isTransferring = true;
-
-        checkCollisions();
     }
 
     /**
@@ -66,7 +64,7 @@ public class Actor {
     /**
      * Detects collisions with other actors in neighbouring tiles.
      */
-    protected void checkCollisions(){
+    public void checkCollisions(){
         List<Actor> collisionOther = position.checkAdjacent();
         if (!collisionOther.isEmpty()) {
             for (Actor collider : collisionOther){
