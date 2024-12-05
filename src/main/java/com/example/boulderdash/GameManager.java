@@ -345,7 +345,7 @@ public class GameManager extends Application {
         loadButton.setOnAction(e -> loadGame());
         exitButton.setOnAction(e -> exitGame());
 
-        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 20;");
+        pauseMenu.setStyle("-fx-background-color: #333; -fx-padding: 20;");
 
         pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
     }
@@ -459,7 +459,7 @@ public class GameManager extends Application {
         tickTimeline.stop();
         if (levelCompleteMenu == null) {
             levelCompleteMenu = new Pane();
-            levelCompleteMenu.setStyle("-fx-background-color: rgba(128, 128, 128, 0.8);");
+            levelCompleteMenu.setStyle("-fx-background-color: #333;");
             levelCompleteMenu.setMaxSize(200, 200);
 
             Label messageLabel = new Label("Level Won!");
