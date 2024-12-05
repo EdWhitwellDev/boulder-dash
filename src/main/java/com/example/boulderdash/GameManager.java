@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 
 import com.example.boulderdash.enums.KeyColours;
 import javafx.animation.*;
-
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
