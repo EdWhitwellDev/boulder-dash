@@ -11,7 +11,6 @@ import java.util.*;
 public class Frog extends Enemy{
     private final Player player;
     private final static int TICK_COOL_DOWN_RESET = 16;
-    private Direction currentDirection;
 
     private int tickCoolDown = 100;
 

@@ -24,10 +24,9 @@ public class Fly extends Enemy{
             Direction.LEFT, new Image("firefly_left.png"),
             Direction.RIGHT, new Image("firefly_right.png")
     );
-    private static final int TICK_COOL_DOWN_RESET = 4;
+    private static final int TICK_COOL_DOWN_RESET = 3;
     private final boolean rightHanded;
     private final boolean buttery;
-    private Direction currentDirection;
     private Direction handSide;
     private int tickCoolDown = 1;
     private int consecutiveTurning = 0;

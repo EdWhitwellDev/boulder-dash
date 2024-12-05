@@ -2,7 +2,6 @@ package com.example.boulderdash.Actors;
 
 
 import com.example.boulderdash.Actors.Enemies.Enemy;
-import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -14,8 +13,10 @@ public class Actor {
     protected Tile position;
     protected int tickCoolDown;
     protected int TICK_COOL_DOWN_RESET;
-    protected Direction currentDirection;
+    protected Direction currentDirection = Direction.STATIONARY;
     protected Image image;
+    private boolean isTransferring;
+    private Tile previousPosition;
 
     public Actor(Tile startPosition){
         position = startPosition;
@@ -38,9 +39,12 @@ public class Actor {
 
     protected void changePos(Tile nextPos) {
         position.setOccupier(null);
+        previousPosition = position;
         position = nextPos;
 
         position.setOccupier(this);
+
+        isTransferring = true;
 
         checkCollisions();
     }
@@ -60,8 +64,19 @@ public class Actor {
         }
     }
 
+    public boolean getIsTransferring(){
+        return isTransferring;
+    }
+    public Tile getPreviousPosition(){
+        return previousPosition;
+    }
+    public void stopTransferring(){
+        isTransferring = false;
+    }
 
-
+    public int getOffset(){
+        return 25;
+    }
     //Hello
 
 }

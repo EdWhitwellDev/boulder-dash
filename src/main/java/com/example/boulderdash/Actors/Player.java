@@ -5,6 +5,7 @@ import com.example.boulderdash.Actors.Falling.Boulder;
 import com.example.boulderdash.Actors.Falling.Diamond;
 import com.example.boulderdash.GameManager;
 import com.example.boulderdash.GameState;
+import com.example.boulderdash.Tiles.Exit;
 import com.example.boulderdash.Tiles.Floor;
 import com.example.boulderdash.Tiles.LockedDoor;
 import com.example.boulderdash.Tiles.Tile;
@@ -25,7 +26,6 @@ public class Player extends Actor {
             Direction.RIGHT, new Image("player_right.png")
     );
     private Map<KeyColours, Integer> keys = new HashMap<>();
-    private Direction currentDirection = Direction.STATIONARY;
     private int tickCoolDown = 0;
     private int tickCoolDownReset = 2;
     private int diamondsCollected = 0;
@@ -37,6 +37,7 @@ public class Player extends Actor {
         keys.put(KeyColours.BLUE, 0);
         keys.put(KeyColours.GREEN, 0);
         keys.put(KeyColours.YELLOW, 0);
+        currentDirection = Direction.STATIONARY;
     }
 
     public void setDirection(Direction direction){
@@ -101,6 +102,12 @@ public class Player extends Actor {
                     return;
                 }
                 keys.put(requiredKey, keys.get(requiredKey)-1);
+            }
+            if (nextTile instanceof Exit) {
+                if (diamondsCollected < GameState.level.getDiamondsRequired()){
+                    return;
+                }
+
             }
             changePos(nextTile);
         }

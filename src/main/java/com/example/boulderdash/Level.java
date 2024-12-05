@@ -30,7 +30,7 @@ public class Level {
     private Amoeba amoeba;
     private int rows;
     private int cols;
-    private Diamond diamond;
+    private int diamondsRequired = 3;
     private Boulder boulder;
 
     public Level() {
@@ -182,8 +182,8 @@ public class Level {
     public Player getPlayer(){
         return player;
     }
-    public Diamond getDiamond(){
-        return diamond;
+    public int getDiamondsRequired(){
+        return diamondsRequired;
     }
     public int getCols() {
         return cols;

@@ -4,14 +4,12 @@ import com.example.boulderdash.Actors.Actor;
 
 import com.example.boulderdash.Actors.Falling.FallingObject;
 
+import javafx.animation.*;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -19,15 +17,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GameManager extends Application {
+
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
@@ -35,6 +34,7 @@ public class GameManager extends Application {
     private Player player;
     private Scene scene;
     private GridPane grid = new GridPane();
+    private Pane transitionPane = new Pane();
     private boolean dead = false;
     private boolean isPaused = false;
 
@@ -48,15 +48,18 @@ public class GameManager extends Application {
 
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
-        grid.setPadding(new Insets(50));
+        //grid.setPadding(new Insets(50));
 
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(grid);
+        stackPane.getChildren().add(transitionPane);
 
-        scene = new Scene(grid, 1500, 1000);  // width: 400, height: 400
+        scene = new Scene(stackPane, 1500, 1000);  // width: 400, height: 400
 
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
-        tickTimeline = new Timeline(new KeyFrame(Duration.millis(100), event -> tick()));
+        tickTimeline = new Timeline(new KeyFrame(Duration.millis(150), event -> tick()));
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
         //drawGame();
@@ -96,6 +99,9 @@ public class GameManager extends Application {
         int rows = level.getRows();
         int columns = level.getCols();
 
+        Map<ImageView, Actor> actorsToAnimate= new HashMap<>();
+
+
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 // Create an ImageView for the image
@@ -110,15 +116,54 @@ public class GameManager extends Application {
                 stackPane.getChildren().add(imageView);
 
                 if (tile.isOccupied()) {
-                    ImageView actorImageView = new ImageView(tile.getOccupier().getImage());
+                    Actor occupier = tile.getOccupier();
+                    ImageView actorImageView = new ImageView(occupier.getImage());
                     actorImageView.setFitHeight(80);
                     actorImageView.setFitWidth(80);
-                    stackPane.getChildren().add(actorImageView);
+                    if (occupier.getIsTransferring()){
+                        // if the actor is transferring animate the transfer
+                        actorsToAnimate.put(actorImageView, occupier);   // add the actor to the offset map
+                        occupier.stopTransferring();
+
+
+                    } else {
+                        stackPane.getChildren().add(actorImageView);
+                    }
+
                 }
                 // Add the ImageView to the grid at the specified row and column
                 grid.add(stackPane, col, row);
             }
         }
+        transitionPane.getChildren().clear();
+        for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
+            ImageView actorImageView = entry.getKey();
+            Actor actor = entry.getValue();
+            Tile previousPosition = actor.getPreviousPosition();
+            Tile currentPosition = actor.getPosition();
+            actorImageView.setTranslateX(previousPosition.getColumn() * 100); // Set the initial X position
+            actorImageView.setTranslateY(previousPosition.getRow() * 100);
+            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), actorImageView);
+            translateTransition.setFromX(previousPosition.getColumn() * 100);
+            translateTransition.setFromY(previousPosition.getRow() * 100);
+            translateTransition.setToX(currentPosition.getColumn() * 100);
+            translateTransition.setToY(currentPosition.getRow() * 100);
+
+            translateTransition.play();
+            transitionPane.getChildren().add(actorImageView);
+        }
+
+
+        // use ParallelTransition to animate all the actors that are transferring
+        //ParallelTransition parallelTransition = new ParallelTransition();
+        //for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
+        //    ImageView actorImageView = entry.getKey();
+        //    Actor actor = entry.getValue();
+        //    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), actorImageView);
+        //    translateTransition.setToX();
+        //    translateTransition.setByY(actor.getOffset());
+        //    parallelTransition.getChildren().add(translateTransition);
+        //}
     }
 
     public void processKeyEvent(KeyEvent event) {
@@ -248,15 +293,12 @@ public class GameManager extends Application {
     }
 
     public void looseGame(){
-
         dead = true;
-
     }
 
     public void winGame(){
-        // do something
+        dead = true;
     }
-
 
     public static void main(String[] args) {
         // Launch the JavaFX application

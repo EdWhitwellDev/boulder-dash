@@ -10,11 +10,13 @@ import java.util.Random;
 
 public class Explosion extends Actor {
     private final static int LIFE_TIME = 9;
-    private final static int EXPAND = 3;
     private final static Image[] EXPLOSION_IMGS = new Image[]{
             new Image("explosion_m.png"),
             new Image("explosion_l.png"),
-            new Image("explosion_s.png")
+            new Image("explosion_s.png"),
+            new Image("explosion_m_2.png"),
+            new Image("explosion_l_2.png"),
+            new Image("explosion_s_2.png")
     };
     private int ticksOld;
     public Explosion(Tile startPosition) {
