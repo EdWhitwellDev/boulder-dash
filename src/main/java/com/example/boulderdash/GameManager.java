@@ -31,15 +31,16 @@ import java.util.*;
  * user input, game state management, and the main game loop.
  */
 public class GameManager extends Application {
-
-    private VBox gameOverMenu;
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
     private Level level;
     private Player player;
     private Scene scene;
-    private VBox pauseMenu;
+    private Pane levelCompleteMenu;
+    private Pane gameOverMenu;
+    private Pane pauseMenu;
+    StackPane stackPane = new StackPane();
     private final GridPane grid = new GridPane();
     private final Pane transitionPane = new Pane();
     private final HBox infoBar = new HBox(20);
@@ -59,7 +60,7 @@ public class GameManager extends Application {
     private final float tickTime = 0.1f;
     private boolean dead = false;
     private boolean isPaused = false;
-    private VBox levelCompleteMenu;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -93,7 +94,7 @@ public class GameManager extends Application {
                 keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen, keyIconYellow, keyLabelYellow);
         infoBar.setPrefHeight(70);
         infoBar.setAlignment(javafx.geometry.Pos.CENTER);
-        infoBar.setStyle("-fx-padding: 10; -fx-background-color: #333; -fx-text-fill: white;");
+        infoBar.setStyle("-fx-padding: 5; -fx-background-color: #333; -fx-text-fill: white;");
         timeLabel.setStyle("-fx-text-fill: white;");
         diamondsLabel.setStyle("-fx-text-fill: white;");
         keyLabelBlue.setStyle("-fx-text-fill: white;");
@@ -103,10 +104,11 @@ public class GameManager extends Application {
         diamondCountIcon.setStyle("-fx-padding: 10;");
 
 
-        StackPane stackPane = new StackPane();
+
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(infoBar);
         stackPane.getChildren().addAll(grid, transitionPane, borderPane);
+
 
 
 
@@ -291,10 +293,10 @@ public class GameManager extends Application {
         if (pauseMenu == null) {
             createPauseMenu(); // Initialize the pause menu if it doesn't exist
         }
-        if (!grid.getChildren().contains(pauseMenu)) {
-            pauseMenu.setTranslateX((scene.getWidth() - 200) / 2); // Center horizontally
-            pauseMenu.setTranslateY((scene.getHeight() - 200) / 2); // Center vertically
-            grid.getChildren().add(pauseMenu); // Add the pause menu to the grid
+        if (!stackPane.getChildren().contains(pauseMenu)) {
+            pauseMenu.setLayoutX((scene.getWidth() - 200) / 2);
+            pauseMenu.setLayoutY((scene.getHeight() - 200) / 2);
+            stackPane.getChildren().add(pauseMenu); // Add the pause menu to the grid
         }
     }
 
@@ -303,7 +305,7 @@ public class GameManager extends Application {
      */
     private void hidePauseMenu() {
         if (pauseMenu != null) {
-            grid.getChildren().remove(pauseMenu); // Remove the pause menu from the grid
+            stackPane.getChildren().remove(pauseMenu); // Remove the pause menu from the grid
         }
     }
 
@@ -311,22 +313,44 @@ public class GameManager extends Application {
      * Creates the pause menu
      */
     private void createPauseMenu() {
-        pauseMenu = new VBox(15); // Vertical layout with spacing between buttons
-        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 10;");
+        pauseMenu = new Pane();
+        pauseMenu.setStyle("-fx-padding: 20;");
+        pauseMenu.setMaxSize(200,200);
+
+
+        String buttonStyle =  "-fx-border-color: white darkgrey darkgrey white;" +
+                "-fx-border-width: 4; -fx-text-fill: black; -fx-font-family: monospace; -fx-font-size: 12; -fx-cursor: hand;";
 
         Button resumeButton = new Button("Resume");
         Button saveButton = new Button("Save Game");
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Exit Game");
 
-        // Set actions for each button
+        resumeButton.setStyle(buttonStyle);
+        saveButton.setStyle(buttonStyle);
+        loadButton.setStyle(buttonStyle);
+        exitButton.setStyle(buttonStyle);
+
+        resumeButton.setLayoutX(60);
+        resumeButton.setLayoutY(20);
+        saveButton.setLayoutX(60);
+        saveButton.setLayoutY(60);
+        loadButton.setLayoutX(60);
+        loadButton.setLayoutY(100);
+        exitButton.setLayoutX(60);
+        exitButton.setLayoutY(140);
+
         resumeButton.setOnAction(e -> togglePause());
         saveButton.setOnAction(e -> saveGame());
         loadButton.setOnAction(e -> loadGame());
         exitButton.setOnAction(e -> exitGame());
 
+        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 20;");
+
         pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
     }
+
+
 
     /**
      * Saves the current game state
@@ -393,37 +417,30 @@ public class GameManager extends Application {
     private void showGameOverScreen() {
         drawGame();
         if (gameOverMenu == null) {
-            gameOverMenu = new VBox(40);
-            gameOverMenu.setStyle("-fx-background-color: grey;" +
-                    "-fx-alignment: center;");
+            gameOverMenu = new Pane();
+            gameOverMenu.setStyle("-fx-background-color: #333;");
+            gameOverMenu.setMaxSize(200, 200);
 
             Label messageLabel = new Label("Game Over!");
-            messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16;" +
-                    "-fx-font-family: monospace;");
+            messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16; -fx-font-family: monospace;");
+            messageLabel.setLayoutX(60);
+            messageLabel.setLayoutY(40);
 
             Button exitButton = new Button("Exit Game");
-            exitButton.setStyle(
-                    "-fx-background-color: grey;" +
-                            "-fx-border-color: white darkgrey darkgrey white;" +
-                            "-fx-border-width: 4;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-font-family: monospace;" +
-                            "-fx-font-size: 12;" +
-                            "-fx-padding: 0 0;"
-
-            );
-
+            exitButton.setStyle("-fx-background-color: grey; -fx-border-color: white darkgrey darkgrey white; " +
+                    "-fx-border-width: 4; -fx-text-fill: white; -fx-font-family: monospace; -fx-font-size: 12;" +
+                    "-fx-cursor: hand;");
+            exitButton.setLayoutX(60);
+            exitButton.setLayoutY(80);
             exitButton.setOnAction(e -> exitGame());
-
 
             gameOverMenu.getChildren().addAll(messageLabel, exitButton);
         }
 
-        gameOverMenu.setTranslateX((scene.getWidth() - 200) / 2);
-        gameOverMenu.setTranslateY((scene.getHeight() - 200) / 2);
+        gameOverMenu.setLayoutX((scene.getWidth() - 200) / 2);
+        gameOverMenu.setLayoutY((scene.getHeight() - 200) / 2);
 
-        grid.getChildren().add(gameOverMenu);
-
+        stackPane.getChildren().add(gameOverMenu);
     }
 
 
@@ -441,37 +458,41 @@ public class GameManager extends Application {
     private void showLevelCompleteScreen() {
         tickTimeline.stop();
         if (levelCompleteMenu == null) {
-            levelCompleteMenu = new VBox(20);
-            levelCompleteMenu.setStyle("-fx-background-color: grey; " +
-                    "-fx-text-fill: green; -fx-font-size: 12;" +
-                    "-fx-font-family: monospace;" +
-                    "-fx-alignment: center;" +
-                    "-fx-border-width: 1");
-
-
+            levelCompleteMenu = new Pane();
+            levelCompleteMenu.setStyle("-fx-background-color: rgba(128, 128, 128, 0.8);");
+            levelCompleteMenu.setMaxSize(200, 200);
 
             Label messageLabel = new Label("Level Won!");
-            messageLabel.setStyle("-fx-text-fill: lightgreen; " +
-                    "-fx-font-size: 12; -fx-font-family: monospace;");
+            messageLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 16; -fx-font-family: monospace;");
+            messageLabel.setLayoutX(60);
+            messageLabel.setLayoutY(40);
 
             Button nextLevelButton = new Button("Next Level");
+            nextLevelButton.setStyle("-fx-background-color: grey; -fx-border-color: white darkgrey darkgrey white; " +
+                    "-fx-border-width: 4; -fx-text-fill: white; -fx-font-family: monospace; -fx-font-size: 12; -fx-cursor: hand;");
+            nextLevelButton.setLayoutX(60);
+            nextLevelButton.setLayoutY(80);
+
             Button exitButton = new Button("Exit Game");
+            exitButton.setStyle("-fx-background-color: grey; -fx-border-color: white darkgrey darkgrey white; " +
+                    "-fx-border-width: 4; -fx-text-fill: white; -fx-font-family: monospace; -fx-font-size: 12; -fx-cursor: hand;");
+            exitButton.setLayoutX(60);
+            exitButton.setLayoutY(120);
 
             nextLevelButton.setOnAction(e -> loadNextLevel());
             exitButton.setOnAction(e -> exitGame());
-            exitButton.setStyle("-fx-font-family: monospace");
 
             levelCompleteMenu.getChildren().addAll(messageLabel, nextLevelButton, exitButton);
         }
 
-        levelCompleteMenu.setTranslateX((scene.getWidth() - 200) / 2);
-        levelCompleteMenu.setTranslateY((scene.getHeight() - 200) / 2);
-        grid.getChildren().add(levelCompleteMenu);
+        levelCompleteMenu.setLayoutX((scene.getWidth() - 200) / 2);
+        levelCompleteMenu.setLayoutY((scene.getHeight() - 200) / 2);
+        stackPane.getChildren().add(levelCompleteMenu);
     }
 
     private void loadNextLevel() {
         System.out.println("Loading next level!");
-        // load next level code here..
+        // load next level code here.
     }
 
     /**
