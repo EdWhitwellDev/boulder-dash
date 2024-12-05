@@ -2,35 +2,38 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 
-import javafx.animation.*;
-import javafx.geometry.Pos;
+import com.example.boulderdash.Actors.Falling.FallingObject;
+
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameManager extends Application {
-
     private List<Actor> deadActors = new ArrayList<>();
-    private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
-    private final Level level = new Level();
+    private Level level = new Level();
     private Player player;
     private Scene scene;
-    private final GridPane grid = new GridPane();
-    private final Pane transitionPane = new Pane();
+    private GridPane grid = new GridPane();
     private boolean dead = false;
     private boolean isPaused = false;
 
@@ -44,28 +47,15 @@ public class GameManager extends Application {
 
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
-        grid.setPadding(javafx.geometry.Insets.EMPTY);
+        grid.setPadding(new Insets(50));
 
 
-
-
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(grid);
-        stackPane.getChildren().add(transitionPane);
-        stackPane.setAlignment(Pos.CENTER);
-        stackPane.setPadding(javafx.geometry.Insets.EMPTY);
-
-
-
-        int rows = level.getRows();
-        int columns = level.getCols();
-
-        scene = new Scene(stackPane, columns*100, rows*100);  // width: 400, height: 400
+        scene = new Scene(grid, 1500, 1000);  // width: 400, height: 400
 
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
-        tickTimeline = new Timeline(new KeyFrame(Duration.millis(150), event -> tick()));
+        tickTimeline = new Timeline(new KeyFrame(Duration.millis(100), event -> tick()));
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
         //drawGame();
@@ -83,26 +73,11 @@ public class GameManager extends Application {
     public void killActor(Actor actor){
         deadActors.add(actor);
     }
-    public void addActor(Actor actor) {
-        newBorns.add(actor);
-    }
 
     private void removeActors(){
         for (Actor actor : deadActors){
             level.removeActor(actor);
         }
-        deadActors = new ArrayList<>();
-    }
-    private void createNewActors(){
-        level.addActors(newBorns);
-        newBorns = new ArrayList<>();
-    }
-
-    private final PlayerProfile playerProfile = new PlayerProfile("Player1", 1, 0);
-
-    private void openPlayerProfile(Stage stage) {
-        PlayerProfileScreen profileScreen = new PlayerProfileScreen(playerProfile);
-        profileScreen.show(stage);
     }
 
     public void drawGame(){
@@ -112,9 +87,6 @@ public class GameManager extends Application {
         int rows = level.getRows();
         int columns = level.getCols();
 
-        Map<ImageView, Actor> actorsToAnimate= new HashMap<>();
-
-
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 // Create an ImageView for the image
@@ -122,55 +94,22 @@ public class GameManager extends Application {
                 StackPane stackPane = new StackPane();
                 ImageView imageView = new ImageView(tile.getImage());
 
-
                 // Optionally, resize the image to fit the grid cells
                 imageView.setFitWidth(100);  // Resize width
                 imageView.setFitHeight(100); // Resize height
 
-
                 stackPane.getChildren().add(imageView);
 
                 if (tile.isOccupied()) {
-                    Actor occupier = tile.getOccupier();
-                    ImageView actorImageView = new ImageView(occupier.getImage());
+                    ImageView actorImageView = new ImageView(tile.getOccupier().getImage());
                     actorImageView.setFitHeight(80);
                     actorImageView.setFitWidth(80);
-                    if (occupier.getIsTransferring()){
-                        // if the actor is transferring animate the transfer
-                        actorsToAnimate.put(actorImageView, occupier);   // add the actor to the offset map
-                        occupier.stopTransferring();
-
-
-                    } else {
-                        stackPane.getChildren().add(actorImageView);
-                    }
-
+                    stackPane.getChildren().add(actorImageView);
                 }
                 // Add the ImageView to the grid at the specified row and column
                 grid.add(stackPane, col, row);
-
             }
         }
-        transitionPane.getChildren().clear();
-        for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
-            ImageView actorImageView = entry.getKey();
-            Actor actor = entry.getValue();
-            Tile previousPosition = actor.getPreviousPosition();
-            Tile currentPosition = actor.getPosition();
-            actorImageView.setTranslateX(previousPosition.getColumn() * 100); // Set the initial X position
-            actorImageView.setTranslateY(previousPosition.getRow() * 100);
-            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), actorImageView);
-            translateTransition.setFromX(previousPosition.getColumn() * 100);
-            translateTransition.setFromY(previousPosition.getRow() * 100);
-            translateTransition.setToX(currentPosition.getColumn() * 100);
-            translateTransition.setToY(currentPosition.getRow() * 100);
-
-            translateTransition.play();
-            transitionPane.getChildren().add(actorImageView);
-            transitionPane.setPadding(javafx.geometry.Insets.EMPTY);
-
-        }
-
     }
 
     public void processKeyEvent(KeyEvent event) {
@@ -196,10 +135,7 @@ public class GameManager extends Application {
                 // Escape key was pressed, so the game will be paused.
                 togglePause();
                 break;
-            case P:
-                openPlayerProfile((Stage) grid.getScene().getWindow());
-                break;
-                default:
+            default:
                 // Do nothing for all other keys.
                 player.setDirection(Direction.STATIONARY);
                 break;
@@ -213,7 +149,6 @@ public class GameManager extends Application {
         if (isPaused) {
             tickTimeline.pause();  // pause game loop
             showPauseMenu();
-
         } else {
             tickTimeline.play();   // resume game loop
             hidePauseMenu();
@@ -224,15 +159,12 @@ public class GameManager extends Application {
             createPauseMenu();
         }
         if (!grid.getChildren().contains(pauseMenu)) {
-            // Dynamically calculate the position to center the menu
-            pauseMenu.setTranslateX((scene.getWidth() - pauseMenu.getWidth()) / 2);
-            pauseMenu.setTranslateY((scene.getHeight() - pauseMenu.getHeight()) / 2);
+            // centres the pause menu ( total dimensions / 2 )
+            pauseMenu.setTranslateX((scene.getWidth() - 200) / 2);
+            pauseMenu.setTranslateY((scene.getHeight() - 200) / 2);
             grid.getChildren().add(pauseMenu);
-
         }
     }
-
-
 
     private void hidePauseMenu() {
         if (pauseMenu != null) {
@@ -243,31 +175,26 @@ public class GameManager extends Application {
     private VBox pauseMenu;
 
     private void createPauseMenu() {
-        pauseMenu = new VBox(5);
+        pauseMenu = new VBox(15);
         // background color of the pause menu
-        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 5;");
+        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 10;");
 
         Button resumeButton = new Button("Resume");
-        Button profileButton = new Button("Player Profile");
         Button saveButton = new Button("Save Game");
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Exit Game");
 
-
         resumeButton.setOnAction(e -> togglePause());
         saveButton.setOnAction(e -> saveGame());
         loadButton.setOnAction(e -> loadGame());
-        profileButton.setOnAction(e -> openPlayerProfile((Stage) grid.getScene().getWindow()));
         exitButton.setOnAction(e -> exitGame());
 
-        //centres buttons to pauseMenu Vbox
-        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, profileButton, exitButton);
+        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
         pauseMenu.setTranslateX(scene.getWidth()/ 2 );
         pauseMenu.setTranslateY(scene.getHeight()/ 2 );
 
-        // this changes background pane size of pauseMenu
         GridPane.setColumnSpan(pauseMenu, 1);
-        GridPane.setRowSpan(pauseMenu, 1);
+        GridPane.setRowSpan(pauseMenu, 2);
         GridPane.setHalignment(pauseMenu, javafx.geometry.HPos.CENTER);
         GridPane.setValignment(pauseMenu, javafx.geometry.VPos.CENTER);
 
@@ -290,9 +217,11 @@ public class GameManager extends Application {
         stage.close();
     }
 
+
+
+
     public void tick() {
         removeActors();
-        createNewActors();
         drawGame();
 
         if (!dead) {
@@ -304,12 +233,18 @@ public class GameManager extends Application {
 
     }
 
+    public Timeline getTickTimeline(){
+        return tickTimeline;
+    }
+
     public void looseGame(){
+
         dead = true;
+
     }
 
     public void winGame(){
-        dead = true;
+        // do something
     }
 
 
