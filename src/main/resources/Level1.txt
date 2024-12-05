@@ -12,6 +12,9 @@ T,T,T,N,N,P,P,N,P,T
 T,T,T,N,N,M,D,E,P,T
 T,T,T,T,T,T,T,T,T,T
 [ACTORS]
+D,2,4
+D,2,5
+D,2,6
 P,1,1
 F,1,8,true,UP
 A,5,5,1

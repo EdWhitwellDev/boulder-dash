@@ -1,6 +1,7 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
 
@@ -17,6 +18,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -59,6 +61,7 @@ public class GameManager extends Application {
     private final float tickTime = 0.1f;
     private boolean dead = false;
     private boolean isPaused = false;
+    private VBox levelCompleteMenu;
 
     @Override
     public void start(Stage primaryStage) {
@@ -106,6 +109,8 @@ public class GameManager extends Application {
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(infoBar);
         stackPane.getChildren().addAll(grid, transitionPane, borderPane);
+
+
 
 
         int rows = level.getRows();
@@ -267,6 +272,10 @@ public class GameManager extends Application {
 
 
     private void togglePause() {
+        // ensure you can't pause while gameOver screen is up
+        if (dead) {
+            return;
+        }
         isPaused = !isPaused;
         if (isPaused) {
             tickTimeline.pause(); // Stops the game loop
@@ -361,8 +370,13 @@ public class GameManager extends Application {
             }
         }
 
+        if (player.getDiamondsCollected() >= level.getDiamondsRequired()) {
+            winGame();
+        }
+
         if (timeElapsed > level.getTimeLimit()){
             looseGame();
+
         }
     }
 
@@ -415,12 +429,50 @@ public class GameManager extends Application {
 
 
 
+
+
     /**
      * Ends the current level
      */
     public void winGame() {
-        Text gameOverText = new Text("Level Complete");
-        gameOverText.setFont(new Font("Arial", 75));
+        dead = true;
+        tickTimeline.stop();
+        showLevelCompleteScreen();
+    }
+
+    private void showLevelCompleteScreen() {
+        if (levelCompleteMenu == null) {
+            levelCompleteMenu = new VBox(20);
+            levelCompleteMenu.setStyle("-fx-background-color: grey; " +
+                    "-fx-text-fill: green; -fx-font-size: 12;" +
+                    "-fx-font-family: monospace;" +
+                    "-fx-alignment: center;" +
+                    "-fx-border-width: 1");
+
+
+
+            Label messageLabel = new Label("Level Won!");
+            messageLabel.setStyle("-fx-text-fill: lightgreen; " +
+                    "-fx-font-size: 12; -fx-font-family: monospace;");
+
+            Button nextLevelButton = new Button("Next Level");
+            Button exitButton = new Button("Exit Game");
+
+            nextLevelButton.setOnAction(e -> loadNextLevel());
+            exitButton.setOnAction(e -> exitGame());
+            exitButton.setStyle("-fx-font-family: monospace");
+
+            levelCompleteMenu.getChildren().addAll(messageLabel, nextLevelButton, exitButton);
+        }
+
+        levelCompleteMenu.setTranslateX((scene.getWidth() - 200) / 2);
+        levelCompleteMenu.setTranslateY((scene.getHeight() - 200) / 2);
+        grid.getChildren().add(levelCompleteMenu);
+    }
+
+    private void loadNextLevel() {
+        System.out.println("Loading next level!");
+        // load next level code here..
     }
 
     /**
