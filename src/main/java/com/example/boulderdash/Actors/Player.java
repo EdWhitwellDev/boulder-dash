@@ -105,6 +105,12 @@ public class Player extends Actor {
     public void collectKey(KeyColours keyColour){
         keys.put(keyColour, keys.get(keyColour) + 1);
     }
+    public int getDiamondsCollected(){
+        return diamondsCollected;
+    }
+    public Map<KeyColours, Integer> getKeys(){
+        return keys;
+    }
 
 
 }

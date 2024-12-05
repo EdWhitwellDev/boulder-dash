@@ -242,6 +242,9 @@ public class Level {
     public int getDiamondsRequired(){
         return diamondsRequired;
     }
+    public int getTimeLimit(){
+        return timeLimit;
+    }
     public int getCols() {
         return cols;
     }
