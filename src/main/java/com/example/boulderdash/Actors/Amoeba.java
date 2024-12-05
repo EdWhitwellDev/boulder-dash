@@ -7,48 +7,62 @@ import javafx.scene.image.Image;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents an Amoeba in the Boulderdash game. The Amoeba grows into adjacent tiles
+ * at a specified growth rate. If blocked, it stops growing. It can transform into Diamonds.
+ */
 public class Amoeba extends Actor {
 
-    private int growthRate;       // Number of ticks required between growth attempts
-    private boolean isBlocked;    // True if the amoeba is surrounded and cannot grow
+    /** Number of ticks required between growth attempts. */
+    private int growthRate;
 
+    /** True if the Amoeba is surrounded and cannot grow. */
+    private boolean isBlocked;
+
+    /**
+     * Constructs an Amoeba with a starting tile and growth rate.
+     *
+     * @param startTile  The initial tile where the Amoeba starts.
+     * @param growthRate The number of ticks required between growth attempts.
+     */
     public Amoeba(Tile startTile, int growthRate) {
         super(startTile);  // Call the Actor constructor with the starting tile
-        this.image = new Image("amoeba.png");  // Set the amoeba image path
+        this.image = new Image("amoeba.png");  // Set the Amoeba image path
         this.growthRate = growthRate;
         this.tickCoolDown = growthRate;
         this.isBlocked = false;
     }
 
+    /**
+     * Handles the Amoeba's behavior during each game tick.
+     * If the tick cooldown is complete and the Amoeba is not blocked, it attempts to grow.
+     */
     @Override
     public void move() {
-        // Use tickCoolDown to control the growth rate
         if (tickCoolDown > 0) {
             tickCoolDown--;
             return;  // Wait until the cooldown reaches zero
         }
 
-        // If cooldown is over, attempt to grow
         if (!isBlocked) {
             grow();
         }
 
-        // Reset tick cooldown for the next growth cycle
         tickCoolDown = growthRate;
     }
 
+    /**
+     * Attempts to grow the Amoeba into a random adjacent tile.
+     * If no available tiles are found, marks the Amoeba as blocked.
+     */
     private void grow() {
         List<Tile> availableGrowthTiles = getAvailableGrowthTiles();
 
         if (availableGrowthTiles.isEmpty()) {
-            // If no available tiles, mark the amoeba as blocked
             isBlocked = true;
             System.out.println("Amoeba is blocked and can no longer grow!");
         } else {
-            // Choose a random tile to grow into
             Tile growthTile = availableGrowthTiles.get((int) (Math.random() * availableGrowthTiles.size()));
-
-            // Create a new Amoeba on the new tile using the correct constructor
             Amoeba newAmoeba = new Amoeba(growthTile, this.growthRate);
             growthTile.setOccupier(newAmoeba);
 
@@ -56,7 +70,11 @@ public class Amoeba extends Actor {
         }
     }
 
-    // Helper method to get all available tiles where the amoeba can grow
+    /**
+     * Retrieves a list of adjacent tiles where the Amoeba can grow.
+     *
+     * @return A list of tiles that are valid for Amoeba growth.
+     */
     private List<Tile> getAvailableGrowthTiles() {
         List<Tile> availableTiles = new ArrayList<>();
         Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
@@ -69,22 +87,32 @@ public class Amoeba extends Actor {
         return availableTiles;
     }
 
-    // Determine if the amoeba can grow into a particular tile
+    /**
+     * Checks if the Amoeba can grow into a specified tile.
+     *
+     * @param tile The tile to check.
+     * @return True if the tile is valid for growth, false otherwise.
+     */
     private boolean canGrowInto(Tile tile) {
-        return !tile.isOccupied() || tile.getOccupier() instanceof Player;
+        return tile != null && (!tile.isOccupied() || tile.getOccupier() instanceof Player);
     }
 
-    // Method to transform all amoebas into diamonds
+    /**
+     * Transforms the Amoeba into a Diamond on its current tile.
+     */
     public void transformToDiamonds() {
         System.out.println("Amoeba transforming into diamonds!");
-
-        // Replace the amoeba in the current tile with a Diamond
         position.setOccupier(new Diamond(position));
     }
 
+    /**
+     * Overrides the changePos method from the Actor class.
+     * Amoebas do not move like other actors, so this method does nothing.
+     *
+     * @param nextPos The tile to move to (not used).
+     */
     @Override
     public void changePos(Tile nextPos) {
         // Amoeba does not "move" like normal actors; instead, it grows
-        // This method should not be used directly but is inherited from Actor
     }
 }

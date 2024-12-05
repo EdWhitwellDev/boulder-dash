@@ -14,3 +14,4 @@ T,T,T,T,T,T,T,T,T,T
 [ACTORS]
 P,1,1
 F,1,8,true,UP
+A,5,5,1
