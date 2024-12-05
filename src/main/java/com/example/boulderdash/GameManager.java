@@ -3,6 +3,7 @@ package com.example.boulderdash;
 import com.example.boulderdash.Actors.Actor;
 
 import javafx.animation.*;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import com.example.boulderdash.Actors.Player;
@@ -43,11 +44,18 @@ public class GameManager extends Application {
 
         grid.setHgap(0);  // horizontal gap between cells
         grid.setVgap(0);
-        //grid.setPadding(new Insets(50));
+        grid.setPadding(javafx.geometry.Insets.EMPTY);
+
+
+
 
         StackPane stackPane = new StackPane();
         stackPane.getChildren().add(grid);
         stackPane.getChildren().add(transitionPane);
+        stackPane.setAlignment(Pos.CENTER);
+        stackPane.setPadding(javafx.geometry.Insets.EMPTY);
+
+
 
         int rows = level.getRows();
         int columns = level.getCols();
@@ -90,6 +98,13 @@ public class GameManager extends Application {
         newBorns = new ArrayList<>();
     }
 
+    private PlayerProfile playerProfile = new PlayerProfile("Player1", 1, 0);
+
+    private void openPlayerProfile(Stage stage) {
+        PlayerProfileScreen profileScreen = new PlayerProfileScreen(playerProfile);
+        profileScreen.show(stage);
+    }
+
     public void drawGame(){
         grid.getChildren().clear(); // Clears the grid first
 
@@ -107,9 +122,11 @@ public class GameManager extends Application {
                 StackPane stackPane = new StackPane();
                 ImageView imageView = new ImageView(tile.getImage());
 
+
                 // Optionally, resize the image to fit the grid cells
                 imageView.setFitWidth(100);  // Resize width
                 imageView.setFitHeight(100); // Resize height
+
 
                 stackPane.getChildren().add(imageView);
 
@@ -131,6 +148,7 @@ public class GameManager extends Application {
                 }
                 // Add the ImageView to the grid at the specified row and column
                 grid.add(stackPane, col, row);
+
             }
         }
         transitionPane.getChildren().clear();
@@ -149,6 +167,8 @@ public class GameManager extends Application {
 
             translateTransition.play();
             transitionPane.getChildren().add(actorImageView);
+            transitionPane.setPadding(javafx.geometry.Insets.EMPTY);
+
         }
 
     }
@@ -176,7 +196,10 @@ public class GameManager extends Application {
                 // Escape key was pressed, so the game will be paused.
                 togglePause();
                 break;
-            default:
+            case P:
+                openPlayerProfile((Stage) grid.getScene().getWindow());
+                break;
+                default:
                 // Do nothing for all other keys.
                 player.setDirection(Direction.STATIONARY);
                 break;
@@ -190,6 +213,7 @@ public class GameManager extends Application {
         if (isPaused) {
             tickTimeline.pause();  // pause game loop
             showPauseMenu();
+
         } else {
             tickTimeline.play();   // resume game loop
             hidePauseMenu();
@@ -200,12 +224,15 @@ public class GameManager extends Application {
             createPauseMenu();
         }
         if (!grid.getChildren().contains(pauseMenu)) {
-            // centres the pause menu ( total dimensions / 2 )
-            pauseMenu.setTranslateX((scene.getWidth() - 200) / 2);
-            pauseMenu.setTranslateY((scene.getHeight() - 200) / 2);
+            // Dynamically calculate the position to center the menu
+            pauseMenu.setTranslateX((scene.getWidth() - pauseMenu.getWidth()) / 2);
+            pauseMenu.setTranslateY((scene.getHeight() - pauseMenu.getHeight()) / 2);
             grid.getChildren().add(pauseMenu);
+
         }
     }
+
+
 
     private void hidePauseMenu() {
         if (pauseMenu != null) {
@@ -216,28 +243,31 @@ public class GameManager extends Application {
     private VBox pauseMenu;
 
     private void createPauseMenu() {
-        pauseMenu = new VBox(15);
+        pauseMenu = new VBox(3);
         // background color of the pause menu
         pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 10;");
 
         Button resumeButton = new Button("Resume");
+        Button profileButton = new Button("Player Profile");
         Button saveButton = new Button("Save Game");
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Exit Game");
 
+
         resumeButton.setOnAction(e -> togglePause());
         saveButton.setOnAction(e -> saveGame());
         loadButton.setOnAction(e -> loadGame());
+        profileButton.setOnAction(e -> openPlayerProfile((Stage) grid.getScene().getWindow()));
         exitButton.setOnAction(e -> exitGame());
 
         //centres buttons to pauseMenu Vbox
-        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
+        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, profileButton, exitButton);
         pauseMenu.setTranslateX(scene.getWidth()/ 2 );
         pauseMenu.setTranslateY(scene.getHeight()/ 2 );
 
         // this changes background pane size of pauseMenu
-        GridPane.setColumnSpan(pauseMenu, 1);
-        GridPane.setRowSpan(pauseMenu, 2);
+        GridPane.setColumnSpan(pauseMenu, 2);
+        GridPane.setRowSpan(pauseMenu, 1);
         GridPane.setHalignment(pauseMenu, javafx.geometry.HPos.CENTER);
         GridPane.setValignment(pauseMenu, javafx.geometry.VPos.CENTER);
 
@@ -281,6 +311,7 @@ public class GameManager extends Application {
     public void winGame(){
         dead = true;
     }
+
 
     public static void main(String[] args) {
         // Launch the JavaFX application
