@@ -92,7 +92,7 @@ public class Tile {
 
         if (up != null){
             if (up.isOccupied()){
-                 adjacentActors.add(up.getOccupier());
+                adjacentActors.add(up.getOccupier());
             }
         }
         if (down != null){
