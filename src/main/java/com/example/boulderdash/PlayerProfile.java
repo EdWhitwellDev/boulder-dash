@@ -48,7 +48,7 @@ public class PlayerProfile {
 
     public class PlayerProfileScreen {
 
-        private final PlayerProfile playerProfile;
+        private static PlayerProfile playerProfile;
 
         public PlayerProfileScreen(PlayerProfile playerProfile) {
             this.playerProfile = playerProfile;

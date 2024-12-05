@@ -243,9 +243,9 @@ public class GameManager extends Application {
     private VBox pauseMenu;
 
     private void createPauseMenu() {
-        pauseMenu = new VBox(3);
+        pauseMenu = new VBox(5);
         // background color of the pause menu
-        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 10;");
+        pauseMenu.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-padding: 5;");
 
         Button resumeButton = new Button("Resume");
         Button profileButton = new Button("Player Profile");
@@ -266,7 +266,7 @@ public class GameManager extends Application {
         pauseMenu.setTranslateY(scene.getHeight()/ 2 );
 
         // this changes background pane size of pauseMenu
-        GridPane.setColumnSpan(pauseMenu, 2);
+        GridPane.setColumnSpan(pauseMenu, 1);
         GridPane.setRowSpan(pauseMenu, 1);
         GridPane.setHalignment(pauseMenu, javafx.geometry.HPos.CENTER);
         GridPane.setValignment(pauseMenu, javafx.geometry.VPos.CENTER);
