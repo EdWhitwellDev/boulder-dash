@@ -1,7 +1,7 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
-import javafx.geometry.Pos;
+
 import javafx.scene.control.Label;
 
 
@@ -18,7 +18,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
