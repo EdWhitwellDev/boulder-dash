@@ -78,9 +78,9 @@ public class Actor {
         if (!collisionOther.isEmpty()) {
             for (Actor collider : collisionOther) {
                 if (collider instanceof Enemy && this instanceof Player) {
-                    GameState.manager.loseGame();
+                    GameState.manager.looseGame();
                 } else if (this instanceof Enemy && collider instanceof Player) {
-                    GameState.manager.loseGame();
+                    GameState.manager.looseGame();
                 }
             }
         }
