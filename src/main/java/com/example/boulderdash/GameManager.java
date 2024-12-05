@@ -492,7 +492,10 @@ public class GameManager extends Application {
 
     private void loadNextLevel() {
         System.out.println("Loading next level!");
-        // load next level code here.
+        level = new Level();
+        player = level.getPlayer();
+        timeElapsed = 0;
+        GameState.setupSate(level, player, this);
     }
 
     /**
