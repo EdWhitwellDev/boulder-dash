@@ -5,7 +5,6 @@ import com.example.boulderdash.Actors.Player;
 import javafx.scene.image.Image;
 
 public class Floor extends Tile{
-    private boolean isPath;
     public Floor(int row, int col, boolean isPath) {
         super(row, col, isPath);
         this.isPath = isPath;
@@ -19,5 +18,10 @@ public class Floor extends Tile{
             isPath = true;
             image = new Image("path.png");
         }
+
+    }
+
+    public boolean getIsPath(){
+        return isPath;
     }
 }

@@ -1,9 +1,11 @@
 package com.example.boulderdash.Tiles;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Tile {
@@ -14,9 +16,11 @@ public class Tile {
     protected Image image;
     protected int row;
     protected int column;
+    protected boolean isPath = false;
     private boolean occupied = false;
+
     private Actor occupier;
-    private boolean isPath;
+
 
     public Tile(int row, int col, boolean isPath){
         this.row = row;
@@ -37,10 +41,6 @@ public class Tile {
         return occupier != null;
     }
 
-    public boolean isPath() {
-        return isPath;
-    }
-
     public int getRow() {
         return row;
     }
@@ -48,6 +48,7 @@ public class Tile {
     public int getColumn() {
         return column;
     }
+    public boolean isPath() { return isPath; }
 
     public Tile getUp() {
         return up;
@@ -81,36 +82,74 @@ public class Tile {
         this.up = up;
     }
 
-    public void setOccupied(boolean occupy){
-        occupied = occupy;
-    }
-
     public void setOccupier(Actor occupier){
         this.occupier = occupier;
+        occupied = occupier != null;
     }
 
-    public Actor checkAdjacent(){
+    public List<Actor> checkAdjacent(){
+        List<Actor> adjacentActors = new ArrayList<>();
+
         if (up != null){
             if (up.isOccupied()){
-                return up.getOccupier();
+                adjacentActors.add(up.getOccupier());
             }
         }
         if (down != null){
             if (down.isOccupied()){
-                return down.getOccupier();
+                adjacentActors.add(down.getOccupier());
             }
         }
         if (left != null){
             if (left.isOccupied()){
-                return left.getOccupier();
+                adjacentActors.add(left.getOccupier());
             }
         }
         if (right != null){
             if (right.isOccupied()){
-                return right.getOccupier();
+                adjacentActors.add(right.getOccupier());
             }
         }
-        return null;
+        return adjacentActors;
+    }
+
+    public List<Tile> adjacentPaths(){
+        List<Tile> paths = new ArrayList<>();
+        if (up != null){
+            if (up.isPath() && !up.isOccupied()){
+                paths.add(up);
+            }
+        }
+        if (down != null){
+            if (down.isPath()  && !down.isOccupied()){
+                paths.add(down);
+            }
+        }
+        if (left != null){
+            if (left.isPath()  && !left.isOccupied()){
+                paths.add(left);
+            }
+        }
+        if (right != null){
+            if (right.isPath()  && !right.isOccupied()){
+                paths.add(right);
+            }
+        }
+        return paths;
+    }
+
+    public List<Tile> getAdjacentHorizontal(){
+        return List.of(new Tile[]{left, this, right});
+    }
+    public List<Tile> get3x3(){
+        List<Tile> surrounding = new ArrayList<>(this.getAdjacentHorizontal());
+        if (up != null) {
+            surrounding.addAll(up.getAdjacentHorizontal());
+        }
+        if (down != null) {
+            surrounding.addAll(down.getAdjacentHorizontal());
+        }
+        return surrounding;
     }
 
     // Returns corresponding tile (Needed to push boulder in certain directions)
@@ -130,11 +169,15 @@ public class Tile {
     }
 
     // Turns tile into path (e.g when an explosion happens)
-    public void destroy() {
-        if (isOccupied()) {
-            occupier.setPosition(null);
+    public Tile destroy() {
+        if (occupier != null) {
+            GameState.manager.killActor(occupier);
         }
-        isPath = true;
-        occupier = null;
+
+        Tile remains = new Floor(row, column, true);
+        GameState.level.replaceTile(remains, this);
+        return remains;
     }
+
+
 }

@@ -1,18 +1,34 @@
 package com.example.boulderdash.Actors.Falling;
 
+import com.example.boulderdash.GameState;
+import com.example.boulderdash.Tiles.MagicWall;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
-public class Boulder extends FallingObject{
+/**
+ * Represents an instance of a Boulder.
+ * Boulders are falling objects that can block or kill the player or enemies.
+ * @author Viraj Shah
+ * @version 1.3
+ */
 
-    private boolean isPushed = false;
+public class Boulder extends FallingObject {
 
+    /**
+     * Constructor for a boulder at a specific tile.
+     * @param startPosition is the initial {@link Tile} position of the boulder.
+     */
     public Boulder(Tile startPosition) {
         super(startPosition);
         image = new Image("boulder.png");
     }
 
+    /**
+     * Pushes the boulder in the specified direction.
+     * @param direction the {@link Direction} to push the boulder to.
+     * @return {@code True} if the boulder has been pushed.
+     */
     public boolean push(Direction direction) {
         Tile nextTile = position.getNeighbour(direction); // Gets a direction to push to
 
@@ -24,36 +40,34 @@ public class Boulder extends FallingObject{
         return false;
     }
 
-    public Diamond transformToDiamond() {
-        return new Diamond(position);
+    /**
+     * Transforms and removes the boulder into a {@link Diamond} when interacting with a {@link MagicWall}
+     */
+    @Override
+    public void transform() {
+        GameState.manager.killActor(this);
+        GameState.manager.addActor(new Diamond(position));
     }
 
-    public void fall(Tile[][] grid) {
-        super.fall(grid);
-        if (!isFalling) {
-            roll();
+    /**
+     * Handles the falling and rolling of the boulder.
+     */
+    @Override
+    public void move() {
+        if (!exploded) {
+            super.fall();
+            if (!isFalling) {
+                roll();
+            }
         }
     }
 
-    private void roll() {
-        Tile leftTile = position.getLeft();
-        Tile rightTile = position.getRight();
-
-        if (isAbleToRollTo(leftTile)) {
-            setPosition(leftTile);
-        } else if (isAbleToRollTo(rightTile)) {
-            setPosition(rightTile);
-        }
-    }
-
-    // Helper for push()
+    /**
+     * Handles the pushing behaviour.
+     * @param tile is the {@link Tile} to check if it can be occupied.
+     * @return {@code True} if the boulder can be pushed to the tile.
+     */
     private boolean isAbleToPushTo(Tile tile) {
         return tile != null && tile.isPath() && !tile.isOccupied();
-    }
-
-    // Helper for roll()
-    private boolean isAbleToRollTo(Tile tile) {
-        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
-                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 }
