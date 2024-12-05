@@ -98,7 +98,7 @@ public class GameManager extends Application {
         newBorns = new ArrayList<>();
     }
 
-    private PlayerProfile playerProfile = new PlayerProfile("Player1", 1, 0);
+    private final PlayerProfile playerProfile = new PlayerProfile("Player1", 1, 0);
 
     private void openPlayerProfile(Stage stage) {
         PlayerProfileScreen profileScreen = new PlayerProfileScreen(playerProfile);
