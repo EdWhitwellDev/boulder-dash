@@ -61,6 +61,12 @@ public class GameManager extends Application {
     private boolean dead = false;
     private boolean isPaused = false;
 
+    private Stage primaryStage;
+    private Scene homeScene;
+    private VBox homeScreen;
+    private Label titleLabel;
+    private List<Integer> highScores;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -135,6 +141,85 @@ public class GameManager extends Application {
 
         // Show the window
         primaryStage.show();
+
+        // Show the window
+        primaryStage.show();
+
+        this.primaryStage = primaryStage;
+        highScores = new ArrayList<>();
+
+        setupHomeScreen();
+
+        primaryStage.setTitle("Boulder Dash");
+        primaryStage.setScene(homeScene);
+        primaryStage.show();
+    }
+
+    private void setupHomeScreen() {
+        homeScreen = new VBox(20);
+        homeScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        // Add a logo
+        ImageView logo = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
+        logo.setFitHeight(200);
+        logo.setFitWidth(400);
+
+        // Add a title label
+        titleLabel = new Label("PRESS START TO PLAY");
+        titleLabel.setFont(new Font("Ariel", 40));
+        titleLabel.setStyle("-fx-text-fill: white;");
+
+        // Start Game button
+        Button startButton = new Button("Start");
+        startButton.setFont(new Font("Arial", 20));
+        startButton.setOnAction(e -> startNewGame());
+
+        // Load Game button
+        Button loadButton = new Button("Load Game");
+        loadButton.setFont(new Font("Arial", 20));
+
+        // High Score Table
+        Label highScoreLabel = new Label("High Scores:");
+        highScoreLabel.setFont(new Font("Arial", 25));
+        highScoreLabel.setStyle("-fx-text-fill: white;");
+
+        VBox highScoreBoard = createHighScoreBoard();
+
+        homeScreen.getChildren().addAll(logo, titleLabel, startButton, loadButton, highScoreLabel, highScoreBoard);
+        homeScene = new Scene(homeScreen, 600, 600);
+    }
+
+    // High scoreboard
+    private VBox createHighScoreBoard() {
+        VBox highScoreBoard = new VBox(10); // Vertical spacing between scores
+        highScoreBoard.setStyle("-fx-padding: 10; -fx-alignment: center;");
+
+        if (highScores.isEmpty()) {
+            Label noScoresLabel = new Label("No score yet!");
+            noScoresLabel.setFont(new Font("Arial", 18));
+            noScoresLabel.setStyle("-fx-text-fill: grey;");
+            highScoreBoard.getChildren().add(noScoresLabel);
+        } else {
+            for (int i = 0; i < highScores.size(); i++) {
+                Label scoreLabel = new Label((i + 1) + ". " + highScores.get(i));
+                scoreLabel.setFont(new Font("Arial", 18));
+                scoreLabel.setStyle("-fx-text-fill: white;");
+                highScoreBoard.getChildren().add(scoreLabel);
+            }
+        }
+
+        return highScoreBoard;
+    }
+
+    private void startNewGame() {
+        level = new Level();
+        player = level.getPlayer();
+        timeElapsed = 0;
+
+        GameState.setupSate(level, player, this);
+
+        drawGame();
+        primaryStage.setScene(scene);
     }
 
     /**
