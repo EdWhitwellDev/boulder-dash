@@ -1,30 +1,28 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
-import com.example.boulderdash.Actors.Falling.FallingObject;
+
+
+import com.example.boulderdash.enums.KeyColours;
+import javafx.animation.*;
 
 import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.*;
+
 
 /**
  * Main controller for the game. This class handles game initialisation,
@@ -32,34 +30,90 @@ import java.util.List;
  */
 public class GameManager extends Application {
 
-    private List<Actor> deadActors = new ArrayList<>(); // Stores actors marked for removal
-    private Timeline tickTimeline; // Controls the game loop
-    private Level level = new Level(); // Represents the current level
-    private Player player; // Reference to the player object
-    private Scene scene; // Main game scene
-    private GridPane grid = new GridPane(); // Grid layout for rendering tiles and actors
-    private boolean dead = false; // Checks if the player is dead
-    private boolean isPaused = false; // Checks if the game is paused
-    private VBox pauseMenu; // Pause UI
+
+    private List<Actor> deadActors = new ArrayList<>();
+    private List<Actor> newBorns = new ArrayList<>();
+    private Timeline tickTimeline;
+    private Level level;
+    private Player player;
+    private Scene scene;
+    private final GridPane grid = new GridPane();
+    private final Pane transitionPane = new Pane();
+    private final HBox infoBar = new HBox(20);
+    private final Label timeLabel = new Label();
+    private final Label diamondsLabel = new Label();
+    private final Label keyLabelBlue = new Label();
+    private final Label keyLabelRed = new Label();
+    private final Label keyLabelGreen = new Label();
+    private final Label keyLabelYellow = new Label();
+    private static final ImageView diamondCountIcon = new ImageView(new Image("diamond.png"));
+    private static final ImageView clockIcon = new ImageView(new Image("clock.png"));
+    private static final ImageView keyIconBlue = new ImageView(new Image("blue_key_icon.png"));
+    private static final ImageView keyIconRed = new ImageView(new Image("red_key_icon.png"));
+    private static final ImageView keyIconGreen = new ImageView(new Image("green_key_icon.png"));
+    private static final ImageView keyIconYellow = new ImageView(new Image("yellow_key_icon.png"));
+    private float timeElapsed;
+    private final float tickTime = 0.1f;
+    private boolean dead = false;
+    private boolean isPaused = false;
 
     @Override
     public void start(Stage primaryStage) {
-
-        // Initialise player and level state
+        level = new Level();
         player = level.getPlayer();
+        timeElapsed = 0;
+
+
+
         GameState.setupSate(level, player, this);
 
         // Create grid layout for the game board
         grid.setHgap(0);
         grid.setVgap(0);
-        grid.setPadding(new Insets(50));
 
-        // Create the main game scene
-        scene = new Scene(grid, 1500, 1000);
-        scene.setOnKeyPressed(this::processKeyEvent); // Handles key presses
+        diamondCountIcon.setFitHeight(50);
+        diamondCountIcon.setFitWidth(50);
+        clockIcon.setFitHeight(50);
+        clockIcon.setFitWidth(40);
+        keyIconBlue.setFitHeight(50);
+        keyIconBlue.setFitWidth(50);
+        keyIconRed.setFitHeight(50);
+        keyIconRed.setFitWidth(50);
+        keyIconGreen.setFitHeight(50);
+        keyIconGreen.setFitWidth(50);
+        keyIconYellow.setFitHeight(50);
+        keyIconYellow.setFitWidth(50);
+
+
+        infoBar.getChildren().addAll(clockIcon, timeLabel, diamondCountIcon, diamondsLabel, keyIconBlue, keyLabelBlue,
+                keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen, keyIconYellow, keyLabelYellow);
+        infoBar.setPrefHeight(70);
+        infoBar.setAlignment(javafx.geometry.Pos.CENTER);
+        infoBar.setStyle("-fx-padding: 10; -fx-background-color: #333; -fx-text-fill: white;");
+        timeLabel.setStyle("-fx-text-fill: white;");
+        diamondsLabel.setStyle("-fx-text-fill: white;");
+        keyLabelBlue.setStyle("-fx-text-fill: white;");
+        keyLabelRed.setStyle("-fx-text-fill: white;");
+        keyLabelGreen.setStyle("-fx-text-fill: white;");
+        keyLabelYellow.setStyle("-fx-text-fill: white;");
+        diamondCountIcon.setStyle("-fx-padding: 10;");
+
+
+        StackPane stackPane = new StackPane();
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(infoBar);
+        stackPane.getChildren().addAll(grid, transitionPane, borderPane);
+
+        int rows = level.getRows();
+        int columns = level.getCols();
+
+        scene = new Scene(stackPane, columns*100, rows*100);  // width: 400, height: 400
+
+        scene.setOnKeyPressed(this::processKeyEvent);
+
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
-        tickTimeline = new Timeline(new KeyFrame(Duration.millis(100), event -> tick()));
+        tickTimeline = new Timeline(new KeyFrame(Duration.seconds(tickTime), event -> tick()));
         tickTimeline.setCycleCount(Animation.INDEFINITE);
         tickTimeline.play();
 
@@ -74,6 +128,9 @@ public class GameManager extends Application {
     public void killActor(Actor actor) {
         deadActors.add(actor);
     }
+    public void addActor(Actor actor) {
+        newBorns.add(actor);
+    }
 
     /**
      * Removes all actors that have been marked for removal in the current game tick
@@ -82,21 +139,35 @@ public class GameManager extends Application {
         for (Actor actor : deadActors) {
             level.removeActor(actor);
         }
-        deadActors.clear();
+
+        deadActors = new ArrayList<>();
+    }
+    private void createNewActors(){
+        level.addActors(newBorns);
+        newBorns = new ArrayList<>();
     }
 
-    /**
-     * Draws the current state of the game on the grid
-     */
-    public void drawGame() {
-        grid.getChildren().clear(); // Clear the grid to redraw it
+    public void drawGame(){
+        timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
+        diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
+        keyLabelBlue.setText("x" + String.valueOf(player.getKeys().get(KeyColours.BLUE)));
+        keyLabelRed.setText("x" + String.valueOf(player.getKeys().get(KeyColours.RED)));
+        keyLabelGreen.setText("x" + String.valueOf(player.getKeys().get(KeyColours.GREEN)));
+        keyLabelYellow.setText("x" + String.valueOf(player.getKeys().get(KeyColours.YELLOW)));
+
+        grid.getChildren().clear(); // Clears the grid first
+
 
         // Retrieve the level's tiles and dimensions
         List<List<Tile>> tiles = level.getTiles();
         int rows = level.getRows();
         int columns = level.getCols();
 
+
+        Map<ImageView, Actor> actorsToAnimate= new HashMap<>();
+
         // Iterate through each tile and render it
+
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 Tile tile = tiles.get(row).get(col);
@@ -111,16 +182,44 @@ public class GameManager extends Application {
 
                 // If a tile is occupied, draw the actor occupying it
                 if (tile.isOccupied()) {
-                    ImageView actorImageView = new ImageView(tile.getOccupier().getImage());
+                    Actor occupier = tile.getOccupier();
+                    ImageView actorImageView = new ImageView(occupier.getImage());
                     actorImageView.setFitHeight(80);
                     actorImageView.setFitWidth(80);
-                    stackPane.getChildren().add(actorImageView);
+                    if (occupier.getIsTransferring()){
+                        // if the actor is transferring animate the transfer
+                        actorsToAnimate.put(actorImageView, occupier);   // add the actor to the offset map
+                        occupier.stopTransferring();
+
+
+                    } else {
+                        stackPane.getChildren().add(actorImageView);
+                    }
+
                 }
 
                 // Place the visual representation in the grid
                 grid.add(stackPane, col, row);
             }
         }
+        transitionPane.getChildren().clear();
+        for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
+            ImageView actorImageView = entry.getKey();
+            Actor actor = entry.getValue();
+            Tile previousPosition = actor.getPreviousPosition();
+            Tile currentPosition = actor.getPosition();
+            actorImageView.setTranslateX(previousPosition.getColumn() * 100); // Set the initial X position
+            actorImageView.setTranslateY(previousPosition.getRow() * 100);
+            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), actorImageView);
+            translateTransition.setFromX(previousPosition.getColumn() * 100);
+            translateTransition.setFromY(previousPosition.getRow() * 100);
+            translateTransition.setToX(currentPosition.getColumn() * 100);
+            translateTransition.setToY(currentPosition.getRow() * 100);
+
+            translateTransition.play();
+            transitionPane.getChildren().add(actorImageView);
+        }
+
     }
 
     /**
@@ -231,18 +330,30 @@ public class GameManager extends Application {
         stage.close();
     }
 
-    /**
+ 
+  /**
      * Updates the game state, processes actors' actions, and redraws the game screen
      * at each tick.
      */
     public void tick() {
-        removeActors(); // Remove any dead actors
-        drawGame(); // Redraw the grid
+        timeElapsed += tickTime;
+        removeActors();// Remove any dead actors
+        createNewActors();
+        drawGame();// Redraw the grid
+
+    public void tick() {
+        removeActors(); 
+        drawGame(); 
+
 
         if (!dead) {
             for (Actor actor : level.getActors()) {
                 actor.move(); // Move all active actors
             }
+        }
+
+        if (timeElapsed > level.getTimeLimit()){
+            looseGame();
         }
     }
 
@@ -268,6 +379,7 @@ public class GameManager extends Application {
      *
      * @param args command-line arguments
      */
+
     public static void main(String[] args) {
         launch(args);
     }

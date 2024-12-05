@@ -15,7 +15,9 @@ public class GameState {
     public static GameManager manager;
 
     // Current level being played
+
     public static Level level;
+
 
     // Player character in the game
     public static Player player;
