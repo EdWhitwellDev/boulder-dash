@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Enemy extends Actor {
     protected boolean crushed = false;
+    protected boolean buttery = false;
     public Enemy(Tile startPosition){
         super(startPosition);
     }
@@ -27,7 +28,7 @@ public class Enemy extends Actor {
         for (Tile tile : surroundingTiles){
             if (!(tile instanceof TitaniumWall)) {
                 Tile remains = tile.destroy();
-                Explosion explosion = new Explosion(remains);
+                Explosion explosion = new Explosion(remains, buttery);
                 GameState.manager.addActor(explosion);
             }
         }

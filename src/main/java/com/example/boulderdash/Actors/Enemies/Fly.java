@@ -26,7 +26,6 @@ public class Fly extends Enemy{
     );
     private static final int TICK_COOL_DOWN_RESET = 3;
     private final boolean rightHanded;
-    private final boolean buttery;
     private Direction handSide;
     private int tickCoolDown = 1;
     private int consecutiveTurning = 0;
@@ -121,7 +120,7 @@ public class Fly extends Enemy{
     }
 
     public void explode(){
-        Explosion explosion = new Explosion(position);
+        Explosion explosion = new Explosion(position, buttery);
         GameState.manager.addActor(explosion);
     }
 }
