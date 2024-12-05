@@ -473,6 +473,7 @@ public class GameManager extends Application {
             nextLevelButton.setLayoutX(60);
             nextLevelButton.setLayoutY(80);
 
+
             Button exitButton = new Button("Exit Game");
             exitButton.setStyle("-fx-background-color: grey; -fx-border-color: white darkgrey darkgrey white; " +
                     "-fx-border-width: 4; -fx-text-fill: white; -fx-font-family: monospace; -fx-font-size: 12; -fx-cursor: hand;");
