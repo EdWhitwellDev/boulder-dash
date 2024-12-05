@@ -25,7 +25,7 @@ public class GameManager extends Application {
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
-    private final Level level = new Level();
+    private Level level;
     private Player player;
     private Scene scene;
     private final GridPane grid = new GridPane();
@@ -35,7 +35,7 @@ public class GameManager extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
+        level = new Level();
         player = level.getPlayer();
 
 
