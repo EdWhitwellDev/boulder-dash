@@ -64,7 +64,6 @@ public class PlayerProfile {
             Button saveButton = new Button("Save");
             saveButton.setOnAction(event -> {
                 playerProfile.setName(nameField.getText());
-                // Save profile changes to file or database (if applicable)
                 System.out.println("Player Profile Updated!");
             });
 
