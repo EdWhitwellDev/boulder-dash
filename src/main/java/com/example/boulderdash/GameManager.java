@@ -149,6 +149,7 @@ public class GameManager extends Application {
         loadSelectedButton.setOnAction(e -> {
             String selectedGame = savedGamesList.getSelectionModel().getSelectedItem();
             if (selectedGame != null) {
+                System.out.println("Loading selected game: " + selectedGame);
                 loadSelectedGame(selectedGame);
             }
         });
@@ -166,14 +167,13 @@ public class GameManager extends Application {
 
     private List<String> loadSavedGames() {
         // Replace with logic to save actual saved games
-        return Arrays.asList("Game 1", "Game 2", "Game 3");
+        JSONObject savedGames = (JSONObject) userProfileObj.get("SavedLevels");
+        return new ArrayList<>(savedGames.keySet());
     }
 
     // Method to load the selected game
     private void loadSelectedGame(String gameName) {
-        System.out.println("Loading game: " + gameName);
-
-        // Implement
+        loadGame(gameName);
     }
 
 
@@ -479,7 +479,6 @@ public class GameManager extends Application {
 
         resumeButton.setOnAction(e -> togglePause());
         saveButton.setOnAction(e -> saveGame());
-        loadButton.setOnAction(e -> loadGame());
         exitButton.setOnAction(e -> exitGame());
 
         pauseMenu.setStyle("-fx-background-color: #333; -fx-padding: 20;");
@@ -514,10 +513,9 @@ public class GameManager extends Application {
     /**
      * Loads a previously saved game state
      */
-    private void loadGame() {
-        String currentSave = userProfileObj.get("CurrentLevelLoaded").toString();
-        if (!Objects.equals(currentSave, "")) {
-            level = new Level(currentUser, currentSave);
+    private void loadGame(String gameName) {
+        if (!Objects.equals(gameName, "")) {
+            level = new Level(currentUser, gameName);
             player = level.getPlayer();
             timeElapsed = 0;
             tileSize = level.getTileSize();

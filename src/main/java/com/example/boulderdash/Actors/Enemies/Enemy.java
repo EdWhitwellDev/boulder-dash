@@ -52,4 +52,10 @@ public class Enemy extends Actor {
             }
         }
     }
+
+    public void explodeSingle(){
+        Explosion explosion = new Explosion(position, false);
+        GameState.manager.addActor(explosion);
+        GameState.manager.killActor(this);
+    }
 }

@@ -27,5 +27,5 @@ B,2,4
 B,1,8
 B,3,5
 B,2,8
-BF,9,4,false,UP
+BF,9,4,true,UP
 R,8,8

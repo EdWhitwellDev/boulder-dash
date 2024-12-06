@@ -1,6 +1,8 @@
 package com.example.boulderdash.Actors.Enemies;
 
+import com.example.boulderdash.Actors.Explosion;
 import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;

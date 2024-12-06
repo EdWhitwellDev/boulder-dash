@@ -74,6 +74,8 @@ public class Actor {
                     GameState.manager.looseGame();
                 } else if (this instanceof Enemy && collider instanceof Player) {
                     GameState.manager.looseGame();
+                } else if (this instanceof Enemy && collider instanceof Amoeba) {
+                    ((Enemy) this).explodeSingle();
                 }
             }
         }

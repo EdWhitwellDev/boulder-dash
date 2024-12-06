@@ -1,6 +1,10 @@
 package com.example.boulderdash.Actors;
 
 import com.example.boulderdash.Actors.Falling.Diamond;
+import com.example.boulderdash.Actors.Falling.Boulder;
+import com.example.boulderdash.Actors.Falling.FallingObject;
+import com.example.boulderdash.GameState;
+import com.example.boulderdash.Tiles.Floor;
 import com.example.boulderdash.Tiles.Tile;
 import javafx.scene.image.Image;
 
@@ -12,12 +16,16 @@ import java.util.List;
  * at a specified growth rate. If blocked, it stops growing. It can transform into Diamonds.
  */
 public class Amoeba extends Actor {
+    private List<Amoeba> cluster = new ArrayList<>();
 
     /** Number of ticks required between growth attempts. */
     private int growthRate;
 
     /** True if the Amoeba is surrounded and cannot grow. */
     private boolean isBlocked;
+    private int maxSize = 5;
+    private boolean clusterLimitReached = false;
+    private boolean clusterGrown = false;
 
     /**
      * Constructs an Amoeba with a starting tile and growth rate.
@@ -43,8 +51,17 @@ public class Amoeba extends Actor {
             tickCoolDown--;
             return;  // Wait until the cooldown reaches zero
         }
-
-        if (!isBlocked) {
+        if (clusterLimitReached) {
+            return;
+        }
+        cluster = getAmoebaCluster(new ArrayList<>());
+        if (cluster.size() >= maxSize) {
+            for (Amoeba amoeba : cluster) {
+                amoeba.transform(new Boulder(amoeba.getPosition()));
+            }
+            return;
+        }
+        if (!isBlocked && !clusterGrown) {
             grow();
         }
 
@@ -65,7 +82,10 @@ public class Amoeba extends Actor {
             Tile growthTile = availableGrowthTiles.get((int) (Math.random() * availableGrowthTiles.size()));
             Amoeba newAmoeba = new Amoeba(growthTile, this.growthRate);
             growthTile.setOccupier(newAmoeba);
-
+            GameState.manager.addActor(newAmoeba);
+            for (Amoeba amoeba : cluster) {
+                amoeba.setClusterGrown(true);
+            }
             System.out.println("Amoeba grew to row " + growthTile.getRow() + ", column " + growthTile.getColumn());
         }
     }
@@ -80,11 +100,26 @@ public class Amoeba extends Actor {
         Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
 
         for (Tile tile : adjacentTiles) {
-            if (tile != null && canGrowInto(tile)) {
+            if (canGrowInto(tile)) {
                 availableTiles.add(tile);
             }
         }
         return availableTiles;
+    }
+
+    private List<Amoeba> getAmoebaCluster(List<Amoeba> cluster) {
+        if (cluster.contains(this)) {
+            return cluster;
+        }
+        cluster.add(this);
+        Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
+
+        for (Tile tile : adjacentTiles) {
+            if (tile != null && tile.isOccupied() && tile.getOccupier() instanceof Amoeba) {
+                ((Amoeba) tile.getOccupier()).getAmoebaCluster(cluster);
+            }
+        }
+        return cluster;
     }
 
     /**
@@ -94,27 +129,27 @@ public class Amoeba extends Actor {
      * @return True if the tile is valid for growth, false otherwise.
      */
     private boolean canGrowInto(Tile tile) {
-        return tile != null && (!tile.isOccupied() || tile.getOccupier() instanceof Player);
+        return tile != null && !tile.isOccupied() && tile.getClass() == Floor.class;
     }
 
     /**
      * Transforms the Amoeba into a Diamond on its current tile.
      */
-    public void transformToDiamonds() {
-        System.out.println("Amoeba transforming into diamonds!");
-        position.setOccupier(new Diamond(position));
+    public void transform(FallingObject fallingObject) {
+        clusterLimitReached = true;
+        position.setOccupier(fallingObject);
+        GameState.manager.addActor(fallingObject);
+        GameState.manager.killActor(this);
     }
 
-    /**
-     * Overrides the changePos method from the Actor class.
-     * Amoebas do not move like other actors, so this method does nothing.
-     *
-     * @param nextPos The tile to move to (not used).
-     */
-    @Override
-    public void changePos(Tile nextPos) {
-        // Amoeba does not "move" like normal actors; instead, it grows
+    public void setCluster(List<Amoeba> cluster) {
+        this.cluster = cluster;
     }
+
+    public void setClusterGrown(boolean clusterGrown) {
+        this.clusterGrown = clusterGrown;
+    }
+
     public String toString(){
         return "A" + "," + position.getRow() + "," + position.getColumn();
     }
