@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 import java.util.*;
 
 public class Frog extends Enemy{
-    private final Player player;
+    private Player player;
     private final static int TICK_COOL_DOWN_RESET = 16;
 
     private int tickCoolDown = 1;
@@ -20,6 +20,16 @@ public class Frog extends Enemy{
         super(startPosition);
         this.player = player;
         this.image = new Image("Actor Images/Frog/frog.png");
+    }
+
+    public Frog(Tile startPosition) {
+        super(startPosition);
+        this.player = null;
+        this.image = new Image("Actor Images/Frog/frog.png");
+    }
+
+    public void setPlayer(Player player){
+        this.player = player;
     }
 
     public void move(){

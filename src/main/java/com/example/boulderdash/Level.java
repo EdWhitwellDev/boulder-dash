@@ -216,6 +216,7 @@ public class Level {
     }
 
     private void readActors(List<String> actorStrings){
+        List<Frog> frogsWithoutPlayer = new ArrayList<>();
         for (String line : actorStrings) {
             String[] actorInfo = line.split(",");
 
@@ -229,6 +230,7 @@ public class Level {
             if (!startTile.isPath() && !actorType.equals("P")) {
                 continue;
             }
+
             switch (actorType) {
                 case "P":
                     actors.add(new Player(startTile));
@@ -249,7 +251,13 @@ public class Level {
                     actors.add(new Boulder(startTile));
                     break;
                 case "R":
-                    actors.add(new Frog(startTile, player));
+                    if (player != null) {
+                        actors.add(new Frog(startTile, player));
+                    } else {
+                        Frog frog = new Frog(startTile);
+                        actors.add(frog);
+                        frogsWithoutPlayer.add(frog);
+                    }
                     break;
                 default:
                     break;
@@ -258,6 +266,9 @@ public class Level {
         player = (Player) actors.stream().filter(actor -> actor instanceof Player).findFirst().orElse(null);
         if (player == null){
             throw new IllegalArgumentException("No player found");
+        }
+        for (Frog frog : frogsWithoutPlayer) {
+            frog.setPlayer(player);
         }
     }
 

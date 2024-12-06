@@ -1,0 +1,13 @@
+[WIN CONDITIONS]
+1,60,70
+[TILES]
+T,T,T,T,T,T
+T,D,P,E,P,T
+T,P,P,P,P,T
+T,D,N,P,P,T
+T,P,N,P,P,T
+T,T,T,T,T,T
+[ACTORS]
+P,4,3
+D,2,4
+R,2,2

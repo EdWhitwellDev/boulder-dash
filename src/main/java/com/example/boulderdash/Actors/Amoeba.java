@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Represents an Amoeba in the Boulderdash game. The Amoeba grows into adjacent tiles
@@ -51,21 +52,44 @@ public class Amoeba extends Actor {
             tickCoolDown--;
             return;  // Wait until the cooldown reaches zero
         }
-        if (clusterLimitReached) {
+        if (clusterGrown) {
+            clusterGrown = false;
+            tickCoolDown = growthRate;
             return;
         }
-        cluster = getAmoebaCluster(new ArrayList<>());
+
+        cluster = getAmoebaCluster(cluster);
+
         if (cluster.size() >= maxSize) {
-            for (Amoeba amoeba : cluster) {
-                amoeba.transform(new Boulder(amoeba.getPosition()));
+            for (Amoeba a : cluster) {
+                a.transform(true, position);
             }
             return;
         }
-        if (!isBlocked && !clusterGrown) {
-            grow();
+
+        List<Amoeba> unblockedCluster = new ArrayList<>();
+        for (Amoeba amoeba : cluster) {
+            if (!amoeba.isBlocked) {
+                unblockedCluster.add(amoeba);
+            }
         }
 
-        tickCoolDown = growthRate;
+        if (unblockedCluster.isEmpty()){
+            for (Amoeba a : cluster) {
+                a.transform(false, position);
+            }
+            return;
+        }
+
+        Random random = new Random();
+        int amoebaIndex = random.nextInt(unblockedCluster.size());
+        Amoeba amoeba = unblockedCluster.get(amoebaIndex);
+        amoeba.grow();
+
+        for (Amoeba a : cluster) {
+            a.setClusterGrown(true);
+        }
+
     }
 
     /**
@@ -83,10 +107,7 @@ public class Amoeba extends Actor {
             Amoeba newAmoeba = new Amoeba(growthTile, this.growthRate);
             growthTile.setOccupier(newAmoeba);
             GameState.manager.addActor(newAmoeba);
-            for (Amoeba amoeba : cluster) {
-                amoeba.setClusterGrown(true);
-            }
-            System.out.println("Amoeba grew to row " + growthTile.getRow() + ", column " + growthTile.getColumn());
+
         }
     }
 
@@ -107,11 +128,22 @@ public class Amoeba extends Actor {
         return availableTiles;
     }
 
+    private void isBlocked() {
+        isBlocked = true;
+        Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
+        for (Tile tile : adjacentTiles) {
+            if (tile != null && tile.getClass() == Floor.class && !tile.isOccupied()) {
+                isBlocked = false;
+            }
+        }
+    }
+
     private List<Amoeba> getAmoebaCluster(List<Amoeba> cluster) {
         if (cluster.contains(this)) {
             return cluster;
         }
         cluster.add(this);
+        isBlocked();
         Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
 
         for (Tile tile : adjacentTiles) {
@@ -135,15 +167,17 @@ public class Amoeba extends Actor {
     /**
      * Transforms the Amoeba into a Diamond on its current tile.
      */
-    public void transform(FallingObject fallingObject) {
+    public void transform(Boolean isBoulder, Tile position) {
         clusterLimitReached = true;
+        FallingObject fallingObject;
+        if (isBoulder) {
+            fallingObject = new Boulder(position);
+        } else {
+            fallingObject = new Diamond(position);
+        }
         position.setOccupier(fallingObject);
         GameState.manager.addActor(fallingObject);
         GameState.manager.killActor(this);
-    }
-
-    public void setCluster(List<Amoeba> cluster) {
-        this.cluster = cluster;
     }
 
     public void setClusterGrown(boolean clusterGrown) {
