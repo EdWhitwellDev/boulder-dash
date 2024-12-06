@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import com.example.boulderdash.enums.KeyColours;
 import javafx.animation.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import com.example.boulderdash.Actors.Player;
@@ -103,7 +104,7 @@ public class GameManager extends Application {
 
         // Add a title label
         titleLabel = new Label("PRESS START TO PLAY");
-        titleLabel.setFont(new Font("Ariel", 40));
+        titleLabel.setFont(new Font("Arial", 40));
         titleLabel.setStyle("-fx-text-fill: white;");
 
         // Start Game button
@@ -114,7 +115,7 @@ public class GameManager extends Application {
         // Load Game button
         Button loadButton = new Button("Load Game");
         loadButton.setFont(new Font("Arial", 20));
-        loadButton.setOnAction(e -> loadGame());
+        loadButton.setOnAction(e -> showSavedGamesScreen());
 
         // High Score Table
         Label highScoreLabel = new Label("High Scores:");
@@ -126,6 +127,53 @@ public class GameManager extends Application {
         homeScreen.getChildren().addAll(logo, titleLabel, startButton, loadButton, highScoreLabel, highScoreBoard);
         homeScene = new Scene(homeScreen, 600, 600);
     }
+
+    private void showSavedGamesScreen() {
+        VBox savedGamesScreen = new VBox(20);
+        savedGamesScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        Label savedGamesLabel = new Label("Select a Saved Game");
+        savedGamesLabel.setFont(new Font("Arial", 30));
+        savedGamesLabel.setStyle("-fx-text-fill: white;");
+
+        // ListView to display saved games
+        ListView<String> savedGamesList = new ListView<>();
+        savedGamesList.setPrefSize(400, 300);
+        savedGamesList.getItems().addAll(loadSavedGames()); // loadSavedGames() returns a list of saved games
+
+        // Load selected game button
+        Button loadSelectedButton = new Button("Load Selected Game");
+        loadSelectedButton.setFont(new Font("Arial", 20));
+        loadSelectedButton.setOnAction(e -> {
+            String selectedGame = savedGamesList.getSelectionModel().getSelectedItem();
+            if (selectedGame != null) {
+                loadSelectedGame(selectedGame);
+            }
+        });
+
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setFont(new Font("Arial", 20));
+        backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+
+        savedGamesScreen.getChildren().addAll(savedGamesLabel, savedGamesList, loadSelectedButton, backButton);
+
+        Scene savedGamesScene = new Scene(savedGamesScreen, 600, 600);
+        primaryStage.setScene(savedGamesScene);
+    }
+
+    private List<String> loadSavedGames() {
+        // Replace with logic to save actual saved games
+        return Arrays.asList("Game 1", "Game 2", "Game 3");
+    }
+
+    // Method to load the selected game
+    private void loadSelectedGame(String gameName) {
+        System.out.println("Loading game: " + gameName);
+
+        // Implement
+    }
+
 
     private void UIsetUp() {
         grid.setHgap(0);
