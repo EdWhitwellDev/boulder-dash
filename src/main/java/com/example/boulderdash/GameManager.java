@@ -584,6 +584,7 @@ public class GameManager extends Application {
             gameOverMenu.setPrefSize(scene.getWidth(), scene.getHeight());
 
             VBox gameOverBox = new VBox(20);
+            double buttonWidth = 150;
             gameOverBox.setAlignment(Pos.CENTER);
 
             Label messageLabel = new Label("Game Over!");
@@ -594,6 +595,7 @@ public class GameManager extends Application {
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
 
+
             Button exitButton = new Button("Exit Game");
             exitButton.setStyle("-fx-background-color: grey; " +
                     "-fx-border-color: white darkgrey darkgrey white; " +
@@ -601,9 +603,20 @@ public class GameManager extends Application {
                     "-fx-font-family: monospace; -fx-font-size: 16;" +
                     "-fx-cursor: hand;");
 
-            exitButton.setOnAction(e -> exitGame());
+            Button restartButton = new Button("Restart Game");
+            restartButton.setStyle("-fx-background-color: grey; " +
+                    "-fx-border-color: white darkgrey darkgrey white; " +
+                    "-fx-border-width: 4; -fx-text-fill: white; " +
+                    "-fx-font-family: monospace; -fx-font-size: 16;" +
+                    "-fx-cursor: hand;");
 
-            gameOverBox.getChildren().addAll(messageLabel, scoreBoard, exitButton);
+            restartButton.setPrefWidth(buttonWidth);
+            exitButton.setPrefWidth(buttonWidth);
+
+            exitButton.setOnAction(e -> exitGame());
+            restartButton.setOnAction(e -> restartGame());
+
+            gameOverBox.getChildren().addAll(messageLabel, scoreBoard, restartButton, exitButton);
             gameOverBox.setLayoutX(scene.getWidth() / 2 - gameOverBox.getPrefWidth() / 2);
             gameOverBox.setLayoutY(scene.getHeight() / 2 - gameOverBox.getPrefHeight() / 2);
 
@@ -612,6 +625,23 @@ public class GameManager extends Application {
 
         gameOverMenu.setPrefSize(scene.getWidth(), scene.getHeight());
         stackPane.getChildren().add(gameOverMenu);
+    }
+
+    private void restartGame() {
+        tickTimeline.stop();
+        dead = false;
+        timeElapsed = 0;
+
+        level = new Level(currentLevel);
+        player = level.getPlayer();  // maintain current level / player prof
+
+        GameState.setupSate(level, player, this);
+
+        stackPane.getChildren().remove(gameOverMenu);
+
+        drawGame();
+        tickTimeline.play();
+
     }
 
     /**
