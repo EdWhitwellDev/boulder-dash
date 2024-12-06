@@ -449,41 +449,42 @@ public class GameManager extends Application {
     private void createPauseMenu() {
         pauseMenu = new VBox(5);
         pauseMenu.setStyle("-fx-padding: 20;");
-        pauseMenu.setMaxSize(200,200);
+        pauseMenu.setMaxSize(250,200);
         pauseMenu.setAlignment(javafx.geometry.Pos.CENTER);
 
-
+        double buttonWidth = 150;
         String buttonStyle =  "-fx-border-color: white darkgrey darkgrey white;" +
                 "-fx-border-width: 4; -fx-text-fill: black; " +
                 "-fx-font-family: monospace; -fx-font-size: 12; " +
                 "-fx-cursor: hand;";
+
+
 
         Button resumeButton = new Button("Resume");
         Button saveButton = new Button("Save Game");
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Exit Game");
 
+
         resumeButton.setStyle(buttonStyle);
         saveButton.setStyle(buttonStyle);
         loadButton.setStyle(buttonStyle);
         exitButton.setStyle(buttonStyle);
 
-        resumeButton.setLayoutX(60);
-        resumeButton.setLayoutY(20);
-        saveButton.setLayoutX(60);
-        saveButton.setLayoutY(60);
-        loadButton.setLayoutX(60);
-        loadButton.setLayoutY(100);
-        exitButton.setLayoutX(60);
-        exitButton.setLayoutY(140);
+        resumeButton.setPrefWidth(buttonWidth);
+        saveButton.setPrefWidth(buttonWidth);
+        loadButton.setPrefWidth(buttonWidth);
+        exitButton.setPrefWidth(buttonWidth);
 
         resumeButton.setOnAction(e -> togglePause());
         saveButton.setOnAction(e -> saveGame());
         exitButton.setOnAction(e -> exitGame());
 
-        pauseMenu.setStyle("-fx-background-color: #333; -fx-padding: 20;");
+        pauseMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);" +
+                "-fx-padding: 20;");
 
         pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
+
     }
 
 
