@@ -29,6 +29,9 @@ public class Boulder extends FallingObject{
      * @return {@code True} if the boulder has been pushed.
      */
     public boolean push(Direction direction) {
+        if (direction != Direction.LEFT && direction != Direction.RIGHT) {
+            return false;
+        }
         Tile nextTile = position.getNeighbour(direction); // Gets a direction to push to
 
         // Checks if the next tile is a path and sets the position of boulder to that path
