@@ -628,16 +628,15 @@ public class GameManager extends Application {
     }
 
     private void restartGame() {
+        stackPane.getChildren().remove(gameOverMenu);
         tickTimeline.stop();
         dead = false;
         timeElapsed = 0;
-
         level = new Level(currentLevel);
         player = level.getPlayer();  // maintain current level / player prof
 
         GameState.setupSate(level, player, this);
 
-        stackPane.getChildren().remove(gameOverMenu);
 
         drawGame();
         tickTimeline.play();
