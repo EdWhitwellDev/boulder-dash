@@ -49,7 +49,7 @@ public class GameManager extends Application {
     StackPane stackPane = new StackPane();
     private final GridPane grid = new GridPane();
     private final Pane transitionPane = new Pane();
-    private HBox infoBar = new HBox(20);
+    private final HBox infoBar = new HBox(20);
     private final Label timeLabel = new Label();
     private final Label diamondsLabel = new Label();
     private final Label keyLabelBlue = new Label();
