@@ -77,7 +77,10 @@ public class GameManager extends Application {
     private JSONObject playerProfileObj;
     private JSONObject userProfileObj;
 
-
+    /**
+     * Starts the application, sets up home screen and displays it.
+     * @param primaryStage is the main stage of the application.
+     */
     @Override
     public void start(Stage primaryStage) {
         // Set the title of the window
@@ -95,6 +98,9 @@ public class GameManager extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Sets up the home screen with the UI.
+     */
     private void setupHomeScreen() {
         homeScreen = new VBox(20);
         homeScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
@@ -130,6 +136,9 @@ public class GameManager extends Application {
         homeScene = new Scene(homeScreen, 600, 600);
     }
 
+    /**
+     * Displays the saved games to the user, allowing them to choose between the save files.
+     */
     private void showSavedGamesScreen() {
         VBox savedGamesScreen = new VBox(20);
         savedGamesScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
@@ -165,18 +174,27 @@ public class GameManager extends Application {
         primaryStage.setScene(savedGamesScene);
     }
 
+    /**
+     * Loads the saved games for the user.
+     * @return the list of saved games.
+     */
     private List<String> loadSavedGames() {
         // Replace with logic to save actual saved games
         JSONObject savedGames = (JSONObject) userProfileObj.get("SavedLevels");
         return new ArrayList<>(savedGames.keySet());
     }
 
-    // Method to load the selected game
+    /**
+     * Loads the specific save file.
+     * @param gameName is the name of the save.
+     */
     private void loadSelectedGame(String gameName) {
         loadGame(gameName);
     }
 
-
+    /**
+     * Sets up the UI for the main game.
+     */
     private void UIsetUp() {
         grid.setHgap(0);
         grid.setVgap(0);
@@ -221,7 +239,10 @@ public class GameManager extends Application {
         tickTimeline.setCycleCount(Animation.INDEFINITE);
     }
 
-    // High scoreboard
+    /**
+     * Creates the high score board.
+     * @return a VBox of the high score board.
+     */
     private VBox createHighScoreBoard() {
         VBox highScoreBoard = new VBox(10); // Vertical spacing between scores
         highScoreBoard.setStyle("-fx-padding: 10; -fx-alignment: center;");
@@ -244,6 +265,10 @@ public class GameManager extends Application {
         return highScoreBoard;
     }
 
+    /**
+     * Starts a new game.
+     * Loads the level and game state.
+     */
     private void startNewGame() {
         currentLevel = userProfileObj.get("CurrentLevel") != null ?
                 Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
@@ -264,6 +289,9 @@ public class GameManager extends Application {
         primaryStage.setWidth(level.getCols() * tileSize);
     }
 
+    /**
+     * Loads the player's profile from a JSON file.
+     */
     private void getPlayerProfile(){
         JSONParser parser = new JSONParser();
         try {
@@ -296,6 +324,11 @@ public class GameManager extends Application {
         newBorns = new ArrayList<>();
     }
 
+    /**
+     * Updates the game grid.
+     * This includes the level tiles, actors, and the movement updates.
+     * Handles the timer, diamonds collected, and key counts.
+     */
     public void drawGame(){
         timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
         diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
@@ -404,7 +437,9 @@ public class GameManager extends Application {
         event.consume(); // Prevents further handling of this event by other UI elements
     }
 
-
+    /**
+     * Toggles the state of the game, either paused or unpaused.
+     */
     private void togglePause() {
         // ensure you can't pause while gameOver screen is up
         if (dead) {
@@ -576,6 +611,9 @@ public class GameManager extends Application {
 
     }
 
+    /**
+     * Shows the game over screen to the user and provides options to restart or exit application.
+     */
     private void showGameOverScreen() {
         drawGame();
         if (gameOverMenu == null) {
@@ -584,6 +622,7 @@ public class GameManager extends Application {
             gameOverMenu.setPrefSize(scene.getWidth(), scene.getHeight());
 
             VBox gameOverBox = new VBox(20);
+            double buttonWidth = 150;
             gameOverBox.setAlignment(Pos.CENTER);
 
             Label messageLabel = new Label("Game Over!");
@@ -594,6 +633,7 @@ public class GameManager extends Application {
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
 
+
             Button exitButton = new Button("Exit Game");
             exitButton.setStyle("-fx-background-color: grey; " +
                     "-fx-border-color: white darkgrey darkgrey white; " +
@@ -601,9 +641,20 @@ public class GameManager extends Application {
                     "-fx-font-family: monospace; -fx-font-size: 16;" +
                     "-fx-cursor: hand;");
 
-            exitButton.setOnAction(e -> exitGame());
+            Button restartButton = new Button("Restart Game");
+            restartButton.setStyle("-fx-background-color: grey; " +
+                    "-fx-border-color: white darkgrey darkgrey white; " +
+                    "-fx-border-width: 4; -fx-text-fill: white; " +
+                    "-fx-font-family: monospace; -fx-font-size: 16;" +
+                    "-fx-cursor: hand;");
 
-            gameOverBox.getChildren().addAll(messageLabel, scoreBoard, exitButton);
+            restartButton.setPrefWidth(buttonWidth);
+            exitButton.setPrefWidth(buttonWidth);
+
+            exitButton.setOnAction(e -> exitGame());
+            restartButton.setOnAction(e -> restartGame());
+
+            gameOverBox.getChildren().addAll(messageLabel, scoreBoard, restartButton, exitButton);
             gameOverBox.setLayoutX(scene.getWidth() / 2 - gameOverBox.getPrefWidth() / 2);
             gameOverBox.setLayoutY(scene.getHeight() / 2 - gameOverBox.getPrefHeight() / 2);
 
@@ -615,6 +666,26 @@ public class GameManager extends Application {
     }
 
     /**
+     * Restarts the game.
+     * Resets the game state and reinitialise the level.
+     */
+    private void restartGame() {
+        stackPane.getChildren().remove(gameOverMenu);
+        tickTimeline.stop();
+        dead = false;
+        timeElapsed = 0;
+        level = new Level(currentLevel);
+        player = level.getPlayer();  // maintain current level / player prof
+
+        GameState.setupSate(level, player, this);
+
+
+        drawGame();
+        tickTimeline.play();
+
+    }
+
+    /**
      * Ends the current level
      */
     public void winGame() {
@@ -623,6 +694,11 @@ public class GameManager extends Application {
         showLevelCompleteScreen();
     }
 
+    /**
+     * Shows the level complete screen when the player completes a level.
+     * Stops the game loop to display the screen, shows the high score board, and provides option for moving
+     * onto the next level or exit application.
+     */
     private void showLevelCompleteScreen() {
         tickTimeline.stop();
         if (levelCompleteMenu == null) {
@@ -667,6 +743,9 @@ public class GameManager extends Application {
         stackPane.getChildren().add(levelCompleteMenu);
     }
 
+    /**
+     * Loads the next level once current level has been completed.
+     */
     private void loadNextLevel() {
         System.out.println("Loading next level!");
         level = new Level(currentLevel);
@@ -675,6 +754,10 @@ public class GameManager extends Application {
         GameState.setupSate(level, player, this);
     }
 
+    /**
+     * Shows the remaining time.
+     * @return the remaining time in seconds.
+     */
     public int timeRemaining(){
         return (int)(level.getTimeLimit() - timeElapsed);
     }

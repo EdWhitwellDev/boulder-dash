@@ -65,6 +65,9 @@ public class Player extends Actor {
         }
     }
 
+    /**
+     * Movement execution for the player.
+     */
     public void move(){
         if (tickCoolDown > 0){
             tickCoolDown--;

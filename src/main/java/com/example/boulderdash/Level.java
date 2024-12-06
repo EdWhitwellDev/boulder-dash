@@ -54,6 +54,12 @@ public class Level {
 
     }
 
+    /**
+     * Constructor for a level.
+     * Loads data from the user and save file.
+     * @param user is the user associated with the save file.
+     * @param saveFile contains the level data.
+     */
     public Level(String user, String saveFile) {
         System.out.println("Loading level for user: " + user + " and save file: " + saveFile);
         tiles = new ArrayList<>();
@@ -66,6 +72,11 @@ public class Level {
         setNeighbors();
     }
 
+    /**
+     * Converts a JSON array into a list of strings.
+     * @param jsonArray is the array to be converted.
+     * @return a list of strings.
+     */
     private List<String> jsonArrayToList(JSONArray jsonArray) {
         List<String> list = new ArrayList<>();
         for (Object obj : jsonArray) {
@@ -74,6 +85,11 @@ public class Level {
         return list;
     }
 
+    /**
+     * Loads the level data from the user and save file.
+     * @param user is the user associated with the save file.
+     * @param saveFile contains the level data.
+     */
     public void loadLevel(String user, String saveFile) {
         JSONParser parser = new JSONParser();
         try {
@@ -110,6 +126,10 @@ public class Level {
         }
     }
 
+    /**
+     * Reads the level configuration from a text file and parses the tiles and actors based on the format.
+     * @param levelNum the specific level to load.
+     */
     private void readLevelFile(int levelNum){
         String levelFile = "Level" + levelNum + ".txt";
         Dictionary<String, List<String>> levelSections = new Hashtable<>();
@@ -152,6 +172,10 @@ public class Level {
         tileSize = Integer.parseInt(winConditions[2]);
     }
 
+    /**
+     * Adds tiles to the level from a list of strings.
+     * @param tileStrings is the list of strings representing the tiles.
+     */
     private void readTiles(List<String> tileStrings) {
         int rowIndex = 0;
         int colIndex = 0;
@@ -215,6 +239,10 @@ public class Level {
         }
     }
 
+    /**
+     * Reads in actors to the level from a list of strings.
+     * @param actorStrings is the list of strings representing the actors.
+     */
     private void readActors(List<String> actorStrings){
         List<Frog> frogsWithoutPlayer = new ArrayList<>();
         for (String line : actorStrings) {
@@ -272,6 +300,11 @@ public class Level {
         }
     }
 
+    /**
+     * Converts a string representing a direction to its corresponding {@link Direction} value.
+     * @param direction represents the direction.
+     * @return the {@link Direction} value.
+     */
     private Direction getDirectionFromString(String direction){
         return switch (direction) {
             case "UP" -> Direction.UP;
@@ -282,6 +315,9 @@ public class Level {
         };
     }
 
+    /**
+     * Sets the neighbouring tiles for each tile.
+     */
     private void setNeighbors() {
         int rows = tiles.size();
         int cols = tiles.get(0).size();
@@ -370,10 +406,20 @@ public class Level {
             actorToRemove.getPosition().setOccupier(null);
         }
     }
+
+    /**
+     * Adds actors to the level.
+     * @param actor is the list of {@link Actor} objects to be added.
+     */
     public void addActors(List<Actor> actor) {
         actors.addAll(actor);
     }
 
+    /**
+     * Replaces a tile with a new one.
+     * @param newTile is the tile to replace the old tile.
+     * @param oldTile is the tile to be replaced.
+     */
     public void replaceTile(Tile newTile, Tile oldTile){
         if (oldTile.getDown() != null) {
             oldTile.getDown().setUp(newTile);
@@ -396,6 +442,11 @@ public class Level {
         tiles.get(oldTile.getRow()).set(oldTile.getColumn(), newTile);
     }
 
+    /**
+     * Saves the current level to a JSON file.
+     * @param user is the user under which the file should be saved.
+     * @param saveFile is the name of the save file.
+     */
     public void saveLevel(String user, String saveFile) {
         JSONObject levelObj = new JSONObject();
         JSONArray actorsArrayJson = new JSONArray();

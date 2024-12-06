@@ -8,6 +8,10 @@ import javafx.scene.image.Image;
 
 import java.util.Map;
 
+/**
+ * Represents a fly in the game, either a butterfly or a firefly.
+ * @author Ed Whitewell
+ */
 public class Fly extends Enemy{
     public static final Direction[] CARDINAL_DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
     private static final Map<Direction, Image> orientationButterFly = Map.of(
@@ -30,6 +34,13 @@ public class Fly extends Enemy{
     private int tickCoolDown = 1;
     private int consecutiveTurning = 0;
 
+    /**
+     * Constructor for a fly at the specified location.
+     * @param startPosition the starting {@link Tile} for the fly.
+     * @param turnRight {@code True} if the fly should follow the right hand side. {@code False} if left hand side.
+     * @param butter {@code True} if the fly is a butterfly. {@code False} if it is a firefly.
+     * @param startDirection is the initial {@link Direction} of the fly.
+     */
     public Fly(Tile startPosition, boolean turnRight, boolean butter, Direction startDirection) {
         super(startPosition);
         this.rightHanded = turnRight;
@@ -39,6 +50,10 @@ public class Fly extends Enemy{
         this.image = butter ? new Image("Actor Images/Butterfly/butterfly.png") : new Image("Actor Images/Firefly/firefly.png");
     }
 
+    /**
+     * Handles the movement logic of the fly.
+     * If the fly gets crushed, it will explode. Otherwise, after the tick cooldown it will continue to move.
+     */
     public void move(){
         if (crushed){
             explode();
@@ -70,6 +85,10 @@ public class Fly extends Enemy{
         }
     }
 
+    /**
+     * Changes the fly's direction and updates the animation.
+     * @param newDirection is the new {@link Direction} to face.
+     */
     private void changeDirection(Direction newDirection){
         currentDirection = newDirection;
         if (buttery){
@@ -80,6 +99,11 @@ public class Fly extends Enemy{
         }
     }
 
+    /**
+     * Checks if the fly can move to a specific tile.
+     * @param tile is the {@link Tile} to be checked.
+     * @return {@code True} if the fly can move to the tile.
+     */
     private boolean isAbleToMoveToTile(Tile tile) {
         if (!tile.isPath()) {
             return false;
@@ -87,6 +111,11 @@ public class Fly extends Enemy{
         return !tile.isOccupied();
     }
 
+    /**
+     * Finds the tile in the specified direction relative to the fly's position.
+     * @param direction is the {@link Direction} to be checked.
+     * @return the {@link Tile} in the specified direction, or {@code null} if no tile found.
+     */
     private Tile findTile(Direction direction){
         return switch (direction) {
             case UP -> position.getUp();
@@ -97,12 +126,22 @@ public class Fly extends Enemy{
         };
     }
 
+    /**
+     * Determines the fly's hand direction.
+     * @param turnRight {@code True} if the fly follows right hand side. {@code False} if left hand side.
+     * @return
+     */
     private Direction findHand(boolean turnRight){
         int currentDirIndex = getDirectionIndex(currentDirection);
         currentDirIndex += turnRight ? 1 : -1;
         return CARDINAL_DIRECTIONS[(currentDirIndex + CARDINAL_DIRECTIONS.length)%CARDINAL_DIRECTIONS.length];
     }
 
+    /**
+     * Retrieves the index of the specified direction in the array.
+     * @param direction is the {@link Direction} to find.
+     * @return the index of the direction, or 0 if not found.
+     */
     private int getDirectionIndex(Direction direction){
         for (int index = 0; index < CARDINAL_DIRECTIONS.length; index++){
             if (CARDINAL_DIRECTIONS[index] == direction){
