@@ -107,6 +107,11 @@ public class Amoeba extends Actor {
         return availableTiles;
     }
 
+    /**
+     * Gets a cluster of connected amoebas starting from this amoeba.
+     * @param cluster the list of {@link Amoeba} instances part of the cluster.
+     * @return the updated list of {@link Amoeba} instances.
+     */
     private List<Amoeba> getAmoebaCluster(List<Amoeba> cluster) {
         if (cluster.contains(this)) {
             return cluster;

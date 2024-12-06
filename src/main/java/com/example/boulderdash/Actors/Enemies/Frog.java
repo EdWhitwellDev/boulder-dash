@@ -9,6 +9,11 @@ import javafx.scene.image.Image;
 
 import java.util.*;
 
+/**
+ * Represents a Frog in the game.
+ * The frog moves using bidirectional search to hunt the player.
+ * @author Ed Whitwell
+ */
 public class Frog extends Enemy{
     private final Player player;
     private final static int TICK_COOL_DOWN_RESET = 16;
@@ -16,12 +21,21 @@ public class Frog extends Enemy{
     private int tickCoolDown = 1;
 
 
+    /**
+     * Constructor for a frog at the specified location.
+     * @param startPosition the initial {@link Tile} for the frog.
+     * @param player the {@link Player} for the frog to target.
+     */
     public Frog(Tile startPosition, Player player) {
         super(startPosition);
         this.player = player;
         this.image = new Image("Actor Images/Frog/frog.png");
     }
 
+    /**
+     * Movement logic for the frog.
+     * If the frog gets crushed, it will explode. Otherwise, after the tick cooldown it will move towards the player.
+     */
     public void move(){
         if (crushed){
             explode();
@@ -54,6 +68,12 @@ public class Frog extends Enemy{
         }
     }
 
+    /**
+     * Executes a bidirectional search to find a path towards the player's location.
+     * Looks for an intersection between the player and frog. If one is found, the frog moves closer.
+     * @param target is the {@link Tile} of the player's location.
+     * @return {@code True} if the path to the player was found, moving the frog.
+     */
     public boolean biDirectionalSearch(Tile target){
         Queue<Tile> playerQueue = new LinkedList<>();
         Queue<Tile> frogQueue = new LinkedList<>();
@@ -97,6 +117,14 @@ public class Frog extends Enemy{
         return false;
     }
 
+    /**
+     * Explores adjacent paths to find valid intersections.
+     * @param currentPath is the current {@link Tile} being processed.
+     * @param queue of tiles to be explored.
+     * @param thisParents is the parent mapping for the current search direction.
+     * @param otherParents is the parent mapping for the opposite search direction.
+     * @return the intersection {@link Tile} if found.
+     */
     private Tile traverse(Tile currentPath, Queue<Tile> queue,
                           Dictionary<Tile, Tile> thisParents, Dictionary<Tile, Tile> otherParents) {
         List<Tile> nextPaths = currentPath.adjacentPaths();
@@ -112,7 +140,12 @@ public class Frog extends Enemy{
         return null;
     }
 
-
+    /**
+     * Retrieves the next step for the frog to take.
+     * @param frogPath is the parent mapping for the frog's path.
+     * @param intersection is the tile where the paths intersect.
+     * @return the immediate next {@link Tile} for the frog to move onto.
+     */
     private Tile getNextStep(Dictionary<Tile, Tile> frogPath, Tile intersection){
         Tile nextStep = intersection;
         while (frogPath.get(nextStep) != this.position){
@@ -123,6 +156,11 @@ public class Frog extends Enemy{
         return nextStep;
     }
 
+    /**
+     * Determines the direction the frog should face to move to the tile.
+     * @param nextTile is the {@link Tile} for the frog to move to.
+     * @return the {@link Direction} to face.
+     */
     private Direction changeDirection(Tile nextTile){
         if (position.getUp() == nextTile){
             return Direction.UP;
