@@ -22,4 +22,7 @@ public class NormalWall extends Tile{
         super(row, col, false);
         image = new Image("Tile Images/normal_wall.png");
     }
+    public String toString(){
+        return "N";
+    }
 }

@@ -48,4 +48,8 @@ public class LockedDoor extends Floor{
     public KeyColours getColour(){
         return colour;
     }
+
+    public String toString(){
+        return colour.toString().substring(0, 1);
+    }
 }

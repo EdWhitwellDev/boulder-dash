@@ -15,6 +15,9 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.simple.JSONArray;
+import org.json.simple.parser.*;
+import org.json.simple.JSONObject;
 
 /**
  * This class is responsible for getting the level's tiles,
@@ -38,19 +41,73 @@ public class Level {
      * Constructor for the Level class. Sets tiles, actors, and player and
      * reads the tile layout from a file and sets up actor positions
      */
-    public Level() {
+    public Level(int levelNum) {
         tiles = new ArrayList<>();
         actors = new ArrayList<>();
 
-
-        readLevelFile(1);
-
-
+        readLevelFile(levelNum);
         rows = tiles.size();
         cols = tiles.get(0).size();
 
         setNeighbors();
 
+
+    }
+
+    public Level(String user, String saveFile) {
+        System.out.println("Loading level for user: " + user + " and save file: " + saveFile);
+        tiles = new ArrayList<>();
+        actors = new ArrayList<>();
+
+        loadLevel(user, saveFile);
+        rows = tiles.size();
+        cols = tiles.get(0).size();
+
+        setNeighbors();
+    }
+
+    private List<String> jsonArrayToList(JSONArray jsonArray) {
+        List<String> list = new ArrayList<>();
+        for (Object obj : jsonArray) {
+            list.add(obj.toString());
+        }
+        return list;
+    }
+
+    public void loadLevel(String user, String saveFile) {
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObj = (JSONObject) PlayerProfileObj.get(user);
+            JSONObject savedLevelsObj = (JSONObject) userObj.get("SavedLevels");
+            JSONObject levelObj = (JSONObject) savedLevelsObj.get(saveFile);
+
+            JSONArray actorsArrayJson = (JSONArray) levelObj.get("Actors");
+            JSONArray tilesArrayJson = (JSONArray) levelObj.get("Tiles");
+
+            diamondsRequired = Integer.parseInt(levelObj.get("DiamondsRequired").toString());
+            timeLimit = Integer.parseInt(levelObj.get("TimeRemaining").toString());
+            tileSize = Integer.parseInt(levelObj.get("TileSize").toString());
+
+            List<String> actorsArray = jsonArrayToList(actorsArrayJson);
+            List<String> tilesArray = jsonArrayToList(tilesArrayJson);
+
+            readTiles(tilesArray);
+            readActors(actorsArray);
+
+            int collectedDiamonds = Integer.parseInt(levelObj.get("DiamondsCollected").toString());
+            player.setDiamondsCollected(collectedDiamonds);
+
+            Map<KeyColours, Integer> keys = new HashMap<>();
+            JSONObject keysObj = (JSONObject) levelObj.get("KeysCollected");
+            for (KeyColours keyColour : KeyColours.values()) {
+                keys.put(keyColour, Integer.parseInt(keysObj.get(keyColour.toString()).toString()));
+            }
+            player.setKeys(keys);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void readLevelFile(int levelNum){
@@ -93,7 +150,6 @@ public class Level {
         diamondsRequired = Integer.parseInt(winConditions[0]);
         timeLimit = Integer.parseInt(winConditions[1]);
         tileSize = Integer.parseInt(winConditions[2]);
-        System.out.println(actors);
     }
 
     private void readTiles(List<String> tileStrings) {
@@ -162,7 +218,6 @@ public class Level {
     private void readActors(List<String> actorStrings){
         for (String line : actorStrings) {
             String[] actorInfo = line.split(",");
-            System.out.println(line);
 
             String actorType = actorInfo[0];
             int row = Integer.parseInt(actorInfo[1]);
@@ -174,7 +229,6 @@ public class Level {
             if (!startTile.isPath() && !actorType.equals("P")) {
                 continue;
             }
-            System.out.println(line);
             switch (actorType) {
                 case "P":
                     actors.add(new Player(startTile));
@@ -329,6 +383,57 @@ public class Level {
         newTile.setDown(oldTile.getDown());
 
         tiles.get(oldTile.getRow()).set(oldTile.getColumn(), newTile);
+    }
+
+    public void saveLevel(String user, String saveFile) {
+        JSONObject levelObj = new JSONObject();
+        JSONArray actorsArrayJson = new JSONArray();
+        JSONArray tilesArrayJson = new JSONArray();
+
+        for (Actor actor : actors) {
+            String actorString = actor.toString();
+            actorsArrayJson.add(actorString);
+        }
+
+        for (List<Tile> row : tiles) {
+            StringBuilder rowString = new StringBuilder();
+            for (Tile tile : row) {
+                rowString.append(tile.toString()).append(",");
+            }
+            tilesArrayJson.add(rowString.toString());
+        }
+
+        levelObj.put("Actors", actorsArrayJson);
+        levelObj.put("Tiles", tilesArrayJson);
+        levelObj.put("DiamondsRequired", diamondsRequired);
+        levelObj.put("TimeRemaining", GameState.manager.timeRemaining());
+        levelObj.put("TileSize", tileSize);
+
+        JSONObject keysObj = new JSONObject();
+        for (KeyColours keyColour : KeyColours.values()) {
+            keysObj.put(keyColour.toString(), player.getKeys().get(keyColour));
+        }
+        levelObj.put("KeysCollected", keysObj);
+        levelObj.put("DiamondsCollected", player.getDiamondsCollected());
+
+        JSONObject userObj = new JSONObject();
+        JSONObject savedLevelsObj = new JSONObject();
+        savedLevelsObj.put(saveFile, levelObj);
+        userObj.put("SavedLevels", savedLevelsObj);
+
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(user);
+            JSONObject savedLevelsObjOld = (JSONObject) userObjOld.get("SavedLevels");
+            savedLevelsObjOld.put(saveFile, levelObj);
+
+            FileWriter file = new FileWriter("PlayerProfile.json");
+            file.write(PlayerProfileObj.toJSONString());
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

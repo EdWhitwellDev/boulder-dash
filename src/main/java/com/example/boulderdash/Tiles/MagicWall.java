@@ -24,4 +24,7 @@ public class MagicWall extends Tile{
         super(row, col, false);
         image = new Image("Tile Images/magic_wall.png");
     }
+    public String toString(){
+        return "M";
+    }
 }

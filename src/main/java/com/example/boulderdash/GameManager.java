@@ -21,8 +21,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 
+import java.io.FileReader;
 import java.util.*;
 
 
@@ -58,14 +61,18 @@ public class GameManager extends Application {
     private static final ImageView keyIconYellow = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
     private float timeElapsed;
     private final float tickTime = 0.1f;
-    private int tileSize = 80;
+    private int tileSize;
+    private int currentLevel = 1;
     private boolean dead = false;
     private boolean isPaused = false;
+    private String currentUser;
     private Stage primaryStage;
     private Scene homeScene;
     private VBox homeScreen;
     private Label titleLabel;
     private List<Integer> highScores;
+    private JSONObject playerProfileObj;
+    private JSONObject userProfileObj;
 
 
     @Override
@@ -73,6 +80,9 @@ public class GameManager extends Application {
         // Set the title of the window
         primaryStage.setTitle("Boulder Dash");
 
+        getPlayerProfile();
+        currentUser = playerProfileObj.get("CurrentUser").toString();
+        userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
         this.primaryStage = primaryStage;
         highScores = new ArrayList<>();
 
@@ -104,6 +114,7 @@ public class GameManager extends Application {
         // Load Game button
         Button loadButton = new Button("Load Game");
         loadButton.setFont(new Font("Arial", 20));
+        loadButton.setOnAction(e -> loadGame());
 
         // High Score Table
         Label highScoreLabel = new Label("High Scores:");
@@ -120,23 +131,23 @@ public class GameManager extends Application {
         grid.setHgap(0);
         grid.setVgap(0);
 
-        diamondCountIcon.setFitHeight(50);
-        diamondCountIcon.setFitWidth(50);
-        clockIcon.setFitHeight(50);
-        clockIcon.setFitWidth(40);
-        keyIconBlue.setFitHeight(50);
-        keyIconBlue.setFitWidth(50);
-        keyIconRed.setFitHeight(50);
-        keyIconRed.setFitWidth(50);
-        keyIconGreen.setFitHeight(50);
-        keyIconGreen.setFitWidth(50);
-        keyIconYellow.setFitHeight(50);
-        keyIconYellow.setFitWidth(50);
+        diamondCountIcon.setFitHeight(tileSize*0.5);
+        diamondCountIcon.setFitWidth(tileSize*0.5);
+        clockIcon.setFitHeight(tileSize*0.5);
+        clockIcon.setFitWidth(tileSize*0.4);
+        keyIconBlue.setFitHeight(tileSize*0.5);
+        keyIconBlue.setFitWidth(tileSize*0.5);
+        keyIconRed.setFitHeight(tileSize*0.5);
+        keyIconRed.setFitWidth(tileSize*0.5);
+        keyIconGreen.setFitHeight(tileSize*0.5);
+        keyIconGreen.setFitWidth(tileSize*0.5);
+        keyIconYellow.setFitHeight(tileSize*0.5);
+        keyIconYellow.setFitWidth(tileSize*0.5);
         infoBar.getChildren().addAll(clockIcon, timeLabel, diamondCountIcon,
                 diamondsLabel, keyIconBlue, keyLabelBlue,
                 keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen,
                 keyIconYellow, keyLabelYellow);
-        infoBar.setPrefHeight(70);
+        infoBar.setPrefHeight(tileSize*0.7);
         infoBar.setAlignment(javafx.geometry.Pos.CENTER);
         infoBar.setStyle("-fx-padding: 5; -fx-background-color: #333; -fx-text-fill: white;");
         timeLabel.setStyle("-fx-text-fill: white;");
@@ -183,7 +194,10 @@ public class GameManager extends Application {
     }
 
     private void startNewGame() {
-        level = new Level();
+        currentLevel = userProfileObj.get("CurrentLevel") != null ?
+                Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
+
+        level = new Level(currentLevel);
         player = level.getPlayer();
         timeElapsed = 0;
         tileSize = level.getTileSize();
@@ -199,6 +213,14 @@ public class GameManager extends Application {
         primaryStage.setWidth(level.getCols() * tileSize);
     }
 
+    private void getPlayerProfile(){
+        JSONParser parser = new JSONParser();
+        try {
+            playerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Marks an actor for removal from the game
      */
@@ -287,7 +309,7 @@ public class GameManager extends Application {
             Tile currentPosition = actor.getPosition();
             actorImageView.setTranslateX(previousPosition.getColumn() * tileSize); // Set the initial X position
             actorImageView.setTranslateY(previousPosition.getRow() * tileSize);
-            TranslateTransition translateTransition = new TranslateTransition(Duration.millis(100), actorImageView);
+            TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(tickTime), actorImageView);
             translateTransition.setFromX(previousPosition.getColumn() * tileSize);
             translateTransition.setFromY(previousPosition.getRow() * tileSize);
             translateTransition.setToX(currentPosition.getColumn() * tileSize);
@@ -418,14 +440,30 @@ public class GameManager extends Application {
      * Saves the current game state
      */
     private void saveGame() {
-        System.out.println("Game saved!");
+        level.saveLevel(currentUser, "CurrentLevelLoaded");
     }
 
     /**
      * Loads a previously saved game state
      */
     private void loadGame() {
-        System.out.println("Game loaded!");
+        String currentSave = userProfileObj.get("CurrentLevelLoaded").toString();
+        if (!Objects.equals(currentSave, "")) {
+            level = new Level(currentUser, currentSave);
+            player = level.getPlayer();
+            timeElapsed = 0;
+            tileSize = level.getTileSize();
+
+            UIsetUp();
+
+            GameState.setupSate(level, player, this);
+            tickTimeline.play();
+
+            drawGame();
+            primaryStage.setScene(scene);
+            primaryStage.setHeight(level.getRows() * tileSize);
+            primaryStage.setWidth(level.getCols() * tileSize);
+        }
     }
 
     /**
@@ -453,10 +491,6 @@ public class GameManager extends Application {
                 actor.move(); // Move all active actors
             }
         }
-
-        //if (player.getDiamondsCollected() >= level.getDiamondsRequired()) {
-        //    winGame();
-        //}
 
         if (timeElapsed > level.getTimeLimit()){
             looseGame();
@@ -551,10 +585,14 @@ public class GameManager extends Application {
 
     private void loadNextLevel() {
         System.out.println("Loading next level!");
-        level = new Level();
+        level = new Level(currentLevel);
         player = level.getPlayer();
         timeElapsed = 0;
         GameState.setupSate(level, player, this);
+    }
+
+    public int timeRemaining(){
+        return (int)(level.getTimeLimit() - timeElapsed);
     }
 
     /**

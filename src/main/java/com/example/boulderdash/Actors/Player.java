@@ -163,6 +163,12 @@ public class Player extends Actor {
     public int getDiamondsCollected(){
         return diamondsCollected;
     }
+    public void setDiamondsCollected(int diamondsCollected){
+        this.diamondsCollected = diamondsCollected;
+    }
+    public void setKeys(Map<KeyColours, Integer> keys){
+        this.keys.putAll(keys);
+    }
 
     /**
      * The accessor method for the Player's key count.
@@ -173,5 +179,8 @@ public class Player extends Actor {
         return keys;
     }
 
+    public String toString(){
+        return "P" + "," + position.getRow() + "," + position.getColumn();
+    }
 
 }

@@ -63,4 +63,7 @@ public class Boulder extends FallingObject{
         return tile != null && tile.isPath() && !tile.isOccupied();
     }
 
+    public String toString(){
+        return "B" + "," + position.getRow() + "," + position.getColumn();
+    }
 }

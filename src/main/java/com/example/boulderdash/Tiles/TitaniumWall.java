@@ -22,4 +22,7 @@ public class TitaniumWall extends Tile{
         super(row, col, false);
         image = new Image("Tile Images/titanium_wall.png");
     }
+        public String toString(){
+            return "T";
+        }
 }

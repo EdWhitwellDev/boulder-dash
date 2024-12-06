@@ -49,7 +49,7 @@ public class Fly extends Enemy{
         else {
             boolean turnFlag = false;
             if (consecutiveTurning > 5) {
-                explode();
+                explodeSingle();
                 GameState.manager.killActor(this);
             } else {
                 Tile side = findTile(handSide);
@@ -113,8 +113,12 @@ public class Fly extends Enemy{
         return 0;
     }
 
-    public void explode(){
+    public void explodeSingle(){
         Explosion explosion = new Explosion(position, buttery);
         GameState.manager.addActor(explosion);
+    }
+    public String toString(){
+        String symbol = buttery ? "BF" : "F";
+        return symbol + "," + position.getRow() + "," + position.getColumn() + "," + buttery + "," + currentDirection.toString();
     }
 }

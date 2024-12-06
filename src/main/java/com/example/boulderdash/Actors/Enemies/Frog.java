@@ -137,4 +137,8 @@ public class Frog extends Enemy{
         return Direction.STATIONARY;
     }
 
+    public String toString(){
+        return "R" + "," + position.getRow() + "," + position.getColumn();
+    }
+
 }

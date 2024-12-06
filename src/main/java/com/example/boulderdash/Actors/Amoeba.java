@@ -115,4 +115,7 @@ public class Amoeba extends Actor {
     public void changePos(Tile nextPos) {
         // Amoeba does not "move" like normal actors; instead, it grows
     }
+    public String toString(){
+        return "A" + "," + position.getRow() + "," + position.getColumn();
+    }
 }

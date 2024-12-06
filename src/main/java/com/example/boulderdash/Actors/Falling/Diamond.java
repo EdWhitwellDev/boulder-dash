@@ -37,4 +37,7 @@ public class Diamond extends FallingObject {
     public void move() {
         super.fall();
     }
+    public String toString(){
+        return "D" + "," + position.getRow() + "," + position.getColumn();
+    }
 }

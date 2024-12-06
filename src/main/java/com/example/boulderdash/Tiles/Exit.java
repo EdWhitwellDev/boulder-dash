@@ -32,4 +32,7 @@ public class Exit extends Floor{
         super.setOccupier(occupant);
         GameState.manager.winGame();
     }
+    public String toString(){
+        return "E";
+    }
 }
