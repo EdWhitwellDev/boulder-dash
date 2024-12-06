@@ -485,7 +485,7 @@ public class GameManager extends Application {
                 "-fx-padding: 20;");
 
         pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
-        
+
     }
 
 
