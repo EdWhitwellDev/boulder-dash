@@ -27,7 +27,7 @@ public class Floor extends Tile{
 
         //Sets the Tile's image based on whether it is
         // dirt (isPath==false) or path (isPath==true)
-        image = isPath ? new Image("path.png") : new Image("dirt.png");
+        image = isPath ? new Image("Tile Images/path.png") : new Image("Tile Images/dirt.png");
     }
 
     /**
@@ -46,7 +46,7 @@ public class Floor extends Tile{
         // is occupied by the Player.
         if (!isPath && occupant instanceof Player){
             isPath = true;
-            image = new Image("path.png");
+            image = new Image("Tile Images/path.png");
         }
 
     }

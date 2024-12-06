@@ -20,6 +20,6 @@ public class TitaniumWall extends Tile{
      */
     public TitaniumWall(int row, int col){
         super(row, col, false);
-        image = new Image("titanium_wall.png");
+        image = new Image("Tile Images/titanium_wall.png");
     }
 }

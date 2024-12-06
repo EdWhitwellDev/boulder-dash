@@ -20,7 +20,7 @@ public class Boulder extends FallingObject{
      */
     public Boulder(Tile startPosition) {
         super(startPosition);
-        image = new Image("boulder.png");
+        image = new Image("Actor Images/boulder.png");
     }
 
     /**

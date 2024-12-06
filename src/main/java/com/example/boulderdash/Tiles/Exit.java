@@ -22,7 +22,7 @@ public class Exit extends Floor{
      */
     public Exit(int row, int col){
         super(row, col, false);
-        image = new Image("exit.png");
+        image = new Image("Tile Images/Exit.png");
     }
 
     /**

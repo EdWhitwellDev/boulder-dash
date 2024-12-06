@@ -11,18 +11,18 @@ import java.util.Map;
 public class Fly extends Enemy{
     public static final Direction[] CARDINAL_DIRECTIONS = {Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT};
     private static final Map<Direction, Image> orientationButterFly = Map.of(
-            Direction.STATIONARY, new Image("butterfly.png"),
-            Direction.UP, new Image("butterfly.png"),
-            Direction.DOWN, new Image("butterfly_down.png"),
-            Direction.LEFT, new Image("butterfly_left.png"),
-            Direction.RIGHT, new Image("butterfly_right.png")
+            Direction.STATIONARY, new Image("Actor Images/Butterfly/butterfly.png"),
+            Direction.UP, new Image("Actor Images/Butterfly/butterfly.png"),
+            Direction.DOWN, new Image("Actor Images/Butterfly/butterfly_down.png"),
+            Direction.LEFT, new Image("Actor Images/Butterfly/butterfly_left.png"),
+            Direction.RIGHT, new Image("Actor Images/Butterfly/butterfly_right.png")
     );
     private static final Map<Direction, Image> orientationFireFly = Map.of(
-            Direction.STATIONARY, new Image("firefly.png"),
-            Direction.UP, new Image("firefly.png"),
-            Direction.DOWN, new Image("firefly_down.png"),
-            Direction.LEFT, new Image("firefly_left.png"),
-            Direction.RIGHT, new Image("firefly_right.png")
+            Direction.STATIONARY, new Image("Actor Images/Firefly/firefly.png"),
+            Direction.UP, new Image("Actor Images/Firefly/firefly.png"),
+            Direction.DOWN, new Image("Actor Images/Firefly/firefly_down.png"),
+            Direction.LEFT, new Image("Actor Images/Firefly/firefly_left.png"),
+            Direction.RIGHT, new Image("Actor Images/Firefly/firefly_right.png")
     );
     private static final int TICK_COOL_DOWN_RESET = 3;
     private final boolean rightHanded;
@@ -36,7 +36,7 @@ public class Fly extends Enemy{
         this.buttery = butter;
         this.currentDirection = startDirection;
         this.handSide = findHand(rightHanded);
-        this.image = butter ? new Image("butterfly.png") : new Image("firefly.png");
+        this.image = butter ? new Image("Actor Images/Butterfly/butterfly.png") : new Image("Actor Images/Firefly/firefly.png");
     }
 
     public void move(){

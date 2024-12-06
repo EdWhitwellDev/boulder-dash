@@ -22,6 +22,6 @@ public class MagicWall extends Tile{
      */
     public MagicWall(int row, int col){
         super(row, col, false);
-        image = new Image("magic_wall.png");
+        image = new Image("Tile Images/magic_wall.png");
     }
 }

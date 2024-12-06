@@ -27,7 +27,7 @@ public class Amoeba extends Actor {
      */
     public Amoeba(Tile startTile, int growthRate) {
         super(startTile);  // Call the Actor constructor with the starting tile
-        this.image = new Image("amoeba.png");  // Set the Amoeba image path
+        this.image = new Image("Actor Images/amoeba.png");  // Set the Amoeba image path
         this.growthRate = growthRate;
         this.tickCoolDown = growthRate;
         this.isBlocked = false;

@@ -1,7 +1,6 @@
 package com.example.boulderdash.Actors.Enemies;
 
 import com.example.boulderdash.Actors.Player;
-import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
@@ -18,7 +17,7 @@ public class Frog extends Enemy{
     public Frog(Tile startPosition, Player player) {
         super(startPosition);
         this.player = player;
-        this.image = new Image("frog.png");
+        this.image = new Image("Actor Images/Frog/frog.png");
     }
 
     public void move(){

@@ -1,9 +1,7 @@
 package com.example.boulderdash.Actors;
 
-import com.example.boulderdash.Actors.Enemies.Enemy;
 import com.example.boulderdash.Actors.Falling.Boulder;
 import com.example.boulderdash.Actors.Falling.Diamond;
-import com.example.boulderdash.GameManager;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Exit;
 import com.example.boulderdash.Tiles.Floor;
@@ -13,7 +11,6 @@ import com.example.boulderdash.enums.Direction;
 import com.example.boulderdash.enums.KeyColours;
 import javafx.scene.image.Image;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,11 +22,11 @@ public class Player extends Actor {
 
     //A Map of all Directions to their corresponding Images with the correct orientation
     private static final Map<Direction, Image> orientation = Map.of(
-            Direction.STATIONARY, new Image("player_down.png"),
-            Direction.UP, new Image("player_up.png"),
-            Direction.DOWN, new Image("player_down.png"),
-            Direction.LEFT, new Image("player_left.png"),
-            Direction.RIGHT, new Image("player_right.png")
+            Direction.STATIONARY, new Image("Actor Images/Player/player_down.png"),
+            Direction.UP, new Image("Actor Images/Player/player_up.png"),
+            Direction.DOWN, new Image("Actor Images/Player/player_down.png"),
+            Direction.LEFT, new Image("Actor Images/Player/player_left.png"),
+            Direction.RIGHT, new Image("Actor Images/Player/player_right.png")
     );
 
     //A Map holding the key count for each key colour

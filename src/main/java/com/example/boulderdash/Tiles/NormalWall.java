@@ -20,6 +20,6 @@ public class NormalWall extends Tile{
      */
     public NormalWall(int row, int col){
         super(row, col, false);
-        image = new Image("normal_wall.png");
+        image = new Image("Tile Images/normal_wall.png");
     }
 }

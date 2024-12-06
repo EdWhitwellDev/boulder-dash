@@ -2,7 +2,6 @@ package com.example.boulderdash.Tiles;
 
 import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Actors.Player;
-import com.example.boulderdash.enums.Direction;
 import com.example.boulderdash.enums.KeyColours;
 import javafx.scene.image.Image;
 
@@ -17,10 +16,10 @@ public class Key extends Floor{
     //A Map of the KeyColours (Enum) and their corresponding key image.
     //Colours: [Red, Blue, Green, Yellow]
     private static final Map<KeyColours, Image> colours = Map.of(
-            KeyColours.RED, new Image("red_key.png"),
-            KeyColours.BLUE, new Image("blue_key.png"),
-            KeyColours.GREEN, new Image("green_key.png"),
-            KeyColours.YELLOW, new Image("yellow_key.png")
+            KeyColours.RED, new Image("Tile Images/Keys (in-Tile)/red_key.png"),
+            KeyColours.BLUE, new Image("Tile Images/Keys (in-Tile)/blue_key.png"),
+            KeyColours.GREEN, new Image("Tile Images/Keys (in-Tile)/green_key.png"),
+            KeyColours.YELLOW, new Image("Tile Images/Keys (in-Tile)/yellow_key.png")
     );
 
     //The Key's colour

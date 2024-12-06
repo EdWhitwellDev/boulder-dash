@@ -50,12 +50,12 @@ public class GameManager extends Application {
     private final Label keyLabelRed = new Label();
     private final Label keyLabelGreen = new Label();
     private final Label keyLabelYellow = new Label();
-    private static final ImageView diamondCountIcon = new ImageView(new Image("diamond.png"));
+    private static final ImageView diamondCountIcon = new ImageView(new Image("Actor Images/diamond.png"));
     private static final ImageView clockIcon = new ImageView(new Image("clock.png"));
-    private static final ImageView keyIconBlue = new ImageView(new Image("blue_key_icon.png"));
-    private static final ImageView keyIconRed = new ImageView(new Image("red_key_icon.png"));
-    private static final ImageView keyIconGreen = new ImageView(new Image("green_key_icon.png"));
-    private static final ImageView keyIconYellow = new ImageView(new Image("yellow_key_icon.png"));
+    private static final ImageView keyIconBlue = new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
+    private static final ImageView keyIconRed = new ImageView(new Image("Key Icon Images/red_key_icon.png"));
+    private static final ImageView keyIconGreen = new ImageView(new Image("Key Icon Images/green_key_icon.png"));
+    private static final ImageView keyIconYellow = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
     private float timeElapsed;
     private final float tickTime = 0.1f;
     private int tileSize = 80;

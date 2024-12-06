@@ -16,10 +16,10 @@ public class LockedDoor extends Floor{
     //A Map of the KeyColours (Enum) and their corresponding door image.
     //Colours: [Red, Blue, Green, Yellow]
     private static final Map<KeyColours, Image> colours = Map.of(
-            KeyColours.RED, new Image("red_door.png"),
-            KeyColours.BLUE, new Image("blue_door.png"),
-            KeyColours.GREEN, new Image("green_door.png"),
-            KeyColours.YELLOW, new Image("yellow_door.png")
+            KeyColours.RED, new Image("Tile Images/Locked Doors/red_door.png"),
+            KeyColours.BLUE, new Image("Tile Images/Locked Doors/blue_door.png"),
+            KeyColours.GREEN, new Image("Tile Images/Locked Doors/green_door.png"),
+            KeyColours.YELLOW, new Image("Tile Images/Locked Doors/yellow_door.png")
     );
 
     //The Door's colour
