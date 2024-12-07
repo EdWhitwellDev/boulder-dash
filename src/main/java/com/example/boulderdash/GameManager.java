@@ -2,6 +2,7 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
@@ -23,12 +24,16 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.util.Duration;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -95,6 +100,15 @@ public class GameManager extends Application {
         setupHomeScreen();
 
         primaryStage.setScene(homeScene);
+
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+        // Set stage to fill the screen
+        primaryStage.setX(screenBounds.getMinX());
+        primaryStage.setY(screenBounds.getMinY());
+        primaryStage.setWidth(screenBounds.getWidth());
+        primaryStage.setHeight(screenBounds.getHeight());
+
         primaryStage.show();
     }
 
@@ -133,7 +147,7 @@ public class GameManager extends Application {
         VBox highScoreBoard = createHighScoreBoard();
 
         homeScreen.getChildren().addAll(logo, titleLabel, startButton, loadButton, highScoreLabel, highScoreBoard);
-        homeScene = new Scene(homeScreen, 600, 600);
+        homeScene = new Scene(homeScreen);
     }
 
     /**
@@ -170,7 +184,7 @@ public class GameManager extends Application {
 
         savedGamesScreen.getChildren().addAll(savedGamesLabel, savedGamesList, loadSelectedButton, backButton);
 
-        Scene savedGamesScene = new Scene(savedGamesScreen, 600, 600);
+        Scene savedGamesScene = new Scene(savedGamesScreen);
         primaryStage.setScene(savedGamesScene);
     }
 
@@ -226,12 +240,14 @@ public class GameManager extends Application {
         keyLabelYellow.setStyle("-fx-text-fill: white;");
         diamondCountIcon.setStyle("-fx-padding: 10;");
 
+        stackPane.setStyle("-fx-background-color: #333;");
+
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(infoBar);
 
         stackPane.getChildren().addAll(grid, transitionPane, borderPane);
 
-        scene = new Scene(stackPane, 600, 600);  // width: 400, height: 400
+        scene = new Scene(stackPane);  // width: 400, height: 400
         scene.setOnKeyPressed(this::processKeyEvent);
         scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
 
@@ -283,10 +299,19 @@ public class GameManager extends Application {
         GameState.setupSate(level, player, this);
         tickTimeline.play();
 
+        int cols = level.getCols();
+        int rows = level.getRows();
+        int windowWidth = (int) primaryStage.getWidth();
+        int windowHeight = (int) primaryStage.getHeight();
+
+        tileSize = Math.min(windowWidth / cols, windowHeight / rows);
+        grid.setAlignment(Pos.CENTER);
+
         drawGame();
         primaryStage.setScene(scene);
-        primaryStage.setHeight(level.getRows() * tileSize);
-        primaryStage.setWidth(level.getCols() * tileSize);
+        // center the scene on the screen
+
+
     }
 
     /**
@@ -391,13 +416,22 @@ public class GameManager extends Application {
             Actor actor = entry.getValue();
             Tile previousPosition = actor.getPreviousPosition();
             Tile currentPosition = actor.getPosition();
-            actorImageView.setTranslateX(previousPosition.getColumn() * tileSize); // Set the initial X position
-            actorImageView.setTranslateY(previousPosition.getRow() * tileSize);
+
+            double widthGrid = tileSize * columns;
+            double heightGrid = tileSize * rows;
+            double widthStage = primaryStage.getWidth();
+            double heightStage = primaryStage.getHeight();
+
+            double x = (widthStage - widthGrid) / 2;
+            double y = (heightStage - heightGrid) / 2;
+
+            actorImageView.setTranslateX(previousPosition.getColumn() * tileSize + x); // Set the initial X position
+            actorImageView.setTranslateY(previousPosition.getRow() * tileSize + y); // Set the initial Y position
             TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(tickTime), actorImageView);
-            translateTransition.setFromX(previousPosition.getColumn() * tileSize);
-            translateTransition.setFromY(previousPosition.getRow() * tileSize);
-            translateTransition.setToX(currentPosition.getColumn() * tileSize);
-            translateTransition.setToY(currentPosition.getRow() * tileSize);
+            translateTransition.setFromX(previousPosition.getColumn() * tileSize + x);
+            translateTransition.setFromY(previousPosition.getRow() * tileSize + y);
+            translateTransition.setToX(currentPosition.getColumn() * tileSize + x);
+            translateTransition.setToY(currentPosition.getRow() * tileSize + y);
 
             translateTransition.setOnFinished(e -> {
                 actor.checkCollisions();
@@ -694,6 +728,39 @@ public class GameManager extends Application {
         showLevelCompleteScreen();
     }
 
+    public void saveScore(int score) {
+        JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
+        // get the scores for the current level
+        List<Integer> scores = (List<Integer>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
+        if (scores == null){
+            scores = new ArrayList<>();
+        }
+        scores.add(score);
+
+        // sort the scores in descending order
+        scores.sort(Collections.reverseOrder());
+        // keep only the top 10 scores
+        if (scores.size() > 10){
+            scores = scores.subList(0, 10);
+        }
+
+        highScoresObj.put(String.valueOf("Level"+ currentLevel), scores);
+
+        // update the high scores in the player profile
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(currentUser);
+            FileWriter file = new FileWriter("PlayerProfile.json");
+            userObjOld.put("HighScores", highScoresObj);
+            file.write(PlayerProfileObj.toJSONString());
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     /**
      * Shows the level complete screen when the player completes a level.
      * Stops the game loop to display the screen, shows the high score board, and provides option for moving
@@ -701,6 +768,7 @@ public class GameManager extends Application {
      */
     private void showLevelCompleteScreen() {
         tickTimeline.stop();
+        int score = player.getDiamondsCollected() * 10 + timeRemaining()*2;
         if (levelCompleteMenu == null) {
             levelCompleteMenu = new StackPane();
             levelCompleteMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);");
@@ -713,6 +781,11 @@ public class GameManager extends Application {
             messageLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 48;" +
                     " -fx-font-family: monospace;");
 
+            Label scoreLabel = new Label("You Scored: " + score);
+            scoreLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 48;" +
+                    " -fx-font-family: monospace;");
+
+            saveScore(score);
 
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
@@ -734,7 +807,7 @@ public class GameManager extends Application {
             nextLevelButton.setOnAction(e -> loadNextLevel());
             exitButton.setOnAction(e -> exitGame());
 
-            levelCompleteBox.getChildren().addAll(messageLabel, scoreBoard, nextLevelButton, exitButton);
+            levelCompleteBox.getChildren().addAll(messageLabel, scoreLabel, scoreBoard, nextLevelButton, exitButton);
 
             levelCompleteMenu.getChildren().add(levelCompleteBox);
         }
