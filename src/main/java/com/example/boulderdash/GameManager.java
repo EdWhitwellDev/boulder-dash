@@ -840,6 +840,7 @@ public class GameManager extends Application {
         primaryStage.setScene(scene);
         // center the scene on the screen
 
+        Audio.getInstance().playMusic("/Music/MinecraftChill.mp3", true, 1.0);
     }
 
     /**

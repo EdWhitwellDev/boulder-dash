@@ -2,6 +2,7 @@ package com.example.boulderdash.Actors;
 
 import com.example.boulderdash.Actors.Falling.Boulder;
 import com.example.boulderdash.Actors.Falling.Diamond;
+import com.example.boulderdash.Audio;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Exit;
 import com.example.boulderdash.Tiles.Floor;
@@ -75,6 +76,7 @@ public class Player extends Actor {
             Tile nextTile = getNextTile(currentDirection);
             if (nextTile != null) {
                 processMove(nextTile);
+                Audio.getInstance().playSoundEffect("/Music/Move.mp3", 1.0);
             }
         }
     }
@@ -149,6 +151,7 @@ public class Player extends Actor {
                 //and the Diamond is removed from the Tile.
                 if (occupier instanceof Diamond) {
                     diamondsCollected++;
+                    Audio.getInstance().playSoundEffect("/Music/DiamondCollect.mp3", 1.0);
                     GameState.manager.killActor(occupier);
 
                     //If the tile holds a Boulder. If the Boulder cannot be pushed, the Player's

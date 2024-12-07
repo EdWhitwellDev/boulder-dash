@@ -3,6 +3,7 @@ package com.example.boulderdash.Actors;
 
 import com.example.boulderdash.Actors.Enemies.Enemy;
 import com.example.boulderdash.Actors.Enemies.Fly;
+import com.example.boulderdash.Audio;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -52,9 +53,11 @@ public abstract class Actor {
                     String enemyType = enemyClass.getSimpleName();
                     if (collider instanceof Fly fly) {
                         GameState.manager.looseGame("Killed by a " + (fly.isbuttery() ? "Butterfly" : "Firefly"));
+                        Audio.getInstance().playSoundEffect("/Music/MinecraftDeath.mp3", 1.0);
                     }
                     else {
                         GameState.manager.looseGame("Killed by a " + enemyType);
+                        Audio.getInstance().playSoundEffect("/Music/MinecraftDeath.mp3", 1.0);
                     }
                     return true;
                 } else if (this instanceof Enemy && collider instanceof Player) {
@@ -62,9 +65,11 @@ public abstract class Actor {
                     String enemyType = enemyClass.getSimpleName();
                     if (this instanceof Fly fly) {
                         GameState.manager.looseGame("Killed by a " + (fly.isbuttery() ? "Butterfly" : "Firefly"));
+                        Audio.getInstance().playSoundEffect("/Music/MinecraftDeath.mp3", 1.0);
                     }
                     else {
                         GameState.manager.looseGame("Killed by a " + enemyType);
+                        Audio.getInstance().playSoundEffect("/Music/MinecraftDeath.mp3", 1.0);
                     }
                     return true;
                 } else if (this instanceof Enemy && collider instanceof Amoeba) {
