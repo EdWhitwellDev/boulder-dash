@@ -71,6 +71,7 @@ public class GameManager extends Application {
     private static final ImageView keyIconRed = new ImageView(new Image("Key Icon Images/red_key_icon.png"));
     private static final ImageView keyIconGreen = new ImageView(new Image("Key Icon Images/green_key_icon.png"));
     private static final ImageView keyIconYellow = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
+    private static final int NUMBER_OF_LEVELS = 5;
     private final float tickTime = 0.1f;
     private float timeElapsed;
     private int tileSize;
@@ -427,15 +428,18 @@ public class GameManager extends Application {
         levelsList.setPrefSize(400, 300);
 
         JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
-        int currentUnlockedLevel = userProfileObj.get("CurrentLevel") != null
-                ? Integer.parseInt(userProfileObj.get("CurrentLevel").toString())
-                : 1;
 
+        List<Integer> completedLevelsList = new ArrayList<>();
+        for (Object level : completedLevels){
+            completedLevelsList.add(Integer.parseInt(level.toString()));
+        }
         // Populate the list with unlocked levels
-        for (int i = 1; i <= currentUnlockedLevel; i++) {
+        for (int i = 1; i <= NUMBER_OF_LEVELS; i++) {
             String levelInfo = "Level " + i;
-            if (completedLevels.contains(i)) {
+            if (completedLevelsList.contains(i) ) {
                 levelInfo += " (Completed)";
+            } else {
+                levelInfo += " (Locked)";
             }
             levelsList.getItems().add(levelInfo);
         }
@@ -446,6 +450,15 @@ public class GameManager extends Application {
             String selectedLevel = levelsList.getSelectionModel().getSelectedItem();
             if (selectedLevel != null) {
                 int levelNumber = Integer.parseInt(selectedLevel.split(" ")[1]);
+                if (completedLevelsList.contains(levelNumber)) {
+                    loadLevel(levelNumber);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Level Locked");
+                    alert.setContentText("Please complete this level to unlock replays");
+                    alert.showAndWait();
+                }
                 loadLevel(levelNumber);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
