@@ -34,10 +34,11 @@ public class Amoeba extends Actor {
      * @param startTile  The initial tile where the Amoeba starts.
      * @param growthRate The number of ticks required between growth attempts.
      */
-    public Amoeba(Tile startTile, int growthRate) {
+    public Amoeba(Tile startTile, int growthRate, int maxSize) {
         super(startTile);  // Call the Actor constructor with the starting tile
         this.image = new Image("Actor Images/amoeba.png");  // Set the Amoeba image path
         this.growthRate = growthRate;
+        this.maxSize = maxSize;
         this.tickCoolDown = growthRate;
         this.isBlocked = false;
     }
@@ -104,7 +105,7 @@ public class Amoeba extends Actor {
             System.out.println("Amoeba is blocked and can no longer grow!");
         } else {
             Tile growthTile = availableGrowthTiles.get((int) (Math.random() * availableGrowthTiles.size()));
-            Amoeba newAmoeba = new Amoeba(growthTile, this.growthRate);
+            Amoeba newAmoeba = new Amoeba(growthTile, this.growthRate, this.maxSize);
             growthTile.setOccupier(newAmoeba);
             GameState.manager.addActor(newAmoeba);
 

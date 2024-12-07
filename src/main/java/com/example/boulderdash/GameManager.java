@@ -302,14 +302,13 @@ public class GameManager extends Application {
         level = new Level(currentLevel);
         player = level.getPlayer();
         timeElapsed = 0;
-        tileSize = level.getTileSize();
+        calcTileSize();
 
         UIsetUp();
 
         GameState.setupSate(level, player, this);
         tickTimeline.play();
 
-        calcTileSize();
 
         drawGame();
         primaryStage.setScene(scene);
@@ -594,7 +593,7 @@ public class GameManager extends Application {
             level = new Level(currentUser, gameName);
             player = level.getPlayer();
             timeElapsed = 0;
-            tileSize = level.getTileSize();
+            calcTileSize();
 
             UIsetUp();
 

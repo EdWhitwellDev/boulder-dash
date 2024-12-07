@@ -28,11 +28,13 @@ public class Level {
     private final List<List<Tile>> tiles;// Grid of tiles that make up the level
     private final List<Actor> actors;// List of all active actors in the level
     private Player player;// The player character
-    private final int rows;// Number of rows in the level
-    private final int cols;// Number of columns in the level
+    private int rows;// Number of rows in the level
+    private int cols;// Number of columns in the level
     private int timeLimit;
     private int diamondsRequired;
     private int tileSize;
+    private int amoebaGrowthRate;
+    private int amoebaMaxSize;
     private Boulder boulder;
 
 
@@ -46,8 +48,8 @@ public class Level {
         actors = new ArrayList<>();
 
         readLevelFile(levelNum);
-        rows = tiles.size();
-        cols = tiles.get(0).size();
+        //rows = tiles.size();
+        //cols = tiles.get(0).size();
 
         setNeighbors();
 
@@ -66,8 +68,8 @@ public class Level {
         actors = new ArrayList<>();
 
         loadLevel(user, saveFile);
-        rows = tiles.size();
-        cols = tiles.get(0).size();
+        //rows = tiles.size();
+        //cols = tiles.get(0).size();
 
         setNeighbors();
     }
@@ -104,6 +106,8 @@ public class Level {
             diamondsRequired = Integer.parseInt(levelObj.get("DiamondsRequired").toString());
             timeLimit = Integer.parseInt(levelObj.get("TimeRemaining").toString());
             tileSize = Integer.parseInt(levelObj.get("TileSize").toString());
+            amoebaGrowthRate = Integer.parseInt(levelObj.get("AmoebaGrowthRate").toString());
+            amoebaMaxSize = Integer.parseInt(levelObj.get("AmoebaMaxSize").toString());
 
             List<String> actorsArray = jsonArrayToList(actorsArrayJson);
             List<String> tilesArray = jsonArrayToList(tilesArrayJson);
@@ -164,12 +168,17 @@ public class Level {
             e.printStackTrace();
         }
 
-        readTiles(levelSections.get("TILES"));
-        readActors(levelSections.get("ACTORS"));
+
         String[] winConditions = levelSections.get("WIN CONDITIONS").get(0).split(",");
         diamondsRequired = Integer.parseInt(winConditions[0]);
         timeLimit = Integer.parseInt(winConditions[1]);
-        tileSize = Integer.parseInt(winConditions[2]);
+        rows = Integer.parseInt(winConditions[2]);
+        cols = Integer.parseInt(winConditions[3]);
+        amoebaGrowthRate = Integer.parseInt(winConditions[4]);
+        amoebaMaxSize = Integer.parseInt(winConditions[5]);
+
+        readTiles(levelSections.get("TILES"));
+        readActors(levelSections.get("ACTORS"));
     }
 
     /**
@@ -264,7 +273,7 @@ public class Level {
                     actors.add(new Player(startTile));
                     break;
                 case "A":
-                    actors.add(new Amoeba(startTile, Integer.parseInt(actorInfo[3])));
+                    actors.add(new Amoeba(startTile, amoebaGrowthRate, amoebaMaxSize));
                     break;
                 case "F":
                     actors.add(new Fly(startTile, Boolean.parseBoolean(actorInfo[3]), false, getDirectionFromString(actorInfo[4])));
@@ -364,8 +373,11 @@ public class Level {
     public int getTimeLimit(){
         return timeLimit;
     }
-    public int getTileSize(){
-        return tileSize;
+    public int getAmoebaGrowthRate(){
+        return amoebaGrowthRate;
+    }
+    public int getAmoebaMaxSize(){
+        return amoebaMaxSize;
     }
 
     /**
@@ -470,6 +482,8 @@ public class Level {
         levelObj.put("DiamondsRequired", diamondsRequired);
         levelObj.put("TimeRemaining", GameState.manager.timeRemaining());
         levelObj.put("TileSize", tileSize);
+        levelObj.put("AmoebaGrowthRate", amoebaGrowthRate);
+        levelObj.put("AmoebaMaxSize", amoebaMaxSize);
 
         JSONObject keysObj = new JSONObject();
         for (KeyColours keyColour : KeyColours.values()) {
