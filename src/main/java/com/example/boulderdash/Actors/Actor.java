@@ -33,30 +33,6 @@ public abstract class Actor {
         }
     }
 
-    public Image getImage() {
-        return image;
-    }
-
-    public Tile getPosition() {
-        return position;
-    }
-
-    /**
-     * Changes the position of an Actor to a new tile and detects any collisions.
-     * @param nextPos is the next {@link Tile} to move to.
-     */
-    protected void changePos(Tile nextPos) {
-        if (checkCollisions()) {
-            return;
-        }
-        position.setOccupier(null);
-        previousPosition = position;
-        position = nextPos;
-        position.setOccupier(this);
-
-        isTransferring = true;
-    }
-
     /**
      * Specifies how the actor moves on the grid.
      * Overridden by subclasses for specific movement.
@@ -85,13 +61,6 @@ public abstract class Actor {
         return false;
     }
 
-    public boolean getIsTransferring(){
-        return isTransferring;
-    }
-    public Tile getPreviousPosition(){
-        return previousPosition;
-    }
-
     /**
      * Stops the actor from transferring between tiles.
      */
@@ -99,5 +68,40 @@ public abstract class Actor {
         isTransferring = false;
     }
 
+
+    /**
+     *  Getters
+     */
+    public Image getImage() {
+        return image;
+    }
+
+    public Tile getPosition() {
+        return position;
+    }
+
+    public boolean getIsTransferring(){
+        return isTransferring;
+    }
+
+    public Tile getPreviousPosition(){
+        return previousPosition;
+    }
+
+    /**
+     * Changes the position of an Actor to a new tile and detects any collisions.
+     * @param nextPos is the next {@link Tile} to move to.
+     */
+    protected void changePos(Tile nextPos) {
+        if (checkCollisions()) {
+            return;
+        }
+        position.setOccupier(null);
+        previousPosition = position;
+        position = nextPos;
+        position.setOccupier(this);
+
+        isTransferring = true;
+    }
 
 }
