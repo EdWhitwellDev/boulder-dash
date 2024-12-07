@@ -266,6 +266,7 @@ public class GameManager extends Application {
     }
 
     private void getHighScores() {
+        highScores = new HashMap<>();
         JSONArray users = (JSONArray) playerProfileObj.get("Users");
         // get the high scores for the current level from all users
         for (Object user : users) {
@@ -783,11 +784,11 @@ public class GameManager extends Application {
         }
 
         // get the scores for the current level
-        List<Integer> scores = (List<Integer>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
+        List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
         if (scores == null){
             scores = new ArrayList<>();
         }
-        scores.add(score);
+        scores.add((long) score);
 
         // sort the scores in descending order
         scores.sort(Collections.reverseOrder());
@@ -795,6 +796,8 @@ public class GameManager extends Application {
         if (scores.size() > 10){
             scores = scores.subList(0, 10);
         }
+
+
 
         highScoresObj.put(String.valueOf("Level"+ currentLevel), scores);
 
@@ -873,11 +876,25 @@ public class GameManager extends Application {
      * Loads the next level once current level has been completed.
      */
     private void loadNextLevel() {
-        System.out.println("Loading next level!");
+        currentLevel++;
+        updateCurrentLevel();
         level = new Level(currentLevel);
         player = level.getPlayer();
         timeElapsed = 0;
         GameState.setupSate(level, player, this);
+    }
+    private void updateCurrentLevel(){
+        userProfileObj.put("CurrentLevel", currentLevel);
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            FileWriter file = new FileWriter("PlayerProfile.json");
+            PlayerProfileObj.put(currentUser, userProfileObj);
+            file.write(PlayerProfileObj.toJSONString());
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

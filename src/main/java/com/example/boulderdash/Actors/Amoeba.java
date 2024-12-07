@@ -63,7 +63,7 @@ public class Amoeba extends Actor {
 
         if (cluster.size() >= maxSize) {
             for (Amoeba a : cluster) {
-                a.transform(true, position);
+                a.transform(true);
             }
             return;
         }
@@ -77,7 +77,7 @@ public class Amoeba extends Actor {
 
         if (unblockedCluster.isEmpty()){
             for (Amoeba a : cluster) {
-                a.transform(false, position);
+                a.transform(false);
             }
             return;
         }
@@ -168,7 +168,8 @@ public class Amoeba extends Actor {
     /**
      * Transforms the Amoeba into a Diamond on its current tile.
      */
-    public void transform(Boolean isBoulder, Tile position) {
+    public void transform(Boolean isBoulder) {
+        System.out.println("Amoeba has transformed into a Diamond!" + position.getRow() + "," + position.getColumn() + " " + isBoulder);
         clusterLimitReached = true;
         FallingObject fallingObject;
         if (isBoulder) {

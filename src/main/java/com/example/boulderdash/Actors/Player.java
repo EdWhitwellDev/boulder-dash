@@ -123,6 +123,8 @@ public class Player extends Actor {
                     if (!boulder.push(currentDirection)) {
                         return;
                     }
+                } else {
+                    return;
                 }
 
             }
