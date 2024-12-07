@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
 public class Exit extends Floor{
 
     /**
-     *This is the sole constructor of this class. It sets the tile's row, column and the
+     * This is the sole constructor of this class. It sets the tile's row, column and the
      * isPath variable is given a default value 'false'. It also sets the Exit Tile's image.
      *
      * @param row An integer representing the Grid Row that the tile is in.
@@ -32,7 +32,9 @@ public class Exit extends Floor{
         super.setOccupier(occupant);
         GameState.manager.winGame();
     }
+
     public String toString(){
         return "E";
     }
+
 }

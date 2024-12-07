@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
  * @author Viraj Shah
  * @version 1.3
  */
-public class Boulder extends FallingObject{
+public class Boulder extends FallingObject {
 
     /**
      * Constructor for a boulder at a specific tile.

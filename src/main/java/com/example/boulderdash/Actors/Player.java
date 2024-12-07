@@ -32,7 +32,6 @@ public class Player extends Actor {
     //A Map holding the key count for each key colour
     private final Map<KeyColours, Integer> keys = new HashMap<>();
     private int tickCoolDown = 0;
-    private int tickCoolDownReset = 3;
 
     //The number of diamonds collected by the player
     private int diamondsCollected = 0;
@@ -78,6 +77,41 @@ public class Player extends Actor {
                 processMove(nextTile);
             }
         }
+    }
+
+    /**
+     * This method allows the player to collect a Key, and update it's key count.
+     * */
+    public void collectKey(KeyColours keyColour){
+        keys.put(keyColour, keys.get(keyColour) + 1);
+    }
+
+    /**
+     * The accessor method for the number of Diamonds the Player has collected.
+     *
+     * @return The number of Diamonds the Player has collected.
+     * */
+    public int getDiamondsCollected(){
+        return diamondsCollected;
+    }
+    public void setDiamondsCollected(int diamondsCollected){
+        this.diamondsCollected = diamondsCollected;
+    }
+    public void setKeys(Map<KeyColours, Integer> keys){
+        this.keys.putAll(keys);
+    }
+
+    /**
+     * The accessor method for the Player's key count.
+     *
+     * @return The number of Keys of each colour that the Player has collected.
+     * */
+    public Map<KeyColours, Integer> getKeys(){
+        return keys;
+    }
+
+    public String toString(){
+        return "P" + "," + position.getRow() + "," + position.getColumn();
     }
 
     /**
@@ -151,41 +185,6 @@ public class Player extends Actor {
             }
             changePos(nextTile);
         }
-    }
-
-    /**
-     * This method allows the player to collect a Key, and update it's key count.
-     * */
-    public void collectKey(KeyColours keyColour){
-        keys.put(keyColour, keys.get(keyColour) + 1);
-    }
-
-    /**
-     * The accessor method for the number of Diamonds the Player has collected.
-     *
-     * @return The number of Diamonds the Player has collected.
-     * */
-    public int getDiamondsCollected(){
-        return diamondsCollected;
-    }
-    public void setDiamondsCollected(int diamondsCollected){
-        this.diamondsCollected = diamondsCollected;
-    }
-    public void setKeys(Map<KeyColours, Integer> keys){
-        this.keys.putAll(keys);
-    }
-
-    /**
-     * The accessor method for the Player's key count.
-     *
-     * @return The number of Keys of each colour that the Player has collected.
-     * */
-    public Map<KeyColours, Integer> getKeys(){
-        return keys;
-    }
-
-    public String toString(){
-        return "P" + "," + position.getRow() + "," + position.getColumn();
     }
 
 }

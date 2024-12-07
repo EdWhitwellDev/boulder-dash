@@ -1,6 +1,7 @@
 package com.example.boulderdash.Tiles;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
@@ -30,8 +31,7 @@ public class Tile {
 
     //Attribute to represent whether the tile is a path tile or not. Used as determinant
     //in Floor class, but set to default value of 'false' in all other tile classes.
-    protected boolean isPath = false;
-    private boolean occupied = false;
+    protected boolean isPath;
 
     //Attribute to hold the Actor object currently occupying the tile.
     private Actor occupier;
@@ -119,7 +119,6 @@ public class Tile {
      * */
     public void setOccupier(Actor occupier){
         this.occupier = occupier;
-        occupied = occupier != null;
     }
 
     /**
@@ -242,21 +241,16 @@ public class Tile {
      * @return The desired Tile
      * */
     public Tile getNeighbour(Direction direction) {
-        switch (direction) {
-            case UP:
-                return up;
-            case DOWN:
-                return down;
-            case LEFT:
-                return left;
-            case RIGHT:
-                return right;
-            default:
-                return null;
-        }
+        return switch (direction) {
+            case UP -> up;
+            case DOWN -> down;
+            case LEFT -> left;
+            case RIGHT -> right;
+            default -> null;
+        };
     }
 
-    // Turns tile into path (e.g when an explosion happens)
+    // Turns tile into path (e.g. when an explosion happens)
     /**
      * This method is to turn a tile (either occupied or unoccupied) into a path. Can be called
      * when an explosion occurs.
@@ -264,8 +258,12 @@ public class Tile {
      * @return The new path tile replacing the destroyed tile.
      * */
     public Tile destroy() {
+        System.out.println("Tile destroyed at: " + row + ", " + column);
         //If the tile is occupied, kills the occupant.
         if (occupier != null) {
+            if (occupier instanceof Player) {
+                GameState.manager.looseGame("Killed by Explosion");
+            }
             GameState.manager.killActor(occupier);
         }
 

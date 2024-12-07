@@ -2,6 +2,7 @@ package com.example.boulderdash.Actors;
 
 
 import com.example.boulderdash.Actors.Enemies.Enemy;
+import com.example.boulderdash.Actors.Enemies.Fly;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -33,12 +34,73 @@ public abstract class Actor {
         }
     }
 
+    /**
+     * Specifies how the actor moves on the grid.
+     * Overridden by subclasses for specific movement.
+     */
+    public void move(){}
+
+    /**
+     * Detects collisions with other actors in neighbouring tiles.
+     */
+    public boolean checkCollisions(){
+        List<Actor> collisionOther = position.checkAdjacent();
+        if (!collisionOther.isEmpty()) {
+            for (Actor collider : collisionOther){
+                if (collider instanceof Enemy && this instanceof Player){
+                    Class<?> enemyClass = collider.getClass();
+                    String enemyType = enemyClass.getSimpleName();
+                    if (collider instanceof Fly fly) {
+                        GameState.manager.looseGame("Killed by a " + (fly.isbuttery() ? "Butterfly" : "Firefly"));
+                    }
+                    else {
+                        GameState.manager.looseGame("Killed by a " + enemyType);
+                    }
+                    return true;
+                } else if (this instanceof Enemy && collider instanceof Player) {
+                    Class<?> enemyClass = this.getClass();
+                    String enemyType = enemyClass.getSimpleName();
+                    if (this instanceof Fly fly) {
+                        GameState.manager.looseGame("Killed by a " + (fly.isbuttery() ? "Butterfly" : "Firefly"));
+                    }
+                    else {
+                        GameState.manager.looseGame("Killed by a " + enemyType);
+                    }
+                    return true;
+                } else if (this instanceof Enemy && collider instanceof Amoeba) {
+                    ((Enemy) this).explodeSingle();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Stops the actor from transferring between tiles.
+     */
+    public void stopTransferring(){
+        isTransferring = false;
+    }
+
+
+    /**
+     *  Getters
+     */
     public Image getImage() {
         return image;
     }
 
     public Tile getPosition() {
         return position;
+    }
+
+    public boolean getIsTransferring(){
+        return isTransferring;
+    }
+
+    public Tile getPreviousPosition(){
+        return previousPosition;
     }
 
     /**
@@ -56,48 +118,5 @@ public abstract class Actor {
 
         isTransferring = true;
     }
-
-    /**
-     * Specifies how the actor moves on the grid.
-     * Overridden by subclasses for specific movement.
-     */
-    public void move(){}
-
-    /**
-     * Detects collisions with other actors in neighbouring tiles.
-     */
-    public boolean checkCollisions(){
-        List<Actor> collisionOther = position.checkAdjacent();
-        if (!collisionOther.isEmpty()) {
-            for (Actor collider : collisionOther){
-                if (collider instanceof Enemy && this instanceof Player){
-                    GameState.manager.looseGame();
-                    return true;
-                } else if (this instanceof Enemy && collider instanceof Player) {
-                    GameState.manager.looseGame();
-                    return true;
-                } else if (this instanceof Enemy && collider instanceof Amoeba) {
-                    ((Enemy) this).explodeSingle();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean getIsTransferring(){
-        return isTransferring;
-    }
-    public Tile getPreviousPosition(){
-        return previousPosition;
-    }
-
-    /**
-     * Stops the actor from transferring between tiles.
-     */
-    public void stopTransferring(){
-        isTransferring = false;
-    }
-
 
 }

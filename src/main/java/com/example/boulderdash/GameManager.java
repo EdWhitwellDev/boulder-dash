@@ -2,7 +2,6 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 
@@ -40,15 +39,23 @@ import java.util.*;
  * user input, game state management, and the main game loop.
  */
 public class GameManager extends Application {
+    private String deathCause = "";
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
     private Level level;
     private Player player;
     private Scene scene;
+    private Scene homeScene;
     private Pane levelCompleteMenu;
     private Pane gameOverMenu;
     private VBox pauseMenu;
+    private String currentUser;
+    private Stage primaryStage;
+    private Label currentUserLabel;
+    private Map<Integer, String> highScores;
+    private JSONObject playerProfileObj;
+    private JSONObject userProfileObj;
     StackPane stackPane = new StackPane();
     private final GridPane grid = new GridPane();
     private final Pane transitionPane = new Pane();
@@ -65,20 +72,13 @@ public class GameManager extends Application {
     private static final ImageView keyIconRed = new ImageView(new Image("Key Icon Images/red_key_icon.png"));
     private static final ImageView keyIconGreen = new ImageView(new Image("Key Icon Images/green_key_icon.png"));
     private static final ImageView keyIconYellow = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
-    private float timeElapsed;
+    private static final int NUMBER_OF_LEVELS = 5;
     private final float tickTime = 0.1f;
+    private float timeElapsed;
     private int tileSize;
     private int currentLevel = 1;
     private boolean dead = false;
     private boolean isPaused = false;
-    private String currentUser;
-    private Stage primaryStage;
-    private Scene homeScene;
-    private VBox homeScreen;
-    private Label titleLabel;
-    private Map<Integer, String> highScores;
-    private JSONObject playerProfileObj;
-    private JSONObject userProfileObj;
 
     /**
      * Starts the application, sets up home screen and displays it.
@@ -102,293 +102,13 @@ public class GameManager extends Application {
         primaryStage.setScene(homeScene);
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-
         // Set stage to fill the screen
         primaryStage.setX(screenBounds.getMinX());
         primaryStage.setY(screenBounds.getMinY());
         primaryStage.setWidth(screenBounds.getWidth());
         primaryStage.setHeight(screenBounds.getHeight());
-
+        //primaryStage.setFullScreen(true);
         primaryStage.show();
-    }
-
-    private void calcTileSize() {
-        int cols = level.getCols();
-        int rows = level.getRows();
-        int windowWidth = (int) primaryStage.getWidth();
-        int windowHeight = (int) primaryStage.getHeight();
-
-        tileSize = Math.min(windowWidth / cols, windowHeight / rows);
-        grid.setAlignment(Pos.CENTER);
-    }
-
-    /**
-     * Sets up the home screen with the UI.
-     */
-    private void setupHomeScreen() {
-        homeScreen = new VBox(20);
-        homeScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
-
-        // Add a logo
-        ImageView logo = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
-        logo.setFitHeight(200);
-        logo.setFitWidth(400);
-
-        // Add a title label
-        titleLabel = new Label("PRESS START TO PLAY");
-        titleLabel.setFont(new Font("Arial", 40));
-        titleLabel.setStyle("-fx-text-fill: white;");
-
-        // Start Game button
-        Button startButton = new Button("Start");
-        startButton.setFont(new Font("Arial", 20));
-        startButton.setOnAction(e -> startNewGame());
-
-        // Load Game button
-        Button loadButton = new Button("Load Game");
-        loadButton.setFont(new Font("Arial", 20));
-        loadButton.setOnAction(e -> showSavedGamesScreen());
-
-        // High Score Table
-        Label highScoreLabel = new Label("Level " + currentLevel + " Highest Scores:");
-        highScoreLabel.setFont(new Font("Arial", 25));
-        highScoreLabel.setStyle("-fx-text-fill: white;");
-
-        VBox highScoreBoard = createHighScoreBoard();
-
-        homeScreen.getChildren().addAll(logo, titleLabel, startButton, loadButton, highScoreLabel, highScoreBoard);
-        homeScene = new Scene(homeScreen);
-    }
-
-    /**
-     * Displays the saved games to the user, allowing them to choose between the save files.
-     */
-    private void showSavedGamesScreen() {
-        VBox savedGamesScreen = new VBox(20);
-        savedGamesScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
-
-        Label savedGamesLabel = new Label("Select a Saved Game");
-        savedGamesLabel.setFont(new Font("Arial", 30));
-        savedGamesLabel.setStyle("-fx-text-fill: white;");
-
-        // ListView to display saved games
-        ListView<String> savedGamesList = new ListView<>();
-        savedGamesList.setPrefSize(400, 300);
-        savedGamesList.getItems().addAll(loadSavedGames()); // loadSavedGames() returns a list of saved games
-
-        // Load selected game button
-        Button loadSelectedButton = new Button("Load Selected Game");
-        loadSelectedButton.setFont(new Font("Arial", 20));
-        loadSelectedButton.setOnAction(e -> {
-            String selectedGame = savedGamesList.getSelectionModel().getSelectedItem();
-            if (selectedGame != null) {
-                System.out.println("Loading selected game: " + selectedGame);
-                loadSelectedGame(selectedGame);
-            }
-        });
-
-        // Back button
-        Button backButton = new Button("Back");
-        backButton.setFont(new Font("Arial", 20));
-        backButton.setOnAction(e -> primaryStage.setScene(homeScene));
-
-        savedGamesScreen.getChildren().addAll(savedGamesLabel, savedGamesList, loadSelectedButton, backButton);
-
-        Scene savedGamesScene = new Scene(savedGamesScreen);
-        primaryStage.setScene(savedGamesScene);
-    }
-
-    /**
-     * Loads the saved games for the user.
-     * @return the list of saved games.
-     */
-    private List<String> loadSavedGames() {
-        // Replace with logic to save actual saved games
-        JSONObject savedGames = (JSONObject) userProfileObj.get("SavedLevels");
-        return new ArrayList<>(savedGames.keySet());
-    }
-
-    /**
-     * Loads the specific save file.
-     * @param gameName is the name of the save.
-     */
-    private void loadSelectedGame(String gameName) {
-        loadGame(gameName);
-    }
-
-    /**
-     * Sets up the UI for the main game.
-     */
-    private void UIsetUp() {
-        grid.setHgap(0);
-        grid.setVgap(0);
-
-        diamondCountIcon.setFitHeight(tileSize*0.5);
-        diamondCountIcon.setFitWidth(tileSize*0.5);
-        clockIcon.setFitHeight(tileSize*0.5);
-        clockIcon.setFitWidth(tileSize*0.4);
-        keyIconBlue.setFitHeight(tileSize*0.5);
-        keyIconBlue.setFitWidth(tileSize*0.5);
-        keyIconRed.setFitHeight(tileSize*0.5);
-        keyIconRed.setFitWidth(tileSize*0.5);
-        keyIconGreen.setFitHeight(tileSize*0.5);
-        keyIconGreen.setFitWidth(tileSize*0.5);
-        keyIconYellow.setFitHeight(tileSize*0.5);
-        keyIconYellow.setFitWidth(tileSize*0.5);
-        infoBar.getChildren().addAll(clockIcon, timeLabel, diamondCountIcon,
-                diamondsLabel, keyIconBlue, keyLabelBlue,
-                keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen,
-                keyIconYellow, keyLabelYellow);
-        infoBar.setPrefHeight(tileSize*0.7);
-        infoBar.setAlignment(javafx.geometry.Pos.CENTER);
-        infoBar.setStyle("-fx-padding: 5; -fx-background-color: #333; -fx-text-fill: white;");
-        timeLabel.setStyle("-fx-text-fill: white;");
-        diamondsLabel.setStyle("-fx-text-fill: white;");
-        keyLabelBlue.setStyle("-fx-text-fill: white;");
-        keyLabelRed.setStyle("-fx-text-fill: white;");
-        keyLabelGreen.setStyle("-fx-text-fill: white;");
-        keyLabelYellow.setStyle("-fx-text-fill: white;");
-        diamondCountIcon.setStyle("-fx-padding: 10;");
-
-        stackPane.setStyle("-fx-background-color: #333;");
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(infoBar);
-
-        stackPane.getChildren().addAll(grid, transitionPane, borderPane);
-
-        scene = new Scene(stackPane);  // width: 400, height: 400
-        scene.setOnKeyPressed(this::processKeyEvent);
-        scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
-
-        tickTimeline = new Timeline(new KeyFrame(Duration.seconds(tickTime), event -> tick()));
-        tickTimeline.setCycleCount(Animation.INDEFINITE);
-    }
-
-    private void getHighScores() {
-        highScores = new HashMap<>();
-        JSONArray users = (JSONArray) playerProfileObj.get("Users");
-        // get the high scores for the current level from all users
-        for (Object user : users) {
-            JSONObject userObj = (JSONObject) playerProfileObj.get(user);
-            JSONObject highScoresObj = (JSONObject) userObj.get("HighScores");
-            List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
-            System.out.println(scores);
-            if (scores != null){
-                for (long scoreLong : scores){
-                    Integer score = (int) (long) scoreLong;
-                    if (highScores.containsKey(score)){
-                        highScores.put(score, highScores.get(score) + ", " + user.toString());
-                    } else {
-                        highScores.put(score, user.toString());
-                    }
-                }
-            }
-        }
-
-        // sort the high scores in descending order
-        Map<Integer, String> sortedHighScores = new LinkedHashMap<>();
-        highScores.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
-                .forEachOrdered(x -> sortedHighScores.put(x.getKey(), x.getValue()));
-        highScores = sortedHighScores;
-    }
-    /**
-     * Creates the high score board.
-     * @return a VBox of the high score board.
-     */
-    private VBox createHighScoreBoard() {
-        getHighScores();
-
-        VBox highScoreBoard = new VBox(10); // Vertical spacing between scores
-        highScoreBoard.setStyle("-fx-padding: 10; -fx-alignment: center;");
-        highScoreBoard.setAlignment(Pos.CENTER);
-
-        if (highScores.isEmpty()) {
-            Label noScoresLabel = new Label("No score yet!");
-            noScoresLabel.setFont(new Font("Arial", 18));
-            noScoresLabel.setStyle("-fx-text-fill: grey;");
-            highScoreBoard.getChildren().add(noScoresLabel);
-        } else {
-            List<Integer> highScoresInt = new ArrayList<>(this.highScores.keySet());
-            List<String> byUser = new ArrayList<>(this.highScores.values());
-            for (int i = 0; i < Math.min(highScoresInt.size(), 10); i++) {
-                Label scoreLabel = new Label(highScoresInt.get(i).toString());
-                Label userLabel = new Label((i + 1) + ". " + byUser.get(i) + "  - ");
-                scoreLabel.setFont(new Font("Arial", 18));
-                scoreLabel.setStyle("-fx-text-fill: white;");
-                userLabel.setFont(new Font("Arial", 18));
-                userLabel.setStyle("-fx-text-fill: white;");
-
-                HBox scoreBox = new HBox(10);
-                scoreBox.setAlignment(Pos.CENTER);
-                scoreBox.getChildren().addAll(userLabel, scoreLabel);
-
-                highScoreBoard.getChildren().addAll(scoreBox);
-            }
-        }
-
-        return highScoreBoard;
-    }
-
-    /**
-     * Starts a new game.
-     * Loads the level and game state.
-     */
-    private void startNewGame() {
-        currentLevel = userProfileObj.get("CurrentLevel") != null ?
-                Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
-
-        level = new Level(currentLevel);
-        player = level.getPlayer();
-        timeElapsed = 0;
-        calcTileSize();
-
-        UIsetUp();
-
-        GameState.setupSate(level, player, this);
-        tickTimeline.play();
-
-        drawGame();
-        primaryStage.setScene(scene);
-        // center the scene on the screen
-
-
-    }
-
-    /**
-     * Loads the player's profile from a JSON file.
-     */
-    private void getPlayerProfile(){
-        JSONParser parser = new JSONParser();
-        try {
-            playerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    /**
-     * Marks an actor for removal from the game
-     */
-    public void killActor(Actor actor) {
-        deadActors.add(actor);
-    }
-    public void addActor(Actor actor) {
-        newBorns.add(actor);
-    }
-
-    /**
-     * Removes all actors that have been marked for removal in the current game tick
-     */
-    private void removeActors() {
-        for (Actor actor : deadActors) {
-            level.removeActor(actor);
-        }
-        deadActors = new ArrayList<>();
-    }
-    private void createNewActors(){
-        level.addActors(newBorns);
-        newBorns = new ArrayList<>();
     }
 
     /**
@@ -401,10 +121,10 @@ public class GameManager extends Application {
 
         timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
         diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
-        keyLabelBlue.setText("x" + String.valueOf(player.getKeys().get(KeyColours.BLUE)));
-        keyLabelRed.setText("x" + String.valueOf(player.getKeys().get(KeyColours.RED)));
-        keyLabelGreen.setText("x" + String.valueOf(player.getKeys().get(KeyColours.GREEN)));
-        keyLabelYellow.setText("x" + String.valueOf(player.getKeys().get(KeyColours.YELLOW)));
+        keyLabelBlue.setText("x" + (player.getKeys().get(KeyColours.BLUE)));
+        keyLabelRed.setText("x" + (player.getKeys().get(KeyColours.RED)));
+        keyLabelGreen.setText("x" + (player.getKeys().get(KeyColours.GREEN)));
+        keyLabelYellow.setText("x" + (player.getKeys().get(KeyColours.YELLOW)));
 
         grid.getChildren().clear(); // Clears the grid first
 
@@ -477,9 +197,7 @@ public class GameManager extends Application {
             translateTransition.setToX(currentPosition.getColumn() * tileSize + x);
             translateTransition.setToY(currentPosition.getRow() * tileSize + y);
 
-            translateTransition.setOnFinished(e -> {
-                actor.checkCollisions();
-            });
+            translateTransition.setOnFinished(e -> actor.checkCollisions());
 
             translateTransition.play();
             transitionPane.getChildren().add(actorImageView);
@@ -516,7 +234,642 @@ public class GameManager extends Application {
     }
 
     /**
-     * Toggles the state of the game, either paused or unpaused.
+     * Updates the game state, processes actors' actions, and redraws the game screen
+     * at each tick.
+     */
+    public void tick() {
+        timeElapsed += tickTime;
+        removeActors();// Remove any dead actors
+        createNewActors();
+        drawGame();// Redraw the grid
+
+        if (!dead) {
+            for (Actor actor : level.getActors()) {
+                actor.move(); // Move all active actors
+            }
+        }
+
+        if (timeElapsed > level.getTimeLimit()){
+            looseGame("Time Limit Reached!");
+        }
+    }
+
+    /**
+     * Ends the game, marked it as a loss
+     */
+    public void looseGame(String cause) {
+        if (!dead) {
+            Text gameOverText = new Text("Game Over");
+            gameOverText.setFont(new Font("Arial", 75));
+            dead = true;
+            deathCause = cause;
+            tickTimeline.stop();
+            showGameOverScreen();
+        }
+
+    }
+
+    /**
+     * Ends the current level
+     */
+    public void winGame() {
+        dead = true;
+        drawGame();
+        showLevelCompleteScreen();
+    }
+
+    public void saveScore(int score) {
+        JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
+        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
+
+        // check if the level has been completed before
+        if (!completedLevels.contains(currentLevel)){
+            completedLevels.add(currentLevel);
+        }
+
+        // get the scores for the current level
+        List<Long> scores = (List<Long>) highScoresObj.get("Level"+ currentLevel);
+        if (scores == null){
+            scores = new ArrayList<>();
+        }
+        scores.add((long) score);
+
+        // sort the scores in descending order
+        scores.sort(Collections.reverseOrder());
+        // keep only the top 10 scores
+        if (scores.size() > 10){
+            scores = scores.subList(0, 10);
+        }
+
+
+
+        highScoresObj.put(("Level"+ currentLevel), scores);
+
+        // update the high scores in the player profile
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(currentUser);
+            FileWriter file = new FileWriter("PlayerProfile.json");
+            userObjOld.put("HighScores", highScoresObj);
+            userObjOld.put("CompletedLevels", completedLevels);
+            file.write(PlayerProfileObj.toJSONString());
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Marks an actor for removal from the game
+     */
+    public void killActor(Actor actor) {
+        deadActors.add(actor);
+    }
+    public void addActor(Actor actor) {
+        newBorns.add(actor);
+    }
+
+    /**
+     * Shows the remaining time.
+     * @return the remaining time in seconds.
+     */
+    public int timeRemaining(){
+        return (int)(level.getTimeLimit() - timeElapsed);
+    }
+
+    /**
+     * Main method to launch the program
+     *
+     * @param args command-line arguments
+     */
+
+    public static void main(String[] args) {
+        // Launch the JavaFX application
+        launch(args);
+    }
+
+    private void calcTileSize() {
+        int cols = level.getCols();
+        int rows = level.getRows();
+        int windowWidth = (int) primaryStage.getWidth();
+        int windowHeight = (int) primaryStage.getHeight();
+
+        tileSize = Math.min(windowWidth / cols, windowHeight / rows);
+        grid.setAlignment(Pos.CENTER);
+    }
+
+    /**
+     * Sets up the home screen with the UI.
+     */
+    private void setupHomeScreen() {
+        VBox homeScreen = new VBox(20);
+        homeScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        // Add a logo
+        ImageView logo = new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/logo.png")).toExternalForm()));
+        logo.setFitHeight(200);
+        logo.setFitWidth(400);
+
+        // Add a title label
+        Label titleLabel = new Label("PRESS START TO PLAY");
+        titleLabel.setFont(new Font("Arial", 40));
+        titleLabel.setStyle("-fx-text-fill: white;");
+
+        currentUserLabel = new Label("Current User: " + currentUser);
+        currentUserLabel.setFont(new Font("Arial", 20));
+        currentUserLabel.setStyle("-fx-text-fill: white;");
+
+        HBox buttonBox = new HBox(20);
+        buttonBox.setStyle("-fx-alignment: center;");
+
+        // Start Game button
+        Button startButton = new Button("Start");
+        startButton.setFont(new Font("Arial", 20));
+        startButton.setOnAction(e -> startNewGame());
+
+        // Load Game button
+        Button loadButton = new Button("Load Game");
+        loadButton.setFont(new Font("Arial", 20));
+        loadButton.setOnAction(e -> showSavedGamesScreen());
+
+        // User Menu button
+        Button userMenuButton = new Button("User Menu");
+        userMenuButton.setFont(new Font("Arial", 20));
+        userMenuButton.setOnAction(e -> userMenu());
+
+        // Load unlocked levels
+        Button levelsButton = new Button("Levels");
+        levelsButton.setFont(new Font("Arial", 20));
+        levelsButton.setOnAction(e -> levelsMenu());
+
+        // High Score Table
+        Label highScoreLabel = new Label("Level " + currentLevel + " Highest Scores:");
+        highScoreLabel.setFont(new Font("Arial", 25));
+        highScoreLabel.setStyle("-fx-text-fill: white;");
+
+        VBox highScoreBoard = createHighScoreBoard();
+
+        buttonBox.getChildren().addAll(startButton, loadButton, userMenuButton, levelsButton);
+
+        homeScreen.getChildren().addAll(logo, titleLabel, currentUserLabel, buttonBox, highScoreLabel, highScoreBoard);
+        homeScene = new Scene(homeScreen);
+    }
+
+    /**
+     * Displays the levels screen, allowing users to select and play unlocked levels.
+     */
+    private void levelsMenu() {
+        VBox levelsScreen = new VBox(20);
+        levelsScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        Label levelsLabel = new Label("Select a Level to Play");
+        levelsLabel.setFont(new Font("Arial", 20));
+        levelsLabel.setStyle("-fx-text-fill: white;");
+
+        ListView<String> levelsList = new ListView<>();
+        levelsList.setPrefSize(400, 300);
+
+        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
+
+        List<Integer> completedLevelsList = new ArrayList<>();
+        for (Object level : completedLevels){
+            completedLevelsList.add(Integer.parseInt(level.toString()));
+        }
+        // Populate the list with unlocked levels
+        for (int i = 1; i <= NUMBER_OF_LEVELS; i++) {
+            String levelInfo = "Level " + i;
+            if (completedLevelsList.contains(i) ) {
+                levelInfo += " (Completed)";
+            } else {
+                levelInfo += " (Locked)";
+            }
+            levelsList.getItems().add(levelInfo);
+        }
+
+        Button playLevelButton = new Button("Play Selected Level");
+        playLevelButton.setFont(new Font("Arial", 20));
+        playLevelButton.setOnAction(e -> {
+            String selectedLevel = levelsList.getSelectionModel().getSelectedItem();
+            if (selectedLevel != null) {
+                int levelNumber = Integer.parseInt(selectedLevel.split(" ")[1]);
+                if (completedLevelsList.contains(levelNumber)) {
+                    loadLevel(levelNumber);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Level Locked");
+                    alert.setContentText("Please complete this level to unlock replays");
+                    alert.showAndWait();
+                }
+                loadLevel(levelNumber);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("No Level Selected");
+                alert.setContentText("Please select a level.");
+                alert.showAndWait();
+            }
+        });
+
+        Button backButton = new Button("Back");
+        backButton.setFont(new Font("Arial", 20));
+        backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+
+        levelsScreen.getChildren().addAll(levelsLabel, levelsList, playLevelButton, backButton);
+
+        Scene levelsScene = new Scene(levelsScreen);
+        primaryStage.setScene(levelsScene);
+    }
+
+    /**
+     * Loads a specified level.
+     * @param levelNumber The level number to load.
+     */
+    private void loadLevel(int levelNumber) {
+        currentLevel = levelNumber;
+        level = new Level(currentLevel);
+        player = level.getPlayer();
+        timeElapsed = 0;
+        calcTileSize();
+
+        UISetUp();
+
+        GameState.setupSate(level, player, this);
+        tickTimeline.play();
+
+        drawGame();
+        primaryStage.setScene(scene);
+    }
+
+    /**
+     * Displays the User Menu screen, allowing users to add, remove, or select users.
+     */
+    private void userMenu() {
+        VBox userMenuScreen = new VBox(20);
+        userMenuScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        Label userMenuLabel = new Label("User Menu");
+        userMenuLabel.setFont(new Font("Arial", 30));
+        userMenuLabel.setStyle("-fx-text-fill: white;");
+
+        // ListView to display users
+        ListView<String> userList = new ListView<>();
+        JSONArray users = (JSONArray) playerProfileObj.get("Users");
+        if (users != null) {
+            users.forEach(user -> userList.getItems().add(user.toString()));
+        }
+
+        // Adjust ListView height based on the number of users
+        int userCount = users != null ? users.size() : 0;
+        userList.setPrefHeight(Math.min(userCount * 35, 300));
+        userList.setMaxWidth(500);
+
+        // Add User button
+        Button addUserButton = new Button("Add User");
+        addUserButton.setFont(new Font("Arial", 20));
+        addUserButton.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Add User");
+            dialog.setHeaderText("Add a new user");
+            dialog.setContentText("Enter username:");
+
+            String newUser = dialog.showAndWait().orElse("").trim();
+            if (!newUser.isEmpty() && !userList.getItems().contains(newUser)) {
+                userList.getItems().add(newUser);
+                users.add(newUser);
+                JSONObject newUserObj = new JSONObject();
+                newUserObj.put("HighScores", new JSONObject());
+                newUserObj.put("SavedLevels", new JSONObject());
+                newUserObj.put("CurrentLevel", 1);
+                newUserObj.put("CompletedLevels", new JSONArray());
+                playerProfileObj.put(newUser, newUserObj);
+                savePlayerProfile();
+
+                // Update ListView height after adding a new user
+                userList.setPrefHeight(Math.min(users.size() * 35, 300));
+            }
+        });
+
+        // Remove User button
+        Button removeUserButton = new Button("Remove User");
+        removeUserButton.setFont(new Font("Arial", 20));
+        removeUserButton.setOnAction(e -> {
+            String selectedUser = userList.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                if (selectedUser.equals(currentUser)) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Error");
+                    errorAlert.setHeaderText("Current user cannot be removed!");
+                    errorAlert.setContentText("Please switch to a different user and try again.");
+                    errorAlert.showAndWait();
+                } else {
+                    userList.getItems().remove(selectedUser);
+                    users.remove(selectedUser);
+                    playerProfileObj.remove(selectedUser);
+                    savePlayerProfile();
+
+                    // Update ListView height after removing a user
+                    userList.setPrefHeight(Math.min(users.size() * 35, 300));
+                }
+            }
+        });
+
+        // Select User button
+        Button selectUserButton = new Button("Select User");
+        selectUserButton.setFont(new Font("Arial", 20));
+        selectUserButton.setOnAction(e -> {
+            String selectedUser = userList.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                changeCurrentUser(selectedUser);
+                primaryStage.setScene(homeScene);
+            }
+        });
+
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setFont(new Font("Arial", 20));
+        backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+
+        HBox buttonBox = new HBox(10, addUserButton, removeUserButton, selectUserButton, backButton);
+        buttonBox.setStyle("-fx-alignment: center;");
+
+        userMenuScreen.getChildren().addAll(userMenuLabel, userList, buttonBox);
+
+        Scene userMenuScene = new Scene(userMenuScreen);
+        primaryStage.setScene(userMenuScene);
+    }
+
+    private void changeCurrentUser(String newUser) {
+        currentUser = newUser;
+        userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
+        currentUserLabel.setText("Current User: " + currentUser);
+
+        // Update the current user in the JSON file
+        try {
+            playerProfileObj.put("CurrentUser", currentUser);
+            savePlayerProfile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saves the updated player profile to the JSON file.
+     */
+    private void savePlayerProfile() {
+        try (FileWriter file = new FileWriter("PlayerProfile.json")) {
+            file.write(playerProfileObj.toJSONString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Displays the saved games to the user, allowing them to choose between the save files.
+     */
+    private void showSavedGamesScreen() {
+        VBox savedGamesScreen = new VBox(20);
+        savedGamesScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        Label savedGamesLabel = new Label("Select a Saved Game");
+        savedGamesLabel.setFont(new Font("Arial", 30));
+        savedGamesLabel.setStyle("-fx-text-fill: white;");
+
+        List<String> savedGames = loadSavedGames();
+
+        if (savedGames.isEmpty()) {
+            Label noSavesLabel = new Label("No saved games found!");
+            noSavesLabel.setFont(new Font("Arial", 18));
+            noSavesLabel.setStyle("-fx-text-fill: grey;");
+            savedGamesScreen.getChildren().add(noSavesLabel);
+            Button backButton = new Button("Back");
+            backButton.setFont(new Font("Arial", 20));
+            backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+            savedGamesScreen.getChildren().add(backButton);
+            Scene savedGamesScene = new Scene(savedGamesScreen);
+            primaryStage.setScene(savedGamesScene);
+            return;
+        }
+
+        // ListView to display saved games
+        ListView<String> savedGamesList = new ListView<>();
+        savedGamesList.setPrefSize(400, 300);
+        savedGamesList.getItems().addAll(savedGames); // loadSavedGames() returns a list of saved games
+
+        // Load selected game button
+        Button loadSelectedButton = new Button("Load Selected Game");
+        loadSelectedButton.setFont(new Font("Arial", 20));
+        loadSelectedButton.setOnAction(e -> {
+            String selectedGame = savedGamesList.getSelectionModel().getSelectedItem();
+            if (selectedGame != null) {
+                System.out.println("Loading selected game: " + selectedGame);
+                loadSelectedGame(selectedGame);
+            }
+        });
+
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setFont(new Font("Arial", 20));
+        backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+
+        savedGamesScreen.getChildren().addAll(savedGamesLabel, savedGamesList, loadSelectedButton, backButton);
+
+        Scene savedGamesScene = new Scene(savedGamesScreen);
+        primaryStage.setScene(savedGamesScene);
+    }
+
+    /**
+     * Loads the saved games for the user.
+     * @return the list of saved games.
+     */
+    private List<String> loadSavedGames() {
+        // Replace with logic to save actual saved games
+        JSONObject savedGames = (JSONObject) userProfileObj.get("SavedLevels");
+        if (savedGames == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(savedGames.keySet());
+    }
+
+    /**
+     * Loads the specific save file.
+     * @param gameName is the name of the save.
+     */
+    private void loadSelectedGame(String gameName) {
+        loadGame(gameName);
+    }
+
+    /**
+     * Sets up the UI for the main game.
+     */
+    private void UISetUp() {
+        grid.setHgap(0);
+        grid.setVgap(0);
+
+        diamondCountIcon.setFitHeight(tileSize*0.5);
+        diamondCountIcon.setFitWidth(tileSize*0.5);
+        clockIcon.setFitHeight(tileSize*0.5);
+        clockIcon.setFitWidth(tileSize*0.4);
+        keyIconBlue.setFitHeight(tileSize*0.5);
+        keyIconBlue.setFitWidth(tileSize*0.5);
+        keyIconRed.setFitHeight(tileSize*0.5);
+        keyIconRed.setFitWidth(tileSize*0.5);
+        keyIconGreen.setFitHeight(tileSize*0.5);
+        keyIconGreen.setFitWidth(tileSize*0.5);
+        keyIconYellow.setFitHeight(tileSize*0.5);
+        keyIconYellow.setFitWidth(tileSize*0.5);
+        infoBar.getChildren().addAll(clockIcon, timeLabel, diamondCountIcon,
+                diamondsLabel, keyIconBlue, keyLabelBlue,
+                keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen,
+                keyIconYellow, keyLabelYellow);
+        infoBar.setPrefHeight(tileSize*0.7);
+        infoBar.setAlignment(javafx.geometry.Pos.CENTER);
+        infoBar.setStyle("-fx-padding: 5; -fx-background-color: #333; -fx-text-fill: white;");
+        timeLabel.setStyle("-fx-text-fill: white;");
+        diamondsLabel.setStyle("-fx-text-fill: white;");
+        keyLabelBlue.setStyle("-fx-text-fill: white;");
+        keyLabelRed.setStyle("-fx-text-fill: white;");
+        keyLabelGreen.setStyle("-fx-text-fill: white;");
+        keyLabelYellow.setStyle("-fx-text-fill: white;");
+        diamondCountIcon.setStyle("-fx-padding: 10;");
+
+        stackPane.setStyle("-fx-background-color: #333;");
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(infoBar);
+
+        stackPane.getChildren().addAll(grid, transitionPane, borderPane);
+
+        scene = new Scene(stackPane);  // width: 400, height: 400
+        scene.setOnKeyPressed(this::processKeyEvent);
+        scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
+
+        tickTimeline = new Timeline(new KeyFrame(Duration.seconds(tickTime), event -> tick()));
+        tickTimeline.setCycleCount(Animation.INDEFINITE);
+    }
+
+    private void getHighScores() {
+        highScores = new HashMap<>();
+        JSONArray users = (JSONArray) playerProfileObj.get("Users");
+        // get the high scores for the current level from all users
+        for (Object user : users) {
+            JSONObject userObj = (JSONObject) playerProfileObj.get(user);
+            JSONObject highScoresObj = (JSONObject) userObj.get("HighScores");
+            List<Long> scores = (List<Long>) highScoresObj.get("Level"+ currentLevel);
+            System.out.println(scores);
+            if (scores != null){
+                for (long scoreLong : scores){
+                    Integer score = (int) scoreLong;
+                    if (highScores.containsKey(score)){
+                        highScores.put(score, highScores.get(score) + ", " + user.toString());
+                    } else {
+                        highScores.put(score, user.toString());
+                    }
+                }
+            }
+        }
+
+        // sort the high scores in descending order
+        Map<Integer, String> sortedHighScores = new LinkedHashMap<>();
+        highScores.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+                .forEachOrdered(x -> sortedHighScores.put(x.getKey(), x.getValue()));
+        highScores = sortedHighScores;
+    }
+    /**
+     * Creates the high score board.
+     * @return a VBox of the high score board.
+     */
+    private VBox createHighScoreBoard() {
+        getHighScores();
+
+        VBox highScoreBoard = new VBox(10); // Vertical spacing between scores
+        highScoreBoard.setStyle("-fx-padding: 10; -fx-alignment: center;");
+        highScoreBoard.setAlignment(Pos.CENTER);
+
+        if (highScores.isEmpty()) {
+            Label noScoresLabel = new Label("No score yet!");
+            noScoresLabel.setFont(new Font("Arial", 18));
+            noScoresLabel.setStyle("-fx-text-fill: grey;");
+            highScoreBoard.getChildren().add(noScoresLabel);
+        } else {
+            List<Integer> highScoresInt = new ArrayList<>(this.highScores.keySet());
+            List<String> byUser = new ArrayList<>(this.highScores.values());
+            for (int i = 0; i < Math.min(highScoresInt.size(), 10); i++) {
+                Label scoreLabel = new Label(highScoresInt.get(i).toString());
+                Label userLabel = new Label((i + 1) + ". " + byUser.get(i) + "  - ");
+                scoreLabel.setFont(new Font("Arial", 18));
+                scoreLabel.setStyle("-fx-text-fill: white;");
+                userLabel.setFont(new Font("Arial", 18));
+                userLabel.setStyle("-fx-text-fill: white;");
+
+                HBox scoreBox = new HBox(10);
+                scoreBox.setAlignment(Pos.CENTER);
+                scoreBox.getChildren().addAll(userLabel, scoreLabel);
+
+                highScoreBoard.getChildren().addAll(scoreBox);
+            }
+        }
+
+        return highScoreBoard;
+    }
+
+    /**
+     * Starts a new game.
+     * Loads the level and game state.
+     */
+    private void startNewGame() {
+        deathCause = "";
+        currentLevel = userProfileObj.get("CurrentLevel") != null ?
+                Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
+
+        level = new Level(currentLevel);
+        player = level.getPlayer();
+        timeElapsed = 0;
+        calcTileSize();
+
+        UISetUp();
+
+        GameState.setupSate(level, player, this);
+        tickTimeline.play();
+
+        drawGame();
+
+        primaryStage.setScene(scene);
+        // center the scene on the screen
+
+    }
+
+    /**
+     * Loads the player's profile from a JSON file.
+     */
+    private void getPlayerProfile(){
+        JSONParser parser = new JSONParser();
+        try {
+            playerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Removes all actors that have been marked for removal in the current game tick
+     */
+    private void removeActors() {
+        for (Actor actor : deadActors) {
+            level.removeActor(actor);
+        }
+        deadActors = new ArrayList<>();
+    }
+    private void createNewActors(){
+        level.addActors(newBorns);
+        newBorns = new ArrayList<>();
+    }
+
+    /**
+     * Toggles the state of the game, either paused or un-paused.
      */
     private void togglePause() {
         // ensure you can't pause while gameOver screen is up
@@ -636,7 +989,7 @@ public class GameManager extends Application {
             timeElapsed = 0;
             calcTileSize();
 
-            UIsetUp();
+            UISetUp();
 
             GameState.setupSate(level, player, this);
             tickTimeline.play();
@@ -655,40 +1008,6 @@ public class GameManager extends Application {
         saveGame();
         Stage stage = (Stage) grid.getScene().getWindow();
         stage.close();
-    }
-
-
-  /**
-     * Updates the game state, processes actors' actions, and redraws the game screen
-     * at each tick.
-     */
-    public void tick() {
-        timeElapsed += tickTime;
-        removeActors();// Remove any dead actors
-        createNewActors();
-        drawGame();// Redraw the grid
-
-        if (!dead) {
-            for (Actor actor : level.getActors()) {
-                actor.move(); // Move all active actors
-            }
-        }
-
-        if (timeElapsed > level.getTimeLimit()){
-            looseGame();
-        }
-    }
-
-    /**
-     * Ends the game, marked it as a loss
-     */
-    public void looseGame() {
-        Text gameOverText = new Text("Game Over");
-        gameOverText.setFont(new Font("Arial", 75));
-        dead = true;
-        tickTimeline.stop();
-        showGameOverScreen();
-
     }
 
     /**
@@ -710,6 +1029,12 @@ public class GameManager extends Application {
                     " -fx-font-size: 48; " +
                     "-fx-font-family: monospace;");
 
+
+            Label causeLabel = new Label(deathCause);
+            causeLabel.setStyle("-fx-text-fill: darkred;" +
+                    " -fx-font-size: 24; " +
+                    "-fx-font-family: monospace;");
+
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
 
@@ -720,6 +1045,7 @@ public class GameManager extends Application {
                     "-fx-border-width: 4; -fx-text-fill: white; " +
                     "-fx-font-family: monospace; -fx-font-size: 16;" +
                     "-fx-cursor: hand;");
+
 
             Button restartButton = new Button("Restart Game");
             restartButton.setStyle("-fx-background-color: grey; " +
@@ -734,7 +1060,7 @@ public class GameManager extends Application {
             exitButton.setOnAction(e -> exitGame());
             restartButton.setOnAction(e -> restartGame());
 
-            gameOverBox.getChildren().addAll(messageLabel, scoreBoard, restartButton, exitButton);
+            gameOverBox.getChildren().addAll(messageLabel, causeLabel, scoreBoard, restartButton, exitButton);
             gameOverBox.setLayoutX(scene.getWidth() / 2 - gameOverBox.getPrefWidth() / 2);
             gameOverBox.setLayoutY(scene.getHeight() / 2 - gameOverBox.getPrefHeight() / 2);
 
@@ -753,67 +1079,19 @@ public class GameManager extends Application {
         stackPane.getChildren().remove(gameOverMenu);
         tickTimeline.stop();
         dead = false;
+        deathCause ="";
         timeElapsed = 0;
         level = new Level(currentLevel);
         player = level.getPlayer();  // maintain current level / player prof
+        deadActors = new ArrayList<>();
+        newBorns = new ArrayList<>();
 
         GameState.setupSate(level, player, this);
+        gameOverMenu = null;
 
 
         drawGame();
         tickTimeline.play();
-
-    }
-
-    /**
-     * Ends the current level
-     */
-    public void winGame() {
-        dead = true;
-        drawGame();
-        showLevelCompleteScreen();
-    }
-
-    public void saveScore(int score) {
-        JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
-        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
-
-        // check if the level has been completed before
-        if (!completedLevels.contains(currentLevel)){
-            completedLevels.add(currentLevel);
-        }
-
-        // get the scores for the current level
-        List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
-        if (scores == null){
-            scores = new ArrayList<>();
-        }
-        scores.add((long) score);
-
-        // sort the scores in descending order
-        scores.sort(Collections.reverseOrder());
-        // keep only the top 10 scores
-        if (scores.size() > 10){
-            scores = scores.subList(0, 10);
-        }
-
-
-
-        highScoresObj.put(String.valueOf("Level"+ currentLevel), scores);
-
-        // update the high scores in the player profile
-        try {
-            JSONParser parser = new JSONParser();
-            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
-            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(currentUser);
-            FileWriter file = new FileWriter("PlayerProfile.json");
-            userObjOld.put("HighScores", highScoresObj);
-            userObjOld.put("CompletedLevels", completedLevels);
-            file.write(PlayerProfileObj.toJSONString());
-            file.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -895,24 +1173,5 @@ public class GameManager extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Shows the remaining time.
-     * @return the remaining time in seconds.
-     */
-    public int timeRemaining(){
-        return (int)(level.getTimeLimit() - timeElapsed);
-    }
-
-    /**
-     * Main method to launch the program
-     *
-     * @param args command-line arguments
-     */
-
-    public static void main(String[] args) {
-        // Launch the JavaFX application
-        launch(args);
     }
 }

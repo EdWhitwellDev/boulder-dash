@@ -35,8 +35,6 @@ public class Level {
     private int tileSize;
     private int amoebaGrowthRate;
     private int amoebaMaxSize;
-    private Boulder boulder;
-
 
 
     /**
@@ -48,12 +46,8 @@ public class Level {
         actors = new ArrayList<>();
 
         readLevelFile(levelNum);
-        //rows = tiles.size();
-        //cols = tiles.get(0).size();
 
         setNeighbors();
-
-
     }
 
     /**
@@ -70,19 +64,6 @@ public class Level {
         loadLevel(user, saveFile);
 
         setNeighbors();
-    }
-
-    /**
-     * Converts a JSON array into a list of strings.
-     * @param jsonArray is the array to be converted.
-     * @return a list of strings.
-     */
-    private List<String> jsonArrayToList(JSONArray jsonArray) {
-        List<String> list = new ArrayList<>();
-        for (Object obj : jsonArray) {
-            list.add(obj.toString());
-        }
-        return list;
     }
 
     /**
@@ -126,6 +107,124 @@ public class Level {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Removes an actor from the level
+     *
+     * @param actorToRemove the actor to remove
+     */
+    public void removeActor(Actor actorToRemove) {
+        actors.remove(actorToRemove);
+        if (actorToRemove.getPosition() != null && actorToRemove.getPosition().getOccupier() == actorToRemove){
+            actorToRemove.getPosition().setOccupier(null);
+        }
+    }
+
+    /**
+     * Adds actors to the level.
+     * @param actor is the list of {@link Actor} objects to be added.
+     */
+    public void addActors(List<Actor> actor) {
+        actors.addAll(actor);
+    }
+
+    /**
+     * Replaces a tile with a new one.
+     * @param newTile is the tile to replace the old tile.
+     * @param oldTile is the tile to be replaced.
+     */
+    public void replaceTile(Tile newTile, Tile oldTile){
+        if (oldTile.getDown() != null) {
+            oldTile.getDown().setUp(newTile);
+        }
+        if (oldTile.getUp() != null) {
+            oldTile.getUp().setDown(newTile);
+        }
+        if (oldTile.getLeft() != null) {
+            oldTile.getLeft().setRight(newTile);
+        }
+        if (oldTile.getRight() != null) {
+            oldTile.getRight().setLeft(newTile);
+        }
+
+        newTile.setLeft(oldTile.getLeft());
+        newTile.setRight(oldTile.getRight());
+        newTile.setUp(oldTile.getUp());
+        newTile.setDown(oldTile.getDown());
+
+        tiles.get(oldTile.getRow()).set(oldTile.getColumn(), newTile);
+    }
+
+    /**
+     * Saves the current level to a JSON file.
+     * @param user is the user under which the file should be saved.
+     * @param saveFile is the name of the save file.
+     */
+    public void saveLevel(String user, String saveFile) {
+        JSONObject levelObj = new JSONObject();
+        JSONArray actorsArrayJson = new JSONArray();
+        JSONArray tilesArrayJson = new JSONArray();
+
+        for (Actor actor : actors) {
+            String actorString = actor.toString();
+            actorsArrayJson.add(actorString);
+        }
+
+        for (List<Tile> row : tiles) {
+            StringBuilder rowString = new StringBuilder();
+            for (Tile tile : row) {
+                rowString.append(tile.toString()).append(",");
+            }
+            tilesArrayJson.add(rowString.toString());
+        }
+
+        levelObj.put("Actors", actorsArrayJson);
+        levelObj.put("Tiles", tilesArrayJson);
+        levelObj.put("DiamondsRequired", diamondsRequired);
+        levelObj.put("TimeRemaining", GameState.manager.timeRemaining());
+        levelObj.put("TileSize", tileSize);
+        levelObj.put("AmoebaGrowthRate", amoebaGrowthRate);
+        levelObj.put("AmoebaMaxSize", amoebaMaxSize);
+
+        JSONObject keysObj = new JSONObject();
+        for (KeyColours keyColour : KeyColours.values()) {
+            keysObj.put(keyColour.toString(), player.getKeys().get(keyColour));
+        }
+        levelObj.put("KeysCollected", keysObj);
+        levelObj.put("DiamondsCollected", player.getDiamondsCollected());
+
+        JSONObject userObj = new JSONObject();
+        JSONObject savedLevelsObj = new JSONObject();
+        savedLevelsObj.put(saveFile, levelObj);
+        userObj.put("SavedLevels", savedLevelsObj);
+
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(user);
+            JSONObject savedLevelsObjOld = (JSONObject) userObjOld.get("SavedLevels");
+            savedLevelsObjOld.put(saveFile, levelObj);
+
+            FileWriter file = new FileWriter("PlayerProfile.json");
+            file.write(PlayerProfileObj.toJSONString());
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Converts a JSON array into a list of strings.
+     * @param jsonArray is the array to be converted.
+     * @return a list of strings.
+     */
+    private List<String> jsonArrayToList(JSONArray jsonArray) {
+        List<String> list = new ArrayList<>();
+        for (Object obj : jsonArray) {
+            list.add(obj.toString());
+        }
+        return list;
     }
 
     /**
@@ -254,7 +353,6 @@ public class Level {
         List<Frog> frogsWithoutPlayer = new ArrayList<>();
         for (String line : actorStrings) {
             String[] actorInfo = line.split(",");
-
             String actorType = actorInfo[0];
             int row = Integer.parseInt(actorInfo[1]);
             int col = Integer.parseInt(actorInfo[2]);
@@ -371,12 +469,6 @@ public class Level {
     public int getTimeLimit(){
         return timeLimit;
     }
-    public int getAmoebaGrowthRate(){
-        return amoebaGrowthRate;
-    }
-    public int getAmoebaMaxSize(){
-        return amoebaMaxSize;
-    }
 
     /**
      * Returns the number of columns in the level
@@ -403,111 +495,6 @@ public class Level {
      */
     public List<Actor> getActors() {
         return actors;
-    }
-
-    /**
-     * Removes an actor from the level
-     *
-     * @param actorToRemove the actor to remove
-     */
-    public void removeActor(Actor actorToRemove) {
-        actors.remove(actorToRemove);
-        if (actorToRemove.getPosition() != null && actorToRemove.getPosition().getOccupier() == actorToRemove){
-            actorToRemove.getPosition().setOccupier(null);
-        }
-    }
-
-    /**
-     * Adds actors to the level.
-     * @param actor is the list of {@link Actor} objects to be added.
-     */
-    public void addActors(List<Actor> actor) {
-        actors.addAll(actor);
-    }
-
-    /**
-     * Replaces a tile with a new one.
-     * @param newTile is the tile to replace the old tile.
-     * @param oldTile is the tile to be replaced.
-     */
-    public void replaceTile(Tile newTile, Tile oldTile){
-        if (oldTile.getDown() != null) {
-            oldTile.getDown().setUp(newTile);
-        }
-        if (oldTile.getUp() != null) {
-            oldTile.getUp().setDown(newTile);
-        }
-        if (oldTile.getLeft() != null) {
-            oldTile.getLeft().setRight(newTile);
-        }
-        if (oldTile.getRight() != null) {
-            oldTile.getRight().setLeft(newTile);
-        }
-
-        newTile.setLeft(oldTile.getLeft());
-        newTile.setRight(oldTile.getRight());
-        newTile.setUp(oldTile.getUp());
-        newTile.setDown(oldTile.getDown());
-
-        tiles.get(oldTile.getRow()).set(oldTile.getColumn(), newTile);
-    }
-
-    /**
-     * Saves the current level to a JSON file.
-     * @param user is the user under which the file should be saved.
-     * @param saveFile is the name of the save file.
-     */
-    public void saveLevel(String user, String saveFile) {
-        JSONObject levelObj = new JSONObject();
-        JSONArray actorsArrayJson = new JSONArray();
-        JSONArray tilesArrayJson = new JSONArray();
-
-        for (Actor actor : actors) {
-            String actorString = actor.toString();
-            actorsArrayJson.add(actorString);
-        }
-
-        for (List<Tile> row : tiles) {
-            StringBuilder rowString = new StringBuilder();
-            for (Tile tile : row) {
-                rowString.append(tile.toString()).append(",");
-            }
-            tilesArrayJson.add(rowString.toString());
-        }
-
-        levelObj.put("Actors", actorsArrayJson);
-        levelObj.put("Tiles", tilesArrayJson);
-        levelObj.put("DiamondsRequired", diamondsRequired);
-        levelObj.put("TimeRemaining", GameState.manager.timeRemaining());
-        levelObj.put("TileSize", tileSize);
-        levelObj.put("AmoebaGrowthRate", amoebaGrowthRate);
-        levelObj.put("AmoebaMaxSize", amoebaMaxSize);
-
-        JSONObject keysObj = new JSONObject();
-        for (KeyColours keyColour : KeyColours.values()) {
-            keysObj.put(keyColour.toString(), player.getKeys().get(keyColour));
-        }
-        levelObj.put("KeysCollected", keysObj);
-        levelObj.put("DiamondsCollected", player.getDiamondsCollected());
-
-        JSONObject userObj = new JSONObject();
-        JSONObject savedLevelsObj = new JSONObject();
-        savedLevelsObj.put(saveFile, levelObj);
-        userObj.put("SavedLevels", savedLevelsObj);
-
-        try {
-            JSONParser parser = new JSONParser();
-            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
-            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(user);
-            JSONObject savedLevelsObjOld = (JSONObject) userObjOld.get("SavedLevels");
-            savedLevelsObjOld.put(saveFile, levelObj);
-
-            FileWriter file = new FileWriter("PlayerProfile.json");
-            file.write(PlayerProfileObj.toJSONString());
-            file.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**

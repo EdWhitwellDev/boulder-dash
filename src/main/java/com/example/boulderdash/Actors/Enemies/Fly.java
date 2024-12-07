@@ -151,6 +151,10 @@ public class Fly extends Enemy{
         return 0;
     }
 
+    public boolean isbuttery(){
+        return buttery;
+    }
+
     public String toString(){
         String symbol = buttery ? "BF" : "F";
         return symbol + "," + position.getRow() + "," + position.getColumn() + "," + buttery + "," + currentDirection.toString();

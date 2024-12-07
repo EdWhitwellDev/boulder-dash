@@ -1,9 +1,9 @@
 package com.example.boulderdash;
 
+import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Actors.Player;
-import com.example.boulderdash.enums.Direction;
-import javafx.application.Application;
-import javafx.stage.Stage;
+
+import java.util.List;
 
 /**
  * Maintains the current state of the game, including the current active level,
@@ -15,12 +15,18 @@ public class GameState {
     public static GameManager manager;
 
     // Current level being played
-
     public static Level level;
-
 
     // Player character in the game
     public static Player player;
+
+    public static void setActors(List<Actor> actorList) {
+        actors = actorList;
+    }
+    public static List<Actor> getActors() {
+        return actors;
+    }
+    private static List<Actor> actors; // Global list of actors
 
     /**
      * Sets up the game state with the current level, player, and game manager

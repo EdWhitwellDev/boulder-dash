@@ -13,30 +13,44 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Represents an Amoeba in the Boulderdash game. The Amoeba grows into adjacent tiles
- * at a specified growth rate. If blocked, it stops growing. It can transform into Diamonds.
+ * Represents an Amoeba in the Boulderdash game.
+ * The Amoeba grows into adjacent tiles at a specified growth rate.
+ * If it becomes surrounded, it stops growing.
+ * If the cluster of Amoebas reaches a certain size, it transforms into Diamonds.
+ *
+ * @author Dylan Court & Ed Whitwell
+ * @version 1.4
  */
 public class Amoeba extends Actor {
+
+    /** List of all connected Amoebas in the same cluster. */
     private List<Amoeba> cluster = new ArrayList<>();
 
     /** Number of ticks required between growth attempts. */
     private int growthRate;
 
-    /** True if the Amoeba is surrounded and cannot grow. */
+    /** Indicates whether the Amoeba is blocked from further growth. */
     private boolean isBlocked;
-    private int maxSize = 5;
+
+    /** The maximum number of Amoebas allowed in a cluster before transformation occurs. */
+    private int maxSize;
+
+    /** Indicates whether the cluster limit has been reached. */
     private boolean clusterLimitReached = false;
+
+    /** Indicates whether the cluster has grown during the current tick. */
     private boolean clusterGrown = false;
 
     /**
-     * Constructs an Amoeba with a starting tile and growth rate.
+     * Constructs an Amoeba with a starting tile, growth rate, and maximum cluster size.
      *
      * @param startTile  The initial tile where the Amoeba starts.
      * @param growthRate The number of ticks required between growth attempts.
+     * @param maxSize    The maximum number of Amoebas in the cluster before transformation.
      */
     public Amoeba(Tile startTile, int growthRate, int maxSize) {
-        super(startTile);  // Call the Actor constructor with the starting tile
-        this.image = new Image("Actor Images/amoeba.png");  // Set the Amoeba image path
+        super(startTile);
+        this.image = new Image("Actor Images/amoeba.png");
         this.growthRate = growthRate;
         this.maxSize = maxSize;
         this.tickCoolDown = growthRate;
@@ -46,13 +60,15 @@ public class Amoeba extends Actor {
     /**
      * Handles the Amoeba's behavior during each game tick.
      * If the tick cooldown is complete and the Amoeba is not blocked, it attempts to grow.
+     * If the cluster reaches the maximum size, it transforms into Diamonds or Boulders.
      */
     @Override
     public void move() {
         if (tickCoolDown > 0) {
             tickCoolDown--;
-            return;  // Wait until the cooldown reaches zero
+            return;
         }
+
         if (clusterGrown) {
             clusterGrown = false;
             tickCoolDown = growthRate;
@@ -62,40 +78,22 @@ public class Amoeba extends Actor {
         cluster = getAmoebaCluster(cluster);
 
         if (cluster.size() >= maxSize) {
-            for (Amoeba a : cluster) {
-                a.transform(true);
-            }
+            cluster.forEach(a -> a.transform(true));
             return;
         }
 
-        List<Amoeba> unblockedCluster = new ArrayList<>();
-        for (Amoeba amoeba : cluster) {
-            if (!amoeba.isBlocked) {
-                unblockedCluster.add(amoeba);
-            }
-        }
+        List<Amoeba> unblockedCluster = getUnblockedCluster();
 
-        if (unblockedCluster.isEmpty()){
-            for (Amoeba a : cluster) {
-                a.transform(false);
-            }
+        if (unblockedCluster.isEmpty()) {
+            cluster.forEach(a -> a.transform(false));
             return;
         }
 
-        Random random = new Random();
-        int amoebaIndex = random.nextInt(unblockedCluster.size());
-        Amoeba amoeba = unblockedCluster.get(amoebaIndex);
-        amoeba.grow();
-
-        for (Amoeba a : cluster) {
-            a.setClusterGrown(true);
-        }
-
+        growRandomAmoeba(unblockedCluster);
     }
 
     /**
      * Attempts to grow the Amoeba into a random adjacent tile.
-     * If no available tiles are found, marks the Amoeba as blocked.
      */
     private void grow() {
         List<Tile> availableGrowthTiles = getAvailableGrowthTiles();
@@ -105,10 +103,9 @@ public class Amoeba extends Actor {
             System.out.println("Amoeba is blocked and can no longer grow!");
         } else {
             Tile growthTile = availableGrowthTiles.get((int) (Math.random() * availableGrowthTiles.size()));
-            Amoeba newAmoeba = new Amoeba(growthTile, this.growthRate, this.maxSize);
+            Amoeba newAmoeba = new Amoeba(growthTile, growthRate, maxSize);
             growthTile.setOccupier(newAmoeba);
             GameState.manager.addActor(newAmoeba);
-
         }
     }
 
@@ -119,9 +116,7 @@ public class Amoeba extends Actor {
      */
     private List<Tile> getAvailableGrowthTiles() {
         List<Tile> availableTiles = new ArrayList<>();
-        Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
-
-        for (Tile tile : adjacentTiles) {
+        for (Tile tile : getAdjacentTiles()) {
             if (canGrowInto(tile)) {
                 availableTiles.add(tile);
             }
@@ -129,30 +124,49 @@ public class Amoeba extends Actor {
         return availableTiles;
     }
 
-    private void isBlocked() {
+    /**
+     * Checks if the Amoeba is blocked from further growth.
+     */
+    private void checkIfBlocked() {
         isBlocked = true;
-        Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
-        for (Tile tile : adjacentTiles) {
+        for (Tile tile : getAdjacentTiles()) {
             if (tile != null && tile.getClass() == Floor.class && !tile.isOccupied()) {
                 isBlocked = false;
             }
         }
     }
 
+    /**
+     * Recursively collects all Amoebas connected to this one.
+     *
+     * @param cluster The current list of connected Amoebas.
+     * @return The updated list of connected Amoebas.
+     */
     private List<Amoeba> getAmoebaCluster(List<Amoeba> cluster) {
-        if (cluster.contains(this)) {
-            return cluster;
-        }
-        cluster.add(this);
-        isBlocked();
-        Tile[] adjacentTiles = {position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
+        if (cluster.contains(this)) return cluster;
 
-        for (Tile tile : adjacentTiles) {
+        cluster.add(this);
+        checkIfBlocked();
+
+        for (Tile tile : getAdjacentTiles()) {
             if (tile != null && tile.isOccupied() && tile.getOccupier() instanceof Amoeba) {
                 ((Amoeba) tile.getOccupier()).getAmoebaCluster(cluster);
             }
         }
         return cluster;
+    }
+
+    /**
+     * Gets the unblocked Amoebas from the cluster.
+     *
+     * @return A list of unblocked Amoebas in the cluster.
+     */
+    private List<Amoeba> getUnblockedCluster() {
+        List<Amoeba> unblockedCluster = new ArrayList<>();
+        for (Amoeba amoeba : cluster) {
+            if (!amoeba.isBlocked) unblockedCluster.add(amoeba);
+        }
+        return unblockedCluster;
     }
 
     /**
@@ -166,27 +180,57 @@ public class Amoeba extends Actor {
     }
 
     /**
-     * Transforms the Amoeba into a Diamond on its current tile.
+     * Transforms the Amoeba into a Diamond or Boulder on its current tile.
+     *
+     * @param isBoulder Indicates whether to transform into a Boulder (true) or a Diamond (false).
      */
     public void transform(Boolean isBoulder) {
-        System.out.println("Amoeba has transformed into a Diamond!" + position.getRow() + "," + position.getColumn() + " " + isBoulder);
-        clusterLimitReached = true;
-        FallingObject fallingObject;
-        if (isBoulder) {
-            fallingObject = new Boulder(position);
-        } else {
-            fallingObject = new Diamond(position);
-        }
+        System.out.println("Amoeba transformed at: " + position.getRow() + "," + position.getColumn());
+
+        FallingObject fallingObject = isBoulder ? new Boulder(position) : new Diamond(position);
         position.setOccupier(fallingObject);
+
         GameState.manager.addActor(fallingObject);
         GameState.manager.killActor(this);
     }
 
+    /**
+     * Sets whether the cluster has grown during the current tick.
+     *
+     * @param clusterGrown True if the cluster has grown, false otherwise.
+     */
     public void setClusterGrown(boolean clusterGrown) {
         this.clusterGrown = clusterGrown;
     }
 
-    public String toString(){
-        return "A" + "," + position.getRow() + "," + position.getColumn();
+    /**
+     * Returns a string representation of the Amoeba, including its position.
+     *
+     * @return A string representation of the Amoeba.
+     */
+    public String toString() {
+        return "A," + position.getRow() + "," + position.getColumn();
+    }
+
+    /**
+     * Retrieves the adjacent tiles for the Amoeba's current position.
+     *
+     * @return An array of adjacent tiles.
+     */
+    private Tile[] getAdjacentTiles() {
+        return new Tile[]{position.getUp(), position.getDown(), position.getLeft(), position.getRight()};
+    }
+
+    /**
+     * Randomly grows one Amoeba from the unblocked cluster.
+     *
+     * @param unblockedCluster The list of unblocked Amoebas.
+     */
+    private void growRandomAmoeba(List<Amoeba> unblockedCluster) {
+        Random random = new Random();
+        Amoeba amoeba = unblockedCluster.get(random.nextInt(unblockedCluster.size()));
+        amoeba.grow();
+
+        cluster.forEach(a -> a.setClusterGrown(true));
     }
 }

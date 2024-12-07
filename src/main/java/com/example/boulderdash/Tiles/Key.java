@@ -65,4 +65,5 @@ public class Key extends Floor{
     public String toString(){
         return colour.toString().substring(0, 1).toLowerCase();
     }
+
 }
