@@ -51,8 +51,6 @@ public class GameManager extends Application {
     private VBox pauseMenu;
     private String currentUser;
     private Stage primaryStage;
-    private VBox homeScreen;
-    private Label titleLabel;
     private Label currentUserLabel;
     private Map<Integer, String> highScores;
     private JSONObject playerProfileObj;
@@ -121,10 +119,10 @@ public class GameManager extends Application {
 
         timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
         diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
-        keyLabelBlue.setText("x" + String.valueOf(player.getKeys().get(KeyColours.BLUE)));
-        keyLabelRed.setText("x" + String.valueOf(player.getKeys().get(KeyColours.RED)));
-        keyLabelGreen.setText("x" + String.valueOf(player.getKeys().get(KeyColours.GREEN)));
-        keyLabelYellow.setText("x" + String.valueOf(player.getKeys().get(KeyColours.YELLOW)));
+        keyLabelBlue.setText("x" + (player.getKeys().get(KeyColours.BLUE)));
+        keyLabelRed.setText("x" + (player.getKeys().get(KeyColours.RED)));
+        keyLabelGreen.setText("x" + (player.getKeys().get(KeyColours.GREEN)));
+        keyLabelYellow.setText("x" + (player.getKeys().get(KeyColours.YELLOW)));
 
         grid.getChildren().clear(); // Clears the grid first
 
@@ -197,9 +195,7 @@ public class GameManager extends Application {
             translateTransition.setToX(currentPosition.getColumn() * tileSize + x);
             translateTransition.setToY(currentPosition.getRow() * tileSize + y);
 
-            translateTransition.setOnFinished(e -> {
-                actor.checkCollisions();
-            });
+            translateTransition.setOnFinished(e -> actor.checkCollisions());
 
             translateTransition.play();
             transitionPane.getChildren().add(actorImageView);
@@ -287,7 +283,7 @@ public class GameManager extends Application {
         }
 
         // get the scores for the current level
-        List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
+        List<Long> scores = (List<Long>) highScoresObj.get("Level"+ currentLevel);
         if (scores == null){
             scores = new ArrayList<>();
         }
@@ -302,7 +298,7 @@ public class GameManager extends Application {
 
 
 
-        highScoresObj.put(String.valueOf("Level"+ currentLevel), scores);
+        highScoresObj.put(("Level"+ currentLevel), scores);
 
         // update the high scores in the player profile
         try {
@@ -363,16 +359,16 @@ public class GameManager extends Application {
      * Sets up the home screen with the UI.
      */
     private void setupHomeScreen() {
-        homeScreen = new VBox(20);
+        VBox homeScreen = new VBox(20);
         homeScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
 
         // Add a logo
-        ImageView logo = new ImageView(new Image(getClass().getResource("/logo.png").toExternalForm()));
+        ImageView logo = new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/logo.png")).toExternalForm()));
         logo.setFitHeight(200);
         logo.setFitWidth(400);
 
         // Add a title label
-        titleLabel = new Label("PRESS START TO PLAY");
+        Label titleLabel = new Label("PRESS START TO PLAY");
         titleLabel.setFont(new Font("Arial", 40));
         titleLabel.setStyle("-fx-text-fill: white;");
 
@@ -481,7 +477,7 @@ public class GameManager extends Application {
         timeElapsed = 0;
         calcTileSize();
 
-        UIsetUp();
+        UISetUp();
 
         GameState.setupSate(level, player, this);
         tickTimeline.play();
@@ -691,7 +687,7 @@ public class GameManager extends Application {
     /**
      * Sets up the UI for the main game.
      */
-    private void UIsetUp() {
+    private void UISetUp() {
         grid.setHgap(0);
         grid.setVgap(0);
 
@@ -744,11 +740,11 @@ public class GameManager extends Application {
         for (Object user : users) {
             JSONObject userObj = (JSONObject) playerProfileObj.get(user);
             JSONObject highScoresObj = (JSONObject) userObj.get("HighScores");
-            List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
+            List<Long> scores = (List<Long>) highScoresObj.get("Level"+ currentLevel);
             System.out.println(scores);
             if (scores != null){
                 for (long scoreLong : scores){
-                    Integer score = (int) (long) scoreLong;
+                    Integer score = (int) scoreLong;
                     if (highScores.containsKey(score)){
                         highScores.put(score, highScores.get(score) + ", " + user.toString());
                     } else {
@@ -816,7 +812,7 @@ public class GameManager extends Application {
         timeElapsed = 0;
         calcTileSize();
 
-        UIsetUp();
+        UISetUp();
 
         GameState.setupSate(level, player, this);
         tickTimeline.play();
@@ -855,7 +851,7 @@ public class GameManager extends Application {
     }
 
     /**
-     * Toggles the state of the game, either paused or unpaused.
+     * Toggles the state of the game, either paused or un-paused.
      */
     private void togglePause() {
         // ensure you can't pause while gameOver screen is up
@@ -975,7 +971,7 @@ public class GameManager extends Application {
             timeElapsed = 0;
             calcTileSize();
 
-            UIsetUp();
+            UISetUp();
 
             GameState.setupSate(level, player, this);
             tickTimeline.play();
