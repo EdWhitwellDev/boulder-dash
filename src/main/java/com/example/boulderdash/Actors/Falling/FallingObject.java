@@ -3,6 +3,7 @@ package com.example.boulderdash.Actors.Falling;
 import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Actors.Enemies.Enemy;
 import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.Audio;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.MagicWall;
 import com.example.boulderdash.Tiles.Tile;
@@ -141,6 +142,7 @@ public abstract class FallingObject extends Actor {
                 }
                 if (occupant instanceof Player) {
                     GameState.manager.looseGame();
+                    Audio.getInstance().playSoundEffect("/Music/MinecraftDeath.mp3", 1.0);
                     return true;
                 }
             }

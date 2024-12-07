@@ -2,10 +2,13 @@ package com.example.boulderdash.Actors;
 
 
 import com.example.boulderdash.Actors.Enemies.Enemy;
+import com.example.boulderdash.GameManager;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 import java.util.List;
 

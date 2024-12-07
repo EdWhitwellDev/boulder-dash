@@ -1,5 +1,6 @@
 package com.example.boulderdash.Actors.Falling;
 
+import com.example.boulderdash.Audio;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -37,6 +38,7 @@ public class Boulder extends FallingObject{
         // Checks if the next tile is a path and sets the position of boulder to that path
         if (isAbleToPushTo(nextTile)) {
             setPosition(nextTile);
+            Audio.getInstance().playSoundEffect("/Music/BoulderFall.mp3", 1.0);
             return true;
         }
         return false;

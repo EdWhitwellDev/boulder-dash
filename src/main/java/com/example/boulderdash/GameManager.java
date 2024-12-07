@@ -79,6 +79,7 @@ public class GameManager extends Application {
     private JSONObject playerProfileObj;
     private JSONObject userProfileObj;
 
+
     /**
      * Starts the application, sets up home screen and displays it.
      * @param primaryStage is the main stage of the application.
@@ -354,7 +355,7 @@ public class GameManager extends Application {
         primaryStage.setScene(scene);
         // center the scene on the screen
 
-        initialiseMusic();
+        Audio.getInstance().playMusic("/Music/MinecraftChill.mp3", true, 1.0);
 
     }
 
@@ -884,6 +885,7 @@ public class GameManager extends Application {
         player = level.getPlayer();
         timeElapsed = 0;
         GameState.setupSate(level, player, this);
+
     }
     private void updateCurrentLevel(){
         userProfileObj.put("CurrentLevel", currentLevel);
@@ -905,16 +907,6 @@ public class GameManager extends Application {
      */
     public int timeRemaining(){
         return (int)(level.getTimeLimit() - timeElapsed);
-    }
-
-    private void initialiseMusic() {
-        String music = getClass().getResource("/Music/MinecraftChill.mp3").toExternalForm();
-        Media media = new Media(music);
-        mediaPlayer = new MediaPlayer(media);
-
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.play();
-        System.out.println("music is playing");
     }
 
     /**
