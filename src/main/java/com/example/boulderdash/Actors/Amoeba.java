@@ -22,22 +22,15 @@ import java.util.Random;
  * @version 1.4
  */
 public class Amoeba extends Actor {
-
+    /** Number of ticks required between growth attempts. */
+    private final int growthRate;
+    /** The maximum number of Amoebas allowed in a cluster before transformation occurs. */
+    private final int maxSize;
     /** List of all connected Amoebas in the same cluster. */
     private List<Amoeba> cluster = new ArrayList<>();
 
-    /** Number of ticks required between growth attempts. */
-    private int growthRate;
-
     /** Indicates whether the Amoeba is blocked from further growth. */
     private boolean isBlocked;
-
-    /** The maximum number of Amoebas allowed in a cluster before transformation occurs. */
-    private int maxSize;
-
-    /** Indicates whether the cluster limit has been reached. */
-    private boolean clusterLimitReached = false;
-
     /** Indicates whether the cluster has grown during the current tick. */
     private boolean clusterGrown = false;
 
@@ -100,7 +93,6 @@ public class Amoeba extends Actor {
 
         if (availableGrowthTiles.isEmpty()) {
             isBlocked = true;
-            System.out.println("Amoeba is blocked and can no longer grow!");
         } else {
             Tile growthTile = availableGrowthTiles.get((int) (Math.random() * availableGrowthTiles.size()));
             Amoeba newAmoeba = new Amoeba(growthTile, growthRate, maxSize);
@@ -184,7 +176,7 @@ public class Amoeba extends Actor {
      *
      * @param isBoulder Indicates whether to transform into a Boulder (true) or a Diamond (false).
      */
-    public void transform(Boolean isBoulder) {
+    private void transform(Boolean isBoulder) {
         System.out.println("Amoeba transformed at: " + position.getRow() + "," + position.getColumn());
 
         FallingObject fallingObject = isBoulder ? new Boulder(position) : new Diamond(position);
@@ -193,25 +185,6 @@ public class Amoeba extends Actor {
         GameState.manager.addActor(fallingObject);
         GameState.manager.killActor(this);
     }
-
-    /**
-     * Sets whether the cluster has grown during the current tick.
-     *
-     * @param clusterGrown True if the cluster has grown, false otherwise.
-     */
-    public void setClusterGrown(boolean clusterGrown) {
-        this.clusterGrown = clusterGrown;
-    }
-
-    /**
-     * Returns a string representation of the Amoeba, including its position.
-     *
-     * @return A string representation of the Amoeba.
-     */
-    public String toString() {
-        return "A," + position.getRow() + "," + position.getColumn();
-    }
-
     /**
      * Retrieves the adjacent tiles for the Amoeba's current position.
      *
@@ -233,4 +206,24 @@ public class Amoeba extends Actor {
 
         cluster.forEach(a -> a.setClusterGrown(true));
     }
+    /**
+     * Sets whether the cluster has grown during the current tick.
+     *
+     * @param clusterGrown True if the cluster has grown, false otherwise.
+     */
+    public void setClusterGrown(boolean clusterGrown) {
+        this.clusterGrown = clusterGrown;
+    }
+
+    /**
+     * Returns a string representation of the Amoeba, including its position.
+     *
+     * @return A string representation of the Amoeba.
+     */
+    public String toString() {
+        return "A," + position.getRow() + "," + position.getColumn();
+    }
+
+
+
 }
