@@ -14,7 +14,7 @@ import java.util.List;
  * @author Viraj Shah & Ed Whitwell
  * @version 1.3
  */
-public class Actor {
+public abstract class Actor {
     protected Tile position;
     protected int tickCoolDown;
     protected Direction currentDirection = Direction.STATIONARY;
@@ -52,12 +52,9 @@ public class Actor {
         position.setOccupier(null);
         previousPosition = position;
         position = nextPos;
-
         position.setOccupier(this);
 
         isTransferring = true;
-
-
     }
 
     /**

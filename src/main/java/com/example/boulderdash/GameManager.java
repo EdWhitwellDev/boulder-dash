@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.util.Duration;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -75,7 +76,7 @@ public class GameManager extends Application {
     private Scene homeScene;
     private VBox homeScreen;
     private Label titleLabel;
-    private List<Integer> highScores;
+    private Map<Integer, String> highScores;
     private JSONObject playerProfileObj;
     private JSONObject userProfileObj;
 
@@ -91,8 +92,10 @@ public class GameManager extends Application {
         getPlayerProfile();
         currentUser = playerProfileObj.get("CurrentUser").toString();
         userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
+        currentLevel = userProfileObj.get("CurrentLevel") != null ?
+                Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
         this.primaryStage = primaryStage;
-        highScores = new ArrayList<>();
+        highScores = new HashMap<>();
 
         setupHomeScreen();
 
@@ -147,7 +150,7 @@ public class GameManager extends Application {
         loadButton.setOnAction(e -> showSavedGamesScreen());
 
         // High Score Table
-        Label highScoreLabel = new Label("High Scores:");
+        Label highScoreLabel = new Label("Level " + currentLevel + " Highest Scores:");
         highScoreLabel.setFont(new Font("Arial", 25));
         highScoreLabel.setStyle("-fx-text-fill: white;");
 
@@ -262,11 +265,40 @@ public class GameManager extends Application {
         tickTimeline.setCycleCount(Animation.INDEFINITE);
     }
 
+    private void getHighScores() {
+        JSONArray users = (JSONArray) playerProfileObj.get("Users");
+        // get the high scores for the current level from all users
+        for (Object user : users) {
+            JSONObject userObj = (JSONObject) playerProfileObj.get(user);
+            JSONObject highScoresObj = (JSONObject) userObj.get("HighScores");
+            List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
+            System.out.println(scores);
+            if (scores != null){
+                for (long scoreLong : scores){
+                    Integer score = (int) (long) scoreLong;
+                    if (highScores.containsKey(score)){
+                        highScores.put(score, highScores.get(score) + ", " + user.toString());
+                    } else {
+                        highScores.put(score, user.toString());
+                    }
+                }
+            }
+        }
+
+        // sort the high scores in descending order
+        Map<Integer, String> sortedHighScores = new LinkedHashMap<>();
+        highScores.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+                .forEachOrdered(x -> sortedHighScores.put(x.getKey(), x.getValue()));
+        highScores = sortedHighScores;
+    }
     /**
      * Creates the high score board.
      * @return a VBox of the high score board.
      */
     private VBox createHighScoreBoard() {
+        getHighScores();
+
         VBox highScoreBoard = new VBox(10); // Vertical spacing between scores
         highScoreBoard.setStyle("-fx-padding: 10; -fx-alignment: center;");
         highScoreBoard.setAlignment(Pos.CENTER);
@@ -277,11 +309,21 @@ public class GameManager extends Application {
             noScoresLabel.setStyle("-fx-text-fill: grey;");
             highScoreBoard.getChildren().add(noScoresLabel);
         } else {
-            for (int i = 0; i < highScores.size(); i++) {
-                Label scoreLabel = new Label((i + 1) + ". " + highScores.get(i));
+            List<Integer> highScoresInt = new ArrayList<>(this.highScores.keySet());
+            List<String> byUser = new ArrayList<>(this.highScores.values());
+            for (int i = 0; i < Math.min(highScoresInt.size(), 10); i++) {
+                Label scoreLabel = new Label(highScoresInt.get(i).toString());
+                Label userLabel = new Label((i + 1) + ". " + byUser.get(i) + "  - ");
                 scoreLabel.setFont(new Font("Arial", 18));
                 scoreLabel.setStyle("-fx-text-fill: white;");
-                highScoreBoard.getChildren().add(scoreLabel);
+                userLabel.setFont(new Font("Arial", 18));
+                userLabel.setStyle("-fx-text-fill: white;");
+
+                HBox scoreBox = new HBox(10);
+                scoreBox.setAlignment(Pos.CENTER);
+                scoreBox.getChildren().addAll(userLabel, scoreLabel);
+
+                highScoreBoard.getChildren().addAll(scoreBox);
             }
         }
 
@@ -733,6 +775,13 @@ public class GameManager extends Application {
 
     public void saveScore(int score) {
         JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
+        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
+
+        // check if the level has been completed before
+        if (!completedLevels.contains(currentLevel)){
+            completedLevels.add(currentLevel);
+        }
+
         // get the scores for the current level
         List<Integer> scores = (List<Integer>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
         if (scores == null){
@@ -756,6 +805,7 @@ public class GameManager extends Application {
             JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(currentUser);
             FileWriter file = new FileWriter("PlayerProfile.json");
             userObjOld.put("HighScores", highScoresObj);
+            userObjOld.put("CompletedLevels", completedLevels);
             file.write(PlayerProfileObj.toJSONString());
             file.close();
         } catch (Exception e) {
