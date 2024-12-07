@@ -112,6 +112,16 @@ public class GameManager extends Application {
         primaryStage.show();
     }
 
+    private void calcTileSize() {
+        int cols = level.getCols();
+        int rows = level.getRows();
+        int windowWidth = (int) primaryStage.getWidth();
+        int windowHeight = (int) primaryStage.getHeight();
+
+        tileSize = Math.min(windowWidth / cols, windowHeight / rows);
+        grid.setAlignment(Pos.CENTER);
+    }
+
     /**
      * Sets up the home screen with the UI.
      */
@@ -299,13 +309,7 @@ public class GameManager extends Application {
         GameState.setupSate(level, player, this);
         tickTimeline.play();
 
-        int cols = level.getCols();
-        int rows = level.getRows();
-        int windowWidth = (int) primaryStage.getWidth();
-        int windowHeight = (int) primaryStage.getHeight();
-
-        tileSize = Math.min(windowWidth / cols, windowHeight / rows);
-        grid.setAlignment(Pos.CENTER);
+        calcTileSize();
 
         drawGame();
         primaryStage.setScene(scene);
@@ -355,6 +359,8 @@ public class GameManager extends Application {
      * Handles the timer, diamonds collected, and key counts.
      */
     public void drawGame(){
+        calcTileSize();
+
         timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
         diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
         keyLabelBlue.setText("x" + String.valueOf(player.getKeys().get(KeyColours.BLUE)));
