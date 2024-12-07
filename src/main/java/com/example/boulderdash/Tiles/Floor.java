@@ -68,4 +68,5 @@ public class Floor extends Tile{
     public String toString(){
         return isPath ? "P" : "D";
     }
+
 }
