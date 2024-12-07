@@ -773,7 +773,7 @@ public class GameManager extends Application {
     }
 
 
-  /**
+    /**
      * Updates the game state, processes actors' actions, and redraws the game screen
      * at each tick.
      */
