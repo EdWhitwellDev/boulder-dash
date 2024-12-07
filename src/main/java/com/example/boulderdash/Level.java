@@ -68,8 +68,6 @@ public class Level {
         actors = new ArrayList<>();
 
         loadLevel(user, saveFile);
-        //rows = tiles.size();
-        //cols = tiles.get(0).size();
 
         setNeighbors();
     }

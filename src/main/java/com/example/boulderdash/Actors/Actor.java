@@ -46,6 +46,9 @@ public class Actor {
      * @param nextPos is the next {@link Tile} to move to.
      */
     protected void changePos(Tile nextPos) {
+        if (checkCollisions()) {
+            return;
+        }
         position.setOccupier(null);
         previousPosition = position;
         position = nextPos;
@@ -66,19 +69,23 @@ public class Actor {
     /**
      * Detects collisions with other actors in neighbouring tiles.
      */
-    public void checkCollisions(){
+    public boolean checkCollisions(){
         List<Actor> collisionOther = position.checkAdjacent();
         if (!collisionOther.isEmpty()) {
             for (Actor collider : collisionOther){
                 if (collider instanceof Enemy && this instanceof Player){
                     GameState.manager.looseGame();
+                    return true;
                 } else if (this instanceof Enemy && collider instanceof Player) {
                     GameState.manager.looseGame();
+                    return true;
                 } else if (this instanceof Enemy && collider instanceof Amoeba) {
                     ((Enemy) this).explodeSingle();
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public boolean getIsTransferring(){

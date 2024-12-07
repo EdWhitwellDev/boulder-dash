@@ -4,14 +4,11 @@ import com.example.boulderdash.Actors.Actor;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 
 
 import com.example.boulderdash.enums.KeyColours;
 import javafx.animation.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import com.example.boulderdash.Actors.Player;
@@ -309,7 +306,6 @@ public class GameManager extends Application {
         GameState.setupSate(level, player, this);
         tickTimeline.play();
 
-
         drawGame();
         primaryStage.setScene(scene);
         // center the scene on the screen
@@ -532,13 +528,10 @@ public class GameManager extends Application {
                 "-fx-font-family: monospace; -fx-font-size: 12; " +
                 "-fx-cursor: hand;";
 
-
-
         Button resumeButton = new Button("Resume");
         Button saveButton = new Button("Save Game");
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Exit Game");
-
 
         resumeButton.setStyle(buttonStyle);
         saveButton.setStyle(buttonStyle);
@@ -561,8 +554,6 @@ public class GameManager extends Application {
 
     }
 
-
-
     /**
      * Saves the current game state
      */
@@ -573,6 +564,13 @@ public class GameManager extends Application {
         dialog.setTitle("Save Game");
         dialog.setHeaderText("Save Your Progress");
         dialog.setContentText("Enter a name for your save:");
+
+        // set the background color of the dialog and the header to match the game
+        dialog.getDialogPane().setStyle("-fx-background-color: #333;");
+        dialog.getDialogPane().lookup(".content .label").setStyle("-fx-text-fill: white;");
+        dialog.getDialogPane().lookup(".header-panel").setStyle("-fx-background-color: #333;");
+        dialog.getDialogPane().lookup(".header-panel .label").setStyle("-fx-text-fill: white;");
+        dialog.getDialogPane().setGraphic(null);
 
         // does not save if nothing entered / cancel is pressed
         String saveName = dialog.showAndWait().orElse("");
