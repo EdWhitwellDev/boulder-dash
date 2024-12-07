@@ -76,6 +76,7 @@ public class GameManager extends Application {
     private Scene homeScene;
     private VBox homeScreen;
     private Label titleLabel;
+    private Label currentUserLabel;
     private Map<Integer, String> highScores;
     private JSONObject playerProfileObj;
     private JSONObject userProfileObj;
@@ -102,13 +103,12 @@ public class GameManager extends Application {
         primaryStage.setScene(homeScene);
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-
         // Set stage to fill the screen
         primaryStage.setX(screenBounds.getMinX());
         primaryStage.setY(screenBounds.getMinY());
         primaryStage.setWidth(screenBounds.getWidth());
         primaryStage.setHeight(screenBounds.getHeight());
-
+        //primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
@@ -139,6 +139,10 @@ public class GameManager extends Application {
         titleLabel.setFont(new Font("Arial", 40));
         titleLabel.setStyle("-fx-text-fill: white;");
 
+        currentUserLabel = new Label("Current User: " + currentUser);
+        currentUserLabel.setFont(new Font("Arial", 20));
+        currentUserLabel.setStyle("-fx-text-fill: white;");
+
         HBox buttonBox = new HBox(20);
         buttonBox.setStyle("-fx-alignment: center;");
 
@@ -166,7 +170,7 @@ public class GameManager extends Application {
 
         buttonBox.getChildren().addAll(startButton, loadButton, userMenuButton);
 
-        homeScreen.getChildren().addAll(logo, titleLabel, buttonBox, highScoreLabel, highScoreBoard);
+        homeScreen.getChildren().addAll(logo, titleLabel, currentUserLabel, buttonBox, highScoreLabel, highScoreBoard);
         homeScene = new Scene(homeScreen);
     }
 
@@ -206,7 +210,12 @@ public class GameManager extends Application {
             if (!newUser.isEmpty() && !userList.getItems().contains(newUser)) {
                 userList.getItems().add(newUser);
                 users.add(newUser);
-                playerProfileObj.put(newUser, new JSONObject());
+                JSONObject newUserObj = new JSONObject();
+                newUserObj.put("HighScores", new JSONObject());
+                newUserObj.put("SavedLevels", new JSONObject());
+                newUserObj.put("CurrentLevel", 1);
+                newUserObj.put("CompletedLevels", new JSONArray());
+                playerProfileObj.put(newUser, newUserObj);
                 savePlayerProfile();
 
                 // Update ListView height after adding a new user
@@ -244,8 +253,7 @@ public class GameManager extends Application {
         selectUserButton.setOnAction(e -> {
             String selectedUser = userList.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
-                currentUser = selectedUser;
-                userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
+                changeCurrentUser(selectedUser);
                 primaryStage.setScene(homeScene);
             }
         });
@@ -262,6 +270,20 @@ public class GameManager extends Application {
 
         Scene userMenuScene = new Scene(userMenuScreen);
         primaryStage.setScene(userMenuScene);
+    }
+
+    private void changeCurrentUser(String newUser) {
+        currentUser = newUser;
+        userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
+        currentUserLabel.setText("Current User: " + currentUser);
+
+        // Update the current user in the JSON file
+        try {
+            playerProfileObj.put("CurrentUser", currentUser);
+            savePlayerProfile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -286,10 +308,26 @@ public class GameManager extends Application {
         savedGamesLabel.setFont(new Font("Arial", 30));
         savedGamesLabel.setStyle("-fx-text-fill: white;");
 
+        List<String> savedGames = loadSavedGames();
+
+        if (savedGames.isEmpty()) {
+            Label noSavesLabel = new Label("No saved games found!");
+            noSavesLabel.setFont(new Font("Arial", 18));
+            noSavesLabel.setStyle("-fx-text-fill: grey;");
+            savedGamesScreen.getChildren().add(noSavesLabel);
+            Button backButton = new Button("Back");
+            backButton.setFont(new Font("Arial", 20));
+            backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+            savedGamesScreen.getChildren().add(backButton);
+            Scene savedGamesScene = new Scene(savedGamesScreen);
+            primaryStage.setScene(savedGamesScene);
+            return;
+        }
+
         // ListView to display saved games
         ListView<String> savedGamesList = new ListView<>();
         savedGamesList.setPrefSize(400, 300);
-        savedGamesList.getItems().addAll(loadSavedGames()); // loadSavedGames() returns a list of saved games
+        savedGamesList.getItems().addAll(savedGames); // loadSavedGames() returns a list of saved games
 
         // Load selected game button
         Button loadSelectedButton = new Button("Load Selected Game");
@@ -320,6 +358,9 @@ public class GameManager extends Application {
     private List<String> loadSavedGames() {
         // Replace with logic to save actual saved games
         JSONObject savedGames = (JSONObject) userProfileObj.get("SavedLevels");
+        if (savedGames == null) {
+            return new ArrayList<>();
+        }
         return new ArrayList<>(savedGames.keySet());
     }
 
@@ -465,9 +506,9 @@ public class GameManager extends Application {
         tickTimeline.play();
 
         drawGame();
+
         primaryStage.setScene(scene);
         // center the scene on the screen
-
 
     }
 
