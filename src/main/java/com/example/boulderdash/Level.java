@@ -315,7 +315,7 @@ public class Level {
                     case "G":
                         row.add(new LockedDoor(rowIndex, colIndex, KeyColours.GREEN));
                         break;
-                    case "BL":
+                    case "B":
                         row.add(new LockedDoor(rowIndex, colIndex, KeyColours.BLUE));
                         break;
                     case "Y":
