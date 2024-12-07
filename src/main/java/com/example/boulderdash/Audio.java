@@ -29,7 +29,7 @@ public class Audio {
             }
 
             mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setVolume(volume); // Set volume
+            mediaPlayer.setVolume(volume);
 
 
             if (loop) {
@@ -48,7 +48,7 @@ public class Audio {
             Media media = new Media(sound);
             MediaPlayer soundEffectPlayer = new MediaPlayer(media);
 
-            soundEffectPlayer.setVolume(volume); // Set volume
+            soundEffectPlayer.setVolume(volume);
 
             soundEffectPlayer.play();
         } catch (Exception e) {
