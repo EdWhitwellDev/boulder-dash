@@ -101,13 +101,14 @@ public class GameManager extends Application {
 
         primaryStage.setScene(homeScene);
 
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-
-        // Set stage to fill the screen
-        primaryStage.setX(screenBounds.getMinX());
-        primaryStage.setY(screenBounds.getMinY());
-        primaryStage.setWidth(screenBounds.getWidth());
-        primaryStage.setHeight(screenBounds.getHeight());
+//        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+//
+//        // Set stage to fill the screen
+//        primaryStage.setX(screenBounds.getMinX());
+//        primaryStage.setY(screenBounds.getMinY());
+//        primaryStage.setWidth(screenBounds.getWidth());
+//        primaryStage.setHeight(screenBounds.getHeight());
+        primaryStage.setFullScreen(true);
 
         primaryStage.show();
     }
