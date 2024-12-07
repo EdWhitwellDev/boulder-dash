@@ -2,7 +2,6 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 
@@ -20,9 +19,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
 import javafx.util.Duration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,7 +30,6 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 
@@ -74,6 +72,7 @@ public class GameManager extends Application {
     private String currentUser;
     private Stage primaryStage;
     private Scene homeScene;
+    private MediaPlayer mediaPlayer;
     private VBox homeScreen;
     private Label titleLabel;
     private Map<Integer, String> highScores;
@@ -111,6 +110,7 @@ public class GameManager extends Application {
         primaryStage.setFullScreen(true);
 
         primaryStage.show();
+       // initialiseMusic();
     }
 
     private void calcTileSize() {
@@ -354,6 +354,7 @@ public class GameManager extends Application {
         primaryStage.setScene(scene);
         // center the scene on the screen
 
+        initialiseMusic();
 
     }
 
@@ -904,6 +905,16 @@ public class GameManager extends Application {
      */
     public int timeRemaining(){
         return (int)(level.getTimeLimit() - timeElapsed);
+    }
+
+    private void initialiseMusic() {
+        String music = getClass().getResource("/Music/MinecraftChill.mp3").toExternalForm();
+        Media media = new Media(music);
+        mediaPlayer = new MediaPlayer(media);
+
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.play();
+        System.out.println("music is playing");
     }
 
     /**

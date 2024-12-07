@@ -3,7 +3,7 @@ module com.example.boulderdash {
     requires javafx.fxml;
     requires java.desktop;
     requires json.simple;
-
+    requires javafx.media;
 
     opens com.example.boulderdash to javafx.fxml;
     exports com.example.boulderdash;
