@@ -14,12 +14,10 @@ import com.example.boulderdash.Tiles.Tile;
  */
 public abstract class FallingObject extends Actor {
 
+    protected boolean exploded = false;
     protected boolean isFalling = false;
     private int fallDelay = 0;
-    private final int fallDelayReset = 2;
     private int rollDelay = 0;
-    private final int rollDelayReset = 3;
-    protected boolean exploded = false;
 
     /**
      * Constructor for a FallingObject at a specific starting tile.
@@ -42,7 +40,7 @@ public abstract class FallingObject extends Actor {
                 fallDelay--;
                 return;
             }
-            fallDelay = fallDelayReset;
+            fallDelay = 2;
             Tile underTile = position.getDown();
             if (isAbleToFall(underTile)) {
                 setPosition(underTile);
@@ -56,36 +54,6 @@ public abstract class FallingObject extends Actor {
             }
         }
 
-    }
-
-    /**
-     * Defines the object's rolling behaviour.
-     * If an object can roll, it's position is updated either left or right.
-     */
-    private void roll() {
-        if (rollDelay > 0) {
-            rollDelay--;
-            return;
-        }
-        rollDelay = rollDelayReset;
-        Tile leftTile = position.getLeft();
-        Tile rightTile = position.getRight();
-
-        if (isAbleToRollTo(leftTile)) {
-            setPosition(leftTile);
-        } else if (isAbleToRollTo(rightTile)) {
-            setPosition(rightTile);
-        }
-    }
-
-    /**
-     * Handles the rolling behaviour
-     * @param tile is the {@link Tile} to check if it can be occupied.
-     * @return {@code True} if the object can roll to the tile.
-     */
-    private boolean isAbleToRollTo(Tile tile) {
-        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
-                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 
     /**
@@ -116,7 +84,36 @@ public abstract class FallingObject extends Actor {
      */
     public void explode() {
         exploded = true;
+    }
 
+    /**
+     * Defines the object's rolling behaviour.
+     * If an object can roll, it's position is updated either left or right.
+     */
+    private void roll() {
+        if (rollDelay > 0) {
+            rollDelay--;
+            return;
+        }
+        rollDelay = 3;
+        Tile leftTile = position.getLeft();
+        Tile rightTile = position.getRight();
+
+        if (isAbleToRollTo(leftTile)) {
+            setPosition(leftTile);
+        } else if (isAbleToRollTo(rightTile)) {
+            setPosition(rightTile);
+        }
+    }
+
+    /**
+     * Handles the rolling behaviour
+     * @param tile is the {@link Tile} to check if it can be occupied.
+     * @return {@code True} if the object can roll to the tile.
+     */
+    private boolean isAbleToRollTo(Tile tile) {
+        return tile != null && tile.isPath() && !tile.isOccupied() && tile.getDown() != null
+                && tile.getDown().isPath() && !tile.getDown().isOccupied();
     }
 
     /**
