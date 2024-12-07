@@ -2,6 +2,7 @@ package com.example.boulderdash.Actors;
 
 
 import com.example.boulderdash.Actors.Enemies.Enemy;
+import com.example.boulderdash.Actors.Enemies.Fly;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
@@ -47,15 +48,24 @@ public abstract class Actor {
         if (!collisionOther.isEmpty()) {
             for (Actor collider : collisionOther){
                 if (collider instanceof Enemy && this instanceof Player){
-                    System.out.println("Player collided with: " + collider.getClass().getName());
                     Class<?> enemyClass = collider.getClass();
                     String enemyType = enemyClass.getSimpleName();
-                    GameState.manager.looseGame("Killed by " + enemyType);
+                    if (collider instanceof Fly fly) {
+                        GameState.manager.looseGame("Killed by a " + (fly.isbuttery() ? "Butterfly" : "Firefly"));
+                    }
+                    else {
+                        GameState.manager.looseGame("Killed by a " + enemyType);
+                    }
                     return true;
                 } else if (this instanceof Enemy && collider instanceof Player) {
                     Class<?> enemyClass = this.getClass();
                     String enemyType = enemyClass.getSimpleName();
-                    GameState.manager.looseGame("Killed by " + enemyType);
+                    if (this instanceof Fly fly) {
+                        GameState.manager.looseGame("Killed by a " + (fly.isbuttery() ? "Butterfly" : "Firefly"));
+                    }
+                    else {
+                        GameState.manager.looseGame("Killed by a " + enemyType);
+                    }
                     return true;
                 } else if (this instanceof Enemy && collider instanceof Amoeba) {
                     ((Enemy) this).explodeSingle();

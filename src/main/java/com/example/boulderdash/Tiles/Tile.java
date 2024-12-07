@@ -1,6 +1,7 @@
 package com.example.boulderdash.Tiles;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
@@ -257,8 +258,12 @@ public class Tile {
      * @return The new path tile replacing the destroyed tile.
      * */
     public Tile destroy() {
+        System.out.println("Tile destroyed at: " + row + ", " + column);
         //If the tile is occupied, kills the occupant.
         if (occupier != null) {
+            if (occupier instanceof Player) {
+                GameState.manager.looseGame("Killed by Explosion");
+            }
             GameState.manager.killActor(occupier);
         }
 
