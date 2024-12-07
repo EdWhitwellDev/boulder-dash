@@ -24,16 +24,19 @@ import java.util.Random;
 public class Amoeba extends Actor {
 
     /** List of all connected Amoebas in the same cluster. */
-    private final List<Amoeba> cluster = new ArrayList<>();
+    private List<Amoeba> cluster = new ArrayList<>();
 
     /** Number of ticks required between growth attempts. */
-    private final int growthRate;
+    private int growthRate;
 
     /** Indicates whether the Amoeba is blocked from further growth. */
     private boolean isBlocked;
 
     /** The maximum number of Amoebas allowed in a cluster before transformation occurs. */
-    private final int maxSize;
+    private int maxSize;
+
+    /** Indicates whether the cluster limit has been reached. */
+    private boolean clusterLimitReached = false;
 
     /** Indicates whether the cluster has grown during the current tick. */
     private boolean clusterGrown = false;
@@ -72,7 +75,7 @@ public class Amoeba extends Actor {
             return;
         }
 
-        getAmoebaCluster(cluster);
+        cluster = getAmoebaCluster(cluster);
 
         if (cluster.size() >= maxSize) {
             cluster.forEach(a -> a.transform(true));
@@ -137,9 +140,10 @@ public class Amoeba extends Actor {
      * Recursively collects all Amoebas connected to this one.
      *
      * @param cluster The current list of connected Amoebas.
+     * @return The updated list of connected Amoebas.
      */
-    private void getAmoebaCluster(List<Amoeba> cluster) {
-        if (cluster.contains(this)) return;
+    private List<Amoeba> getAmoebaCluster(List<Amoeba> cluster) {
+        if (cluster.contains(this)) return cluster;
 
         cluster.add(this);
         checkIfBlocked();
@@ -149,6 +153,7 @@ public class Amoeba extends Actor {
                 ((Amoeba) tile.getOccupier()).getAmoebaCluster(cluster);
             }
         }
+        return cluster;
     }
 
     /**

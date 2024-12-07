@@ -398,6 +398,11 @@ public class GameManager extends Application {
         userMenuButton.setFont(new Font("Arial", 20));
         userMenuButton.setOnAction(e -> userMenu());
 
+        // Load unlocked levels
+        Button levelsButton = new Button("Levels");
+        levelsButton.setFont(new Font("Arial", 20));
+        levelsButton.setOnAction(e -> levelsMenu());
+
         // High Score Table
         Label highScoreLabel = new Label("Level " + currentLevel + " Highest Scores:");
         highScoreLabel.setFont(new Font("Arial", 25));
@@ -405,10 +410,84 @@ public class GameManager extends Application {
 
         VBox highScoreBoard = createHighScoreBoard();
 
-        buttonBox.getChildren().addAll(startButton, loadButton, userMenuButton);
+        buttonBox.getChildren().addAll(startButton, loadButton, userMenuButton, levelsButton);
 
         homeScreen.getChildren().addAll(logo, titleLabel, currentUserLabel, buttonBox, highScoreLabel, highScoreBoard);
         homeScene = new Scene(homeScreen);
+    }
+
+    /**
+     * Displays the levels screen, allowing users to select and play unlocked levels.
+     */
+    private void levelsMenu() {
+        VBox levelsScreen = new VBox(20);
+        levelsScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        Label levelsLabel = new Label("Select a Level to Play");
+        levelsLabel.setFont(new Font("Arial", 20));
+        levelsLabel.setStyle("-fx-text-fill: white;");
+
+        ListView<String> levelsList = new ListView<>();
+        levelsList.setPrefSize(400, 300);
+
+        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
+        int currentUnlockedLevel = userProfileObj.get("CurrentLevel") != null
+                ? Integer.parseInt(userProfileObj.get("CurrentLevel").toString())
+                : 1;
+
+        // Populate the list with unlocked levels
+        for (int i = 1; i <= currentUnlockedLevel; i++) {
+            String levelInfo = "Level " + i;
+            if (completedLevels.contains(i)) {
+                levelInfo += " (Completed)";
+            }
+            levelsList.getItems().add(levelInfo);
+        }
+
+        Button playLevelButton = new Button("Play Selected Level");
+        playLevelButton.setFont(new Font("Arial", 20));
+        playLevelButton.setOnAction(e -> {
+            String selectedLevel = levelsList.getSelectionModel().getSelectedItem();
+            if (selectedLevel != null) {
+                int levelNumber = Integer.parseInt(selectedLevel.split(" ")[1]);
+                loadLevel(levelNumber);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("No Level Selected");
+                alert.setContentText("Please select a level.");
+                alert.showAndWait();
+            }
+        });
+
+        Button backButton = new Button("Back");
+        backButton.setFont(new Font("Arial", 20));
+        backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+
+        levelsScreen.getChildren().addAll(levelsLabel, levelsList, playLevelButton, backButton);
+
+        Scene levelsScene = new Scene(levelsScreen);
+        primaryStage.setScene(levelsScene);
+    }
+
+    /**
+     * Loads a specified level.
+     * @param levelNumber The level number to load.
+     */
+    private void loadLevel(int levelNumber) {
+        currentLevel = levelNumber;
+        level = new Level(currentLevel);
+        player = level.getPlayer();
+        timeElapsed = 0;
+        calcTileSize();
+
+        UIsetUp();
+
+        GameState.setupSate(level, player, this);
+        tickTimeline.play();
+
+        drawGame();
+        primaryStage.setScene(scene);
     }
 
     /**
