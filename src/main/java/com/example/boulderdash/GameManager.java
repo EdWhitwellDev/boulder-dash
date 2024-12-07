@@ -2,7 +2,6 @@ package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 
@@ -46,9 +45,18 @@ public class GameManager extends Application {
     private Level level;
     private Player player;
     private Scene scene;
+    private Scene homeScene;
     private Pane levelCompleteMenu;
     private Pane gameOverMenu;
     private VBox pauseMenu;
+    private String currentUser;
+    private Stage primaryStage;
+    private VBox homeScreen;
+    private Label titleLabel;
+    private Label currentUserLabel;
+    private Map<Integer, String> highScores;
+    private JSONObject playerProfileObj;
+    private JSONObject userProfileObj;
     StackPane stackPane = new StackPane();
     private final GridPane grid = new GridPane();
     private final Pane transitionPane = new Pane();
@@ -65,21 +73,12 @@ public class GameManager extends Application {
     private static final ImageView keyIconRed = new ImageView(new Image("Key Icon Images/red_key_icon.png"));
     private static final ImageView keyIconGreen = new ImageView(new Image("Key Icon Images/green_key_icon.png"));
     private static final ImageView keyIconYellow = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
-    private float timeElapsed;
     private final float tickTime = 0.1f;
+    private float timeElapsed;
     private int tileSize;
     private int currentLevel = 1;
     private boolean dead = false;
     private boolean isPaused = false;
-    private String currentUser;
-    private Stage primaryStage;
-    private Scene homeScene;
-    private VBox homeScreen;
-    private Label titleLabel;
-    private Label currentUserLabel;
-    private Map<Integer, String> highScores;
-    private JSONObject playerProfileObj;
-    private JSONObject userProfileObj;
 
     /**
      * Starts the application, sets up home screen and displays it.
@@ -110,6 +109,244 @@ public class GameManager extends Application {
         primaryStage.setHeight(screenBounds.getHeight());
         //primaryStage.setFullScreen(true);
         primaryStage.show();
+    }
+
+    /**
+     * Updates the game grid.
+     * This includes the level tiles, actors, and the movement updates.
+     * Handles the timer, diamonds collected, and key counts.
+     */
+    public void drawGame(){
+        calcTileSize();
+
+        timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
+        diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
+        keyLabelBlue.setText("x" + String.valueOf(player.getKeys().get(KeyColours.BLUE)));
+        keyLabelRed.setText("x" + String.valueOf(player.getKeys().get(KeyColours.RED)));
+        keyLabelGreen.setText("x" + String.valueOf(player.getKeys().get(KeyColours.GREEN)));
+        keyLabelYellow.setText("x" + String.valueOf(player.getKeys().get(KeyColours.YELLOW)));
+
+        grid.getChildren().clear(); // Clears the grid first
+
+
+        // Retrieve the level's tiles and dimensions
+        List<List<Tile>> tiles = level.getTiles();
+        int rows = level.getRows();
+        int columns = level.getCols();
+
+
+        Map<ImageView, Actor> actorsToAnimate= new HashMap<>();
+
+        // Iterate through each tile and render it
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                Tile tile = tiles.get(row).get(col);
+                StackPane stackPane = new StackPane(); // Allows stacking multiple visuals
+                ImageView imageView = new ImageView(tile.getImage()); // Tile background
+
+                // Scale tile images to match grid size
+                imageView.setFitWidth(tileSize);
+                imageView.setFitHeight(tileSize);
+
+                stackPane.getChildren().add(imageView);
+
+                // If a tile is occupied, draw the actor occupying it
+                if (tile.isOccupied()) {
+                    Actor occupier = tile.getOccupier();
+                    ImageView actorImageView = new ImageView(occupier.getImage());
+                    actorImageView.setFitHeight(tileSize*0.8);
+                    actorImageView.setFitWidth(tileSize*0.8);
+                    if (occupier.getIsTransferring()){
+                        // if the actor is transferring animate the transfer
+                        actorsToAnimate.put(actorImageView, occupier);   // add the actor to the offset map
+                        occupier.stopTransferring();
+
+
+                    } else {
+                        stackPane.getChildren().add(actorImageView);
+                    }
+
+                }
+
+                // Place the visual representation in the grid
+                grid.add(stackPane, col, row);
+            }
+        }
+        transitionPane.getChildren().clear();
+
+        for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
+            ImageView actorImageView = entry.getKey();
+            Actor actor = entry.getValue();
+            Tile previousPosition = actor.getPreviousPosition();
+            Tile currentPosition = actor.getPosition();
+
+            double widthGrid = tileSize * columns;
+            double heightGrid = tileSize * rows;
+            double widthStage = primaryStage.getWidth();
+            double heightStage = primaryStage.getHeight();
+
+            double x = (widthStage - widthGrid) / 2;
+            double y = (heightStage - heightGrid) / 2;
+
+            actorImageView.setTranslateX(previousPosition.getColumn() * tileSize + x); // Set the initial X position
+            actorImageView.setTranslateY(previousPosition.getRow() * tileSize + y); // Set the initial Y position
+            TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(tickTime), actorImageView);
+            translateTransition.setFromX(previousPosition.getColumn() * tileSize + x);
+            translateTransition.setFromY(previousPosition.getRow() * tileSize + y);
+            translateTransition.setToX(currentPosition.getColumn() * tileSize + x);
+            translateTransition.setToY(currentPosition.getRow() * tileSize + y);
+
+            translateTransition.setOnFinished(e -> {
+                actor.checkCollisions();
+            });
+
+            translateTransition.play();
+            transitionPane.getChildren().add(actorImageView);
+        }
+    }
+
+    /**
+     * Processes user input to control the player or state
+     *
+     * @param event the KeyEvent triggered by a key press
+     */
+    public void processKeyEvent(KeyEvent event) {
+        switch (event.getCode()) {
+            case RIGHT:
+                player.setDirection(Direction.RIGHT);
+                break;
+            case LEFT:
+                player.setDirection(Direction.LEFT);
+                break;
+            case UP:
+                player.setDirection(Direction.UP);
+                break;
+            case DOWN:
+                player.setDirection(Direction.DOWN);
+                break;
+            case ESCAPE:
+                togglePause(); // Pauses or resumes the game
+                break;
+            default:
+                player.setDirection(Direction.STATIONARY);
+                break;
+        }
+        event.consume(); // Prevents further handling of this event by other UI elements
+    }
+
+    /**
+     * Updates the game state, processes actors' actions, and redraws the game screen
+     * at each tick.
+     */
+    public void tick() {
+        timeElapsed += tickTime;
+        removeActors();// Remove any dead actors
+        createNewActors();
+        drawGame();// Redraw the grid
+
+        if (!dead) {
+            for (Actor actor : level.getActors()) {
+                actor.move(); // Move all active actors
+            }
+        }
+
+        if (timeElapsed > level.getTimeLimit()){
+            looseGame();
+        }
+    }
+
+    /**
+     * Ends the game, marked it as a loss
+     */
+    public void looseGame() {
+        Text gameOverText = new Text("Game Over");
+        gameOverText.setFont(new Font("Arial", 75));
+        dead = true;
+        tickTimeline.stop();
+        showGameOverScreen();
+
+    }
+
+    /**
+     * Ends the current level
+     */
+    public void winGame() {
+        dead = true;
+        drawGame();
+        showLevelCompleteScreen();
+    }
+
+    public void saveScore(int score) {
+        JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
+        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
+
+        // check if the level has been completed before
+        if (!completedLevels.contains(currentLevel)){
+            completedLevels.add(currentLevel);
+        }
+
+        // get the scores for the current level
+        List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
+        if (scores == null){
+            scores = new ArrayList<>();
+        }
+        scores.add((long) score);
+
+        // sort the scores in descending order
+        scores.sort(Collections.reverseOrder());
+        // keep only the top 10 scores
+        if (scores.size() > 10){
+            scores = scores.subList(0, 10);
+        }
+
+
+
+        highScoresObj.put(String.valueOf("Level"+ currentLevel), scores);
+
+        // update the high scores in the player profile
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(currentUser);
+            FileWriter file = new FileWriter("PlayerProfile.json");
+            userObjOld.put("HighScores", highScoresObj);
+            userObjOld.put("CompletedLevels", completedLevels);
+            file.write(PlayerProfileObj.toJSONString());
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Marks an actor for removal from the game
+     */
+    public void killActor(Actor actor) {
+        deadActors.add(actor);
+    }
+    public void addActor(Actor actor) {
+        newBorns.add(actor);
+    }
+
+    /**
+     * Shows the remaining time.
+     * @return the remaining time in seconds.
+     */
+    public int timeRemaining(){
+        return (int)(level.getTimeLimit() - timeElapsed);
+    }
+
+    /**
+     * Main method to launch the program
+     *
+     * @param args command-line arguments
+     */
+
+    public static void main(String[] args) {
+        // Launch the JavaFX application
+        launch(args);
     }
 
     private void calcTileSize() {
@@ -523,15 +760,6 @@ public class GameManager extends Application {
             e.printStackTrace();
         }
     }
-    /**
-     * Marks an actor for removal from the game
-     */
-    public void killActor(Actor actor) {
-        deadActors.add(actor);
-    }
-    public void addActor(Actor actor) {
-        newBorns.add(actor);
-    }
 
     /**
      * Removes all actors that have been marked for removal in the current game tick
@@ -545,130 +773,6 @@ public class GameManager extends Application {
     private void createNewActors(){
         level.addActors(newBorns);
         newBorns = new ArrayList<>();
-    }
-
-    /**
-     * Updates the game grid.
-     * This includes the level tiles, actors, and the movement updates.
-     * Handles the timer, diamonds collected, and key counts.
-     */
-    public void drawGame(){
-        calcTileSize();
-
-        timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
-        diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
-        keyLabelBlue.setText("x" + String.valueOf(player.getKeys().get(KeyColours.BLUE)));
-        keyLabelRed.setText("x" + String.valueOf(player.getKeys().get(KeyColours.RED)));
-        keyLabelGreen.setText("x" + String.valueOf(player.getKeys().get(KeyColours.GREEN)));
-        keyLabelYellow.setText("x" + String.valueOf(player.getKeys().get(KeyColours.YELLOW)));
-
-        grid.getChildren().clear(); // Clears the grid first
-
-
-        // Retrieve the level's tiles and dimensions
-        List<List<Tile>> tiles = level.getTiles();
-        int rows = level.getRows();
-        int columns = level.getCols();
-
-
-        Map<ImageView, Actor> actorsToAnimate= new HashMap<>();
-
-        // Iterate through each tile and render it
-
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                Tile tile = tiles.get(row).get(col);
-                StackPane stackPane = new StackPane(); // Allows stacking multiple visuals
-                ImageView imageView = new ImageView(tile.getImage()); // Tile background
-
-                // Scale tile images to match grid size
-                imageView.setFitWidth(tileSize);
-                imageView.setFitHeight(tileSize);
-
-                stackPane.getChildren().add(imageView);
-
-                // If a tile is occupied, draw the actor occupying it
-                if (tile.isOccupied()) {
-                    Actor occupier = tile.getOccupier();
-                    ImageView actorImageView = new ImageView(occupier.getImage());
-                    actorImageView.setFitHeight(tileSize*0.8);
-                    actorImageView.setFitWidth(tileSize*0.8);
-                    if (occupier.getIsTransferring()){
-                        // if the actor is transferring animate the transfer
-                        actorsToAnimate.put(actorImageView, occupier);   // add the actor to the offset map
-                        occupier.stopTransferring();
-
-
-                    } else {
-                        stackPane.getChildren().add(actorImageView);
-                    }
-
-                }
-
-                // Place the visual representation in the grid
-                grid.add(stackPane, col, row);
-            }
-        }
-        transitionPane.getChildren().clear();
-
-        for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
-            ImageView actorImageView = entry.getKey();
-            Actor actor = entry.getValue();
-            Tile previousPosition = actor.getPreviousPosition();
-            Tile currentPosition = actor.getPosition();
-
-            double widthGrid = tileSize * columns;
-            double heightGrid = tileSize * rows;
-            double widthStage = primaryStage.getWidth();
-            double heightStage = primaryStage.getHeight();
-
-            double x = (widthStage - widthGrid) / 2;
-            double y = (heightStage - heightGrid) / 2;
-
-            actorImageView.setTranslateX(previousPosition.getColumn() * tileSize + x); // Set the initial X position
-            actorImageView.setTranslateY(previousPosition.getRow() * tileSize + y); // Set the initial Y position
-            TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(tickTime), actorImageView);
-            translateTransition.setFromX(previousPosition.getColumn() * tileSize + x);
-            translateTransition.setFromY(previousPosition.getRow() * tileSize + y);
-            translateTransition.setToX(currentPosition.getColumn() * tileSize + x);
-            translateTransition.setToY(currentPosition.getRow() * tileSize + y);
-
-            translateTransition.setOnFinished(e -> {
-                actor.checkCollisions();
-            });
-
-            translateTransition.play();
-            transitionPane.getChildren().add(actorImageView);
-        }
-    }
-
-    /**
-     * Processes user input to control the player or state
-     *
-     * @param event the KeyEvent triggered by a key press
-     */
-    public void processKeyEvent(KeyEvent event) {
-        switch (event.getCode()) {
-            case RIGHT:
-                player.setDirection(Direction.RIGHT);
-                break;
-            case LEFT:
-                player.setDirection(Direction.LEFT);
-                break;
-            case UP:
-                player.setDirection(Direction.UP);
-                break;
-            case DOWN:
-                player.setDirection(Direction.DOWN);
-                break;
-            case ESCAPE:
-                togglePause(); // Pauses or resumes the game
-                break;
-            default:
-                player.setDirection(Direction.STATIONARY);
-                break;
-        }
-        event.consume(); // Prevents further handling of this event by other UI elements
     }
 
     /**
@@ -813,40 +917,6 @@ public class GameManager extends Application {
         stage.close();
     }
 
-
-    /**
-     * Updates the game state, processes actors' actions, and redraws the game screen
-     * at each tick.
-     */
-    public void tick() {
-        timeElapsed += tickTime;
-        removeActors();// Remove any dead actors
-        createNewActors();
-        drawGame();// Redraw the grid
-
-        if (!dead) {
-            for (Actor actor : level.getActors()) {
-                actor.move(); // Move all active actors
-            }
-        }
-
-        if (timeElapsed > level.getTimeLimit()){
-            looseGame();
-        }
-    }
-
-    /**
-     * Ends the game, marked it as a loss
-     */
-    public void looseGame() {
-        Text gameOverText = new Text("Game Over");
-        gameOverText.setFont(new Font("Arial", 75));
-        dead = true;
-        tickTimeline.stop();
-        showGameOverScreen();
-
-    }
-
     /**
      * Shows the game over screen to the user and provides options to restart or exit application.
      */
@@ -918,58 +988,6 @@ public class GameManager extends Application {
 
         drawGame();
         tickTimeline.play();
-
-    }
-
-    /**
-     * Ends the current level
-     */
-    public void winGame() {
-        dead = true;
-        drawGame();
-        showLevelCompleteScreen();
-    }
-
-    public void saveScore(int score) {
-        JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
-        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
-
-        // check if the level has been completed before
-        if (!completedLevels.contains(currentLevel)){
-            completedLevels.add(currentLevel);
-        }
-
-        // get the scores for the current level
-        List<Long> scores = (List<Long>) highScoresObj.get(String.valueOf("Level"+ currentLevel));
-        if (scores == null){
-            scores = new ArrayList<>();
-        }
-        scores.add((long) score);
-
-        // sort the scores in descending order
-        scores.sort(Collections.reverseOrder());
-        // keep only the top 10 scores
-        if (scores.size() > 10){
-            scores = scores.subList(0, 10);
-        }
-
-
-
-        highScoresObj.put(String.valueOf("Level"+ currentLevel), scores);
-
-        // update the high scores in the player profile
-        try {
-            JSONParser parser = new JSONParser();
-            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
-            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(currentUser);
-            FileWriter file = new FileWriter("PlayerProfile.json");
-            userObjOld.put("HighScores", highScoresObj);
-            userObjOld.put("CompletedLevels", completedLevels);
-            file.write(PlayerProfileObj.toJSONString());
-            file.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -1051,24 +1069,5 @@ public class GameManager extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Shows the remaining time.
-     * @return the remaining time in seconds.
-     */
-    public int timeRemaining(){
-        return (int)(level.getTimeLimit() - timeElapsed);
-    }
-
-    /**
-     * Main method to launch the program
-     *
-     * @param args command-line arguments
-     */
-
-    public static void main(String[] args) {
-        // Launch the JavaFX application
-        launch(args);
     }
 }
