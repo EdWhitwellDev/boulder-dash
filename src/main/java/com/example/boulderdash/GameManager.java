@@ -39,6 +39,7 @@ import java.util.*;
  * user input, game state management, and the main game loop.
  */
 public class GameManager extends Application {
+    private String deathCause = "";
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
@@ -249,19 +250,22 @@ public class GameManager extends Application {
         }
 
         if (timeElapsed > level.getTimeLimit()){
-            looseGame();
+            looseGame("Time Limit Reached!");
         }
     }
 
     /**
      * Ends the game, marked it as a loss
      */
-    public void looseGame() {
-        Text gameOverText = new Text("Game Over");
-        gameOverText.setFont(new Font("Arial", 75));
-        dead = true;
-        tickTimeline.stop();
-        showGameOverScreen();
+    public void looseGame(String cause) {
+        if (!dead) {
+            Text gameOverText = new Text("Game Over");
+            gameOverText.setFont(new Font("Arial", 75));
+            dead = true;
+            deathCause = cause;
+            tickTimeline.stop();
+            showGameOverScreen();
+        }
 
     }
 
@@ -817,6 +821,7 @@ public class GameManager extends Application {
      * Loads the level and game state.
      */
     private void startNewGame() {
+        deathCause = "";
         currentLevel = userProfileObj.get("CurrentLevel") != null ?
                 Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
 
@@ -1024,6 +1029,11 @@ public class GameManager extends Application {
                     " -fx-font-size: 48; " +
                     "-fx-font-family: monospace;");
 
+            Label causeLabel = new Label(deathCause);
+            causeLabel.setStyle("-fx-text-fill: darkred;" +
+                    " -fx-font-size: 24; " +
+                    "-fx-font-family: monospace;");
+
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
 
@@ -1034,6 +1044,7 @@ public class GameManager extends Application {
                     "-fx-border-width: 4; -fx-text-fill: white; " +
                     "-fx-font-family: monospace; -fx-font-size: 16;" +
                     "-fx-cursor: hand;");
+
 
             Button restartButton = new Button("Restart Game");
             restartButton.setStyle("-fx-background-color: grey; " +
@@ -1048,7 +1059,7 @@ public class GameManager extends Application {
             exitButton.setOnAction(e -> exitGame());
             restartButton.setOnAction(e -> restartGame());
 
-            gameOverBox.getChildren().addAll(messageLabel, scoreBoard, restartButton, exitButton);
+            gameOverBox.getChildren().addAll(messageLabel, causeLabel, scoreBoard, restartButton, exitButton);
             gameOverBox.setLayoutX(scene.getWidth() / 2 - gameOverBox.getPrefWidth() / 2);
             gameOverBox.setLayoutY(scene.getHeight() / 2 - gameOverBox.getPrefHeight() / 2);
 
@@ -1067,11 +1078,15 @@ public class GameManager extends Application {
         stackPane.getChildren().remove(gameOverMenu);
         tickTimeline.stop();
         dead = false;
+        deathCause ="";
         timeElapsed = 0;
         level = new Level(currentLevel);
         player = level.getPlayer();  // maintain current level / player prof
+        deadActors = new ArrayList<>();
+        newBorns = new ArrayList<>();
 
         GameState.setupSate(level, player, this);
+        gameOverMenu = null;
 
 
         drawGame();

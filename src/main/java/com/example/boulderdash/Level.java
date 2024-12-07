@@ -315,7 +315,7 @@ public class Level {
                     case "G":
                         row.add(new LockedDoor(rowIndex, colIndex, KeyColours.GREEN));
                         break;
-                    case "B":
+                    case "BL":
                         row.add(new LockedDoor(rowIndex, colIndex, KeyColours.BLUE));
                         break;
                     case "Y":
@@ -353,7 +353,6 @@ public class Level {
         List<Frog> frogsWithoutPlayer = new ArrayList<>();
         for (String line : actorStrings) {
             String[] actorInfo = line.split(",");
-
             String actorType = actorInfo[0];
             int row = Integer.parseInt(actorInfo[1]);
             int col = Integer.parseInt(actorInfo[2]);

@@ -47,10 +47,15 @@ public abstract class Actor {
         if (!collisionOther.isEmpty()) {
             for (Actor collider : collisionOther){
                 if (collider instanceof Enemy && this instanceof Player){
-                    GameState.manager.looseGame();
+                    System.out.println("Player collided with: " + collider.getClass().getName());
+                    Class<?> enemyClass = collider.getClass();
+                    String enemyType = enemyClass.getSimpleName();
+                    GameState.manager.looseGame("Killed by " + enemyType);
                     return true;
                 } else if (this instanceof Enemy && collider instanceof Player) {
-                    GameState.manager.looseGame();
+                    Class<?> enemyClass = this.getClass();
+                    String enemyType = enemyClass.getSimpleName();
+                    GameState.manager.looseGame("Killed by " + enemyType);
                     return true;
                 } else if (this instanceof Enemy && collider instanceof Amoeba) {
                     ((Enemy) this).explodeSingle();

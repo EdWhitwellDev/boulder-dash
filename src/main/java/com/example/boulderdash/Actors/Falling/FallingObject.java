@@ -137,7 +137,7 @@ public abstract class FallingObject extends Actor {
                     return true;
                 }
                 if (occupant instanceof Player) {
-                    GameState.manager.looseGame();
+                    GameState.manager.looseGame("Crushed by " + this.getClass().getSimpleName());
                     return true;
                 }
             }
