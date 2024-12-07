@@ -139,6 +139,9 @@ public class GameManager extends Application {
         titleLabel.setFont(new Font("Arial", 40));
         titleLabel.setStyle("-fx-text-fill: white;");
 
+        HBox buttonBox = new HBox(20);
+        buttonBox.setStyle("-fx-alignment: center;");
+
         // Start Game button
         Button startButton = new Button("Start");
         startButton.setFont(new Font("Arial", 20));
@@ -149,6 +152,11 @@ public class GameManager extends Application {
         loadButton.setFont(new Font("Arial", 20));
         loadButton.setOnAction(e -> showSavedGamesScreen());
 
+        // User Menu button
+        Button userMenuButton = new Button("User Menu");
+        userMenuButton.setFont(new Font("Arial", 20));
+        userMenuButton.setOnAction(e -> userMenu());
+
         // High Score Table
         Label highScoreLabel = new Label("Level " + currentLevel + " Highest Scores:");
         highScoreLabel.setFont(new Font("Arial", 25));
@@ -156,8 +164,115 @@ public class GameManager extends Application {
 
         VBox highScoreBoard = createHighScoreBoard();
 
-        homeScreen.getChildren().addAll(logo, titleLabel, startButton, loadButton, highScoreLabel, highScoreBoard);
+        buttonBox.getChildren().addAll(startButton, loadButton, userMenuButton);
+
+        homeScreen.getChildren().addAll(logo, titleLabel, buttonBox, highScoreLabel, highScoreBoard);
         homeScene = new Scene(homeScreen);
+    }
+
+    /**
+     * Displays the User Menu screen, allowing users to add, remove, or select users.
+     */
+    private void userMenu() {
+        VBox userMenuScreen = new VBox(20);
+        userMenuScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+
+        Label userMenuLabel = new Label("User Menu");
+        userMenuLabel.setFont(new Font("Arial", 30));
+        userMenuLabel.setStyle("-fx-text-fill: white;");
+
+        // ListView to display users
+        ListView<String> userList = new ListView<>();
+        JSONArray users = (JSONArray) playerProfileObj.get("Users");
+        if (users != null) {
+            users.forEach(user -> userList.getItems().add(user.toString()));
+        }
+
+        // Adjust ListView height based on the number of users
+        int userCount = users != null ? users.size() : 0;
+        userList.setPrefHeight(Math.min(userCount * 35, 300));
+        userList.setMaxWidth(500);
+
+        // Add User button
+        Button addUserButton = new Button("Add User");
+        addUserButton.setFont(new Font("Arial", 20));
+        addUserButton.setOnAction(e -> {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Add User");
+            dialog.setHeaderText("Add a new user");
+            dialog.setContentText("Enter username:");
+
+            String newUser = dialog.showAndWait().orElse("").trim();
+            if (!newUser.isEmpty() && !userList.getItems().contains(newUser)) {
+                userList.getItems().add(newUser);
+                users.add(newUser);
+                playerProfileObj.put(newUser, new JSONObject());
+                savePlayerProfile();
+
+                // Update ListView height after adding a new user
+                userList.setPrefHeight(Math.min(users.size() * 35, 300));
+            }
+        });
+
+        // Remove User button
+        Button removeUserButton = new Button("Remove User");
+        removeUserButton.setFont(new Font("Arial", 20));
+        removeUserButton.setOnAction(e -> {
+            String selectedUser = userList.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                if (selectedUser.equals(currentUser)) {
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Error");
+                    errorAlert.setHeaderText("Current user cannot be removed!");
+                    errorAlert.setContentText("Please switch to a different user and try again.");
+                    errorAlert.showAndWait();
+                } else {
+                    userList.getItems().remove(selectedUser);
+                    users.remove(selectedUser);
+                    playerProfileObj.remove(selectedUser);
+                    savePlayerProfile();
+
+                    // Update ListView height after removing a user
+                    userList.setPrefHeight(Math.min(users.size() * 35, 300));
+                }
+            }
+        });
+
+        // Select User button
+        Button selectUserButton = new Button("Select User");
+        selectUserButton.setFont(new Font("Arial", 20));
+        selectUserButton.setOnAction(e -> {
+            String selectedUser = userList.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                currentUser = selectedUser;
+                userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
+                primaryStage.setScene(homeScene);
+            }
+        });
+
+        // Back button
+        Button backButton = new Button("Back");
+        backButton.setFont(new Font("Arial", 20));
+        backButton.setOnAction(e -> primaryStage.setScene(homeScene));
+
+        HBox buttonBox = new HBox(10, addUserButton, removeUserButton, selectUserButton, backButton);
+        buttonBox.setStyle("-fx-alignment: center;");
+
+        userMenuScreen.getChildren().addAll(userMenuLabel, userList, buttonBox);
+
+        Scene userMenuScene = new Scene(userMenuScreen);
+        primaryStage.setScene(userMenuScene);
+    }
+
+    /**
+     * Saves the updated player profile to the JSON file.
+     */
+    private void savePlayerProfile() {
+        try (FileWriter file = new FileWriter("PlayerProfile.json")) {
+            file.write(playerProfileObj.toJSONString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
