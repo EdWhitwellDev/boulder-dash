@@ -44,6 +44,10 @@ public class Floor extends Tile{
 
         //This changes the isPath value and the tile's image when a Dirt tile (isPath==false)
         // is occupied by the Player.
+        if (this instanceof LockedDoor){
+            ((LockedDoor) this).unLock();
+        }
+
         if (!isPath && occupant instanceof Player){
             isPath = true;
             image = new Image("Tile Images/path.png");

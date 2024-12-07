@@ -1,5 +1,6 @@
 package com.example.boulderdash.Tiles;
 
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.enums.KeyColours;
 import javafx.scene.image.Image;
 
@@ -47,6 +48,12 @@ public class LockedDoor extends Floor{
      * */
     public KeyColours getColour(){
         return colour;
+    }
+
+    public void unLock(){
+        Floor newTile = new Floor(row, column, true);
+        newTile.setOccupier(this.getOccupier());
+        GameState.level.replaceTile(newTile, this);
     }
 
     public String toString(){
