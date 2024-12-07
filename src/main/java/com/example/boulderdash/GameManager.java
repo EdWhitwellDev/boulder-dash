@@ -1029,6 +1029,7 @@ public class GameManager extends Application {
                     " -fx-font-size: 48; " +
                     "-fx-font-family: monospace;");
 
+
             Label causeLabel = new Label(deathCause);
             causeLabel.setStyle("-fx-text-fill: darkred;" +
                     " -fx-font-size: 24; " +
