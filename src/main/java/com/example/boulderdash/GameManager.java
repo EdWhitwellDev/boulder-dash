@@ -97,6 +97,8 @@ public class GameManager extends Application {
     private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
     private static final int USER_LIST_ITEM_HEIGHT = 35;
     private static final int PAUSE_MENU_SPACING = 5;
+    private static final int KEY_AMOUNT = 4;
+    private static final int KEY_IMAGE_SIZE = 50;
     // Attributes
     private String deathCause = "";
     private List<Actor> deadActors = new ArrayList<>();
@@ -735,9 +737,9 @@ public class GameManager extends Application {
         userMenuLabel.setStyle("-fx-text-fill: white;");
 
         ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setStyle("-fx-background: #222; " +
-                "-fx-background-color: transparent; " +
-                "-fx-border-color: transparent;");
+        scrollPane.setStyle("-fx-background: #222; "
+                + "-fx-background-color: transparent; "
+                + "-fx-border-color: transparent;");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
@@ -751,17 +753,18 @@ public class GameManager extends Application {
         if (users != null) {
             int[] userCount = {1}; // Array to allow modification in lambda
             users.forEach(user -> {
-                VBox profileCard = new VBox(10);
-                profileCard.setStyle("-fx-background-color: #3a3a3a;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-padding: 15;" +
-                        "-fx-min-width: 150;" +
-                        "-fx-max-width: 150;" +
-                        "-fx-min-height: 150;" +
-                        "-fx-alignment: center;");
+                VBox profileCard = new VBox(HBOX_SPACING);
+                profileCard.setStyle("-fx-background-color: #3a3a3a;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-padding: 15;"
+                        + "-fx-min-width: 150;"
+                        + "-fx-max-width: 150;"
+                        + "-fx-min-height: 150;"
+                        + "-fx-alignment: center;");
 
                 Label numberLabel = new Label(String.valueOf(userCount[0]));
-                numberLabel.setStyle("-fx-text-fill: white; -fx-font-size: 32; -fx-font-weight: bold;");
+                numberLabel.setStyle("-fx-text-fill: white;"
+                        + " -fx-font-size: 32; -fx-font-weight: bold;");
 
                 Label nameLabel = new Label(user.toString());
                 nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
@@ -769,52 +772,52 @@ public class GameManager extends Application {
                 profileCard.getChildren().addAll(numberLabel, nameLabel);
 
                 profileCard.setOnMouseEntered(e -> {
-                    profileCard.setStyle("-fx-background-color: #4a4a4a;" +
-                            "-fx-background-radius: 10;" +
-                            "-fx-padding: 15;" +
-                            "-fx-min-width: 150;" +
-                            "-fx-max-width: 150;" +
-                            "-fx-min-height: 150;" +
-                            "-fx-alignment: center;" +
-                            "-fx-scale-x: 1.1;" +
-                            "-fx-scale-y: 1.1;");
+                    profileCard.setStyle("-fx-background-color: #4a4a4a;"
+                            + "-fx-background-radius: 10;"
+                            + "-fx-padding: 15;"
+                            + "-fx-min-width: 150;"
+                            + "-fx-max-width: 150;"
+                            + "-fx-min-height: 150;"
+                            + "-fx-alignment: center;"
+                            + "-fx-scale-x: 1.1;"
+                            + "-fx-scale-y: 1.1;");
                     profileCard.setCursor(Cursor.HAND);
                 });
 
                 profileCard.setOnMouseExited(e -> {
-                    if (selectedUser.get() == null ||
-                            !selectedUser.get().equals(user.toString())) {
-                        profileCard.setStyle("-fx-background-color: #3a3a3a;" +
-                                "-fx-background-radius: 10;" +
-                                "-fx-padding: 15;" +
-                                "-fx-min-width: 150;" +
-                                "-fx-max-width: 150;" +
-                                "-fx-min-height: 150;" +
-                                "-fx-alignment: center;" +
-                                "-fx-scale-x: 1;" +
-                                "-fx-scale-y: 1;");
+                    if (selectedUser.get() == null
+                            || !selectedUser.get().equals(user.toString())) {
+                        profileCard.setStyle("-fx-background-color: #3a3a3a;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-padding: 15;"
+                                + "-fx-min-width: 150;"
+                                + "-fx-max-width: 150;"
+                                + "-fx-min-height: 150;"
+                                + "-fx-alignment: center;"
+                                + "-fx-scale-x: 1;"
+                                + "-fx-scale-y: 1;");
                     }
                 });
 
                 profileCard.setOnMouseClicked(e -> {
                     profilesContainer.getChildren().forEach(node -> {
                         if (node instanceof VBox) {
-                            node.setStyle("-fx-background-color: #3a3a3a;" +
-                                    "-fx-background-radius: 10;" +
-                                    "-fx-padding: 15;" +
-                                    "-fx-min-width: 150;" +
-                                    "-fx-max-width: 150;" +
-                                    "-fx-min-height: 150;" +
-                                    "-fx-alignment: center;");
+                            node.setStyle("-fx-background-color: #3a3a3a;"
+                                    + "-fx-background-radius: 10;"
+                                    + "-fx-padding: 15;"
+                                    + "-fx-min-width: 150;"
+                                    + "-fx-max-width: 150;"
+                                    + "-fx-min-height: 150;"
+                                    + "-fx-alignment: center;");
                         }
                     });
-                    profileCard.setStyle("-fx-background-color: #4a4a4a;" +
-                            "-fx-background-radius: 10;" +
-                            "-fx-padding: 15;" +
-                            "-fx-min-width: 150;" +
-                            "-fx-max-width: 150;" +
-                            "-fx-min-height: 150;" +
-                            "-fx-alignment: center;");
+                    profileCard.setStyle("-fx-background-color: #4a4a4a;"
+                            + "-fx-background-radius: 10;"
+                            + "-fx-padding: 15;"
+                            + "-fx-min-width: 150;"
+                            + "-fx-max-width: 150;"
+                            + "-fx-min-height: 150;"
+                            + "-fx-alignment: center;");
                     selectedUser.set(user.toString());
                 });
 
@@ -827,10 +830,10 @@ public class GameManager extends Application {
         scrollPane.setPrefHeight(200);
         scrollPane.setMaxWidth(USE_PREF_SIZE);
 
-        String buttonStyle = "-fx-background-color: #3a3a3a;" +
-                "-fx-text-fill: white;" +
-                "-fx-background-radius: 5;" +
-                "-fx-padding: 8 15 8 15;";
+        String buttonStyle = "-fx-background-color: #3a3a3a;"
+                + "-fx-text-fill: white;"
+                + "-fx-background-radius: 5;"
+                + "-fx-padding: 8 15 8 15;";
 
         Button addUserButton = new Button("Add User");
         addUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
@@ -843,20 +846,22 @@ public class GameManager extends Application {
 
             DialogPane dialogPane = dialog.getDialogPane();
             dialogPane.setStyle("-fx-background-color: #333;");
-            dialogPane.lookup(".content.label").setStyle("-fx-text-fill: white;");
-            dialogPane.lookup(".header-panel").setStyle("-fx-background-color: #222;");
+            dialogPane.lookup(".content.label").
+                    setStyle("-fx-text-fill: white;");
+            dialogPane.lookup(".header-panel").
+                    setStyle("-fx-background-color: #222;");
 
             String newUser = dialog.showAndWait().orElse("").trim();
             if (!newUser.isEmpty() && !users.contains(newUser)) {
                 int newNumber = profilesContainer.getChildren().size() + 1;
-                VBox profileCard = new VBox(10);
-                profileCard.setStyle("-fx-background-color: #3a3a3a;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-padding: 15;" +
-                        "-fx-min-width: 150;" +
-                        "-fx-max-width: 150;" +
-                        "-fx-min-height: 150;" +
-                        "-fx-alignment: center;");
+                VBox profileCard = new VBox(HBOX_SPACING);
+                profileCard.setStyle("-fx-background-color: #3a3a3a;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-padding: 15;"
+                        + "-fx-min-width: 150;"
+                        + "-fx-max-width: 150;"
+                        + "-fx-min-height: 150;"
+                        + "-fx-alignment: center;");
 
                 Label numberLabel = new Label(String.valueOf(newNumber));
                 numberLabel.setStyle("-fx-text-fill: white; -fx-font-size: 32; -fx-font-weight: bold;");
@@ -1000,16 +1005,16 @@ public class GameManager extends Application {
         }
 
         // ListView to display saved games
-
         ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setStyle("-fx-background: #222; " +
-                "-fx-background-color: transparent; " +
-                "-fx-border-color: transparent;");
+        scrollPane.setStyle("-fx-background: #222; "
+                + "-fx-background-color: transparent; "
+                + "-fx-border-color: transparent;");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        HBox savesContainer = new HBox(20);
-        savesContainer.setStyle("-fx-background-color: transparent; -fx-padding: 20;");
+        HBox savesContainer = new HBox(VBOX_SPACING);
+        savesContainer.setStyle("-fx-background-color"
+                + ": transparent; -fx-padding: 20;");
         savesContainer.setAlignment(Pos.CENTER);
 
         StringProperty selectedGame = new SimpleStringProperty(null);
@@ -1019,74 +1024,75 @@ public class GameManager extends Application {
 
         int[] saveCount = {1}; // Array to allow modification in lambda
         savedGames.forEach(save -> {
-            VBox gameCard = new VBox(10);
-            gameCard.setStyle("-fx-background-color: #3a3a3a;" +
-                    "-fx-background-radius: 10;" +
-                    "-fx-padding: 15;" +
-                    "-fx-min-width: 150;" +
-                    "-fx-max-width: 150;" +
-                    "-fx-min-height: 150;" +
-                    "-fx-alignment: center;");
-            ImageView keyImage = (saveCount[0] % 4) == 0 ? KEY_ICON_BLUE :
-                    (saveCount[0] % 4) == 1 ? KEY_ICON_RED :
-                            (saveCount[0] % 4) == 2 ? KEY_ICON_GREEN : KEY_ICON_YELLOW;
-            keyImage.setFitHeight(50);
-            keyImage.setFitWidth(50);
+            VBox gameCard = new VBox(HBOX_SPACING);
+            gameCard.setStyle("-fx-background-color: #3a3a3a;"
+                    + "-fx-background-radius: 10;"
+                    + "-fx-padding: 15;"
+                    + "-fx-min-width: 150;"
+                    + "-fx-max-width: 150;"
+                    + "-fx-min-height: 150;"
+                    + "-fx-alignment: center;");
+            ImageView keyImage = (saveCount[0] % KEY_AMOUNT) == 0 ? KEY_ICON_BLUE
+                    : (saveCount[0] % KEY_AMOUNT) == 1 ? KEY_ICON_RED
+                    : (saveCount[0] % KEY_AMOUNT) == 2
+                    ? KEY_ICON_GREEN : KEY_ICON_YELLOW;
+            keyImage.setFitHeight(KEY_IMAGE_SIZE);
+            keyImage.setFitWidth(KEY_IMAGE_SIZE);
             Label nameLabel = new Label(save);
             nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
             gameCard.getChildren().addAll(keyImage, nameLabel);
             gameCard.setOnMouseEntered(e -> {
-                gameCard.setStyle("-fx-background-color: #4a4a4a;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-padding: 15;" +
-                        "-fx-min-width: 150;" +
-                        "-fx-max-width: 150;" +
-                        "-fx-min-height: 150;" +
-                        "-fx-alignment: center;" +
-                        "-fx-scale-x: 1.1;" +
-                        "-fx-scale-y: 1.1;");
+                gameCard.setStyle("-fx-background-color: #4a4a4a;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-padding: 15;"
+                        + "-fx-min-width: 150;"
+                        + "-fx-max-width: 150;"
+                        + "-fx-min-height: 150;"
+                        + "-fx-alignment: center;"
+                        + "-fx-scale-x: 1.1;"
+                        + "-fx-scale-y: 1.1;");
                 gameCard.setCursor(Cursor.HAND);
             });
             gameCard.setOnMouseExited(e -> {
-                if (selectedGame.get() == null ||
-                        !selectedGame.get().equals(save)) {
-                    gameCard.setStyle("-fx-background-color: #3a3a3a;" +
-                            "-fx-background-radius: 10;" +
-                            "-fx-padding: 15;" +
-                            "-fx-min-width: 150;" +
-                            "-fx-max-width: 150;" +
-                            "-fx-min-height: 150;" +
-                            "-fx-alignment: center;" +
-                            "-fx-scale-x: 1;" +
-                            "-fx-scale-y: 1;");
+                if (selectedGame.get() == null
+                        || !selectedGame.get().equals(save)) {
+                    gameCard.setStyle("-fx-background-color: #3a3a3a;"
+                            + "-fx-background-radius: 10;"
+                            + "-fx-padding: 15;"
+                            + "-fx-min-width: 150;"
+                            + "-fx-max-width: 150;"
+                            + "-fx-min-height: 150;"
+                            + "-fx-alignment: center;"
+                            + "-fx-scale-x: 1;"
+                            + "-fx-scale-y: 1;");
                 }
             });
             gameCard.setOnMouseClicked(e -> {
                 savesContainer.getChildren().forEach(node -> {
                     if (node instanceof VBox) {
-                        node.setStyle("-fx-background-color: #3a3a3a;" +
-                                "-fx-background-radius: 10;" +
-                                "-fx-padding: 15;" +
-                                "-fx-min-width: 150;" +
-                                "-fx-max-width: 150;" +
-                                "-fx-min-height: 150;" +
-                                "-fx-alignment: center;");
+                        node.setStyle("-fx-background-color: #3a3a3a;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-padding: 15;"
+                                + "-fx-min-width: 150;"
+                                + "-fx-max-width: 150;"
+                                + "-fx-min-height: 150;"
+                                + "-fx-alignment: center;");
                     }
                 });
-                gameCard.setStyle("-fx-background-color: #4a4a4a;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-padding: 15;" +
-                        "-fx-min-width: 150;" +
-                        "-fx-max-width: 150;" +
-                        "-fx-min-height: 150;" +
-                        "-fx-alignment: center;");
+                gameCard.setStyle("-fx-background-color: #4a4a4a;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-padding: 15;"
+                        + "-fx-min-width: 150;"
+                        + "-fx-max-width: 150;"
+                        + "-fx-min-height: 150;"
+                        + "-fx-alignment: center;");
                 selectedGame.set(save);
             });
             savesContainer.getChildren().add(gameCard);
             saveCount[0]++;
         });
         scrollPane.setContent(savesContainer);
-        scrollPane.setPrefHeight(200);
+        scrollPane.setPrefHeight(PAUSE_MENU_MAX_HEIGHT);
         scrollPane.setMaxWidth(USE_PREF_SIZE);
 
         // Load selected game button
@@ -1094,7 +1100,8 @@ public class GameManager extends Application {
         loadSelectedButton.setFont(new Font(FONT_ARIAL,
                 FONT_SIZE_CURRENT_USER));
         loadSelectedButton.setOnAction(e -> {
-            System.out.println("Loading selected game: " + selectedGame.toString());
+            System.out.println("Loading selected game: "
+                    + selectedGame.toString());
             loadSelectedGame(selectedGame.get());
         });
 
@@ -1550,7 +1557,8 @@ public class GameManager extends Application {
             });
 
             gameOverBox.getChildren().addAll(messageLabel,
-                    causeLabel, scoreBoard, restartButton, gameOverMainMenuButton, exitButton);
+                    causeLabel, scoreBoard, restartButton,
+                    gameOverMainMenuButton, exitButton);
             gameOverBox.setLayoutX(scene.getWidth() / 2
                     - gameOverBox.getPrefWidth() / 2);
             gameOverBox.setLayoutY(scene.getHeight() / 2
@@ -1646,7 +1654,8 @@ public class GameManager extends Application {
             });
 
             levelCompleteBox.getChildren().addAll(messageLabel,
-                    scoreLabel, scoreBoard, nextLevelButton, mainMenuButton, exitButton);
+                    scoreLabel, scoreBoard, nextLevelButton, mainMenuButton,
+                    exitButton);
 
             levelCompleteMenu.getChildren().add(levelCompleteBox);
         }
