@@ -13,15 +13,13 @@ import java.util.Queue;
 import java.util.Random;
 
 public class Frog extends Enemy {
+    private static final int TICK_COOL_DOWN_RESET = 16;
     //TODO Add comment to describe TICK_COOL_DOWN_RESET and tickCoolDown
     /**
      * The Player that is being targeted by this Frog.
      * */
     private Player player;
-    private static final int TICK_COOL_DOWN_RESET = 16;
     private int tickCoolDown = 1;
-
-    //Constructors
     /**
      * Constructor for a Frog *with* a Targeted Player. Set's the
      * Frog's starting position Tile, it's target and it's image.
@@ -147,6 +145,19 @@ public class Frog extends Enemy {
     }
 
     /**
+     * This is a method to represent a Frog object in the desired
+     * string format.
+     *
+     * @return A string in the format :
+     *             R,v1,v2 (where v1 = RowNumber and v2 = ColumnNumber)
+     * */
+    public String toString() {
+        return "R" + ","
+                + getPosition().getRow()
+                + "," + getPosition().getColumn();
+    }
+
+    /**
      * Finds the adjacent paths from the current tile.
      * @param currentPath is the current tile.
      * @param queue for search traversal.
@@ -210,18 +221,4 @@ public class Frog extends Enemy {
         }
         return Direction.STATIONARY;
     }
-
-    /**
-     * This is a method to represent a Frog object in the desired
-     * string format.
-     *
-     * @return A string in the format :
-     *             R,v1,v2 (where v1 = RowNumber and v2 = ColumnNumber)
-     * */
-    public String toString() {
-        return "R" + ","
-                + getPosition().getRow()
-                + "," + getPosition().getColumn();
-    }
-
 }

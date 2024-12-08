@@ -1,6 +1,5 @@
 package com.example.boulderdash.Actors.Falling;
 
-
 import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import javafx.scene.image.Image;
@@ -24,6 +23,11 @@ public class Diamond extends FallingObject {
         setImage(new Image("Actor Images/diamond.png"));
     }
 
+    /**
+     * Indicates whether an item has been collected during the current tick.
+     * @param hasBeenCollectedThisTick {@code True} if the item has
+     *                                            been collected this tick.
+     */
     public void setHasBeenCollectedThisTick(boolean hasBeenCollectedThisTick) {
         this.hasBeenCollectedThisTick = hasBeenCollectedThisTick;
     }
@@ -41,7 +45,7 @@ public class Diamond extends FallingObject {
      * Handles the falling and rolling of the diamond.
      */
     public void move() {
-        if (hasBeenCollectedThisTick){
+        if (hasBeenCollectedThisTick) {
             return;
         }
         super.fall();

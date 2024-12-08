@@ -132,6 +132,21 @@ public class Fly extends Enemy {
     }
 
     /**
+     * This is the method to write the object's details in the desired
+     * string format.
+     *
+     * @return The Fly's details. */
+    public String toString() {
+        String symbol = isButtery() ? "BF" : "F";
+        return
+                symbol + ","
+                        + getPosition().getRow()
+                        + "," + getPosition().getColumn()
+                        + "," + isButtery() + ","
+                        + getCurrentDirection().toString();
+    }
+
+    /**
      * Changes the fly's direction and updates the animation.
      * @param newDirection is the new {@link Direction} to face.
      */
@@ -201,20 +216,5 @@ public class Fly extends Enemy {
             }
         }
         return 0;
-    }
-
-    /**
-     * This is the method to write the object's details in the desired
-     * string format.
-     *
-     * @return The Fly's details. */
-    public String toString() {
-        String symbol = isButtery() ? "BF" : "F";
-        return
-                symbol + ","
-                        + getPosition().getRow()
-                        + "," + getPosition().getColumn()
-                        + "," + isButtery() + ","
-                        + getCurrentDirection().toString();
     }
 }

@@ -65,16 +65,6 @@ public class Boulder extends FallingObject {
     }
 
     /**
-     * Handles the pushing behaviour.
-     *
-     * @param tile is the {@link Tile} to check if it can be occupied.
-     * @return {@code True} if the boulder can be pushed to the tile.
-     */
-    private boolean isAbleToPushTo(final Tile tile) {
-        return tile != null && tile.isPath() && !tile.isOccupied();
-    }
-
-    /**
      * This is a method to represent a Boulder object in the desired
      * string format.
      *
@@ -85,5 +75,15 @@ public class Boulder extends FallingObject {
         return "B" + ","
                 + getPosition().getRow() + ","
                 + getPosition().getColumn();
+    }
+
+    /**
+     * Handles the pushing behaviour.
+     *
+     * @param tile is the {@link Tile} to check if it can be occupied.
+     * @return {@code True} if the boulder can be pushed to the tile.
+     */
+    private boolean isAbleToPushTo(final Tile tile) {
+        return tile != null && tile.isPath() && !tile.isOccupied();
     }
 }

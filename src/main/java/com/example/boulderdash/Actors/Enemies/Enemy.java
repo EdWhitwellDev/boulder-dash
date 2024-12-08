@@ -51,25 +51,6 @@ public class Enemy extends Actor {
         return buttery;
     }
 
-    //Mutator methods for buttery and crushed
-    /**
-     * This is a mutator method to set whether the Enemy has been crushed.
-     *
-     * @param ifIsCrushed Whether the Enemy has been crushed.
-     * */
-    protected void setCrushed(final boolean ifIsCrushed) {
-        this.crushed = ifIsCrushed;
-    }
-
-    /**
-     * This is a mutator method to set whether the Fly Enemy is a Butterfly.
-     *
-     * @param ifIsButtery Whether the Fly Enemy is a Butterfly.
-     * */
-    protected void setButtery(final boolean ifIsButtery) {
-        this.buttery = ifIsButtery;
-    }
-
     /**
      * This method 'crushes' the Enemy by changing the value of the crushed
      * attribute.
@@ -105,5 +86,24 @@ public class Enemy extends Actor {
         Explosion explosion = new Explosion(getPosition(), false);
         GameState.getManager().addActor(explosion);
         GameState.getManager().killActor(this);
+    }
+
+    //Mutator methods for buttery and crushed
+    /**
+     * This is a mutator method to set whether the Enemy has been crushed.
+     *
+     * @param ifIsCrushed Whether the Enemy has been crushed.
+     * */
+    protected void setCrushed(final boolean ifIsCrushed) {
+        this.crushed = ifIsCrushed;
+    }
+
+    /**
+     * This is a mutator method to set whether the Fly Enemy is a Butterfly.
+     *
+     * @param ifIsButtery Whether the Fly Enemy is a Butterfly.
+     * */
+    protected void setButtery(final boolean ifIsButtery) {
+        this.buttery = ifIsButtery;
     }
 }
