@@ -94,9 +94,11 @@ public class Frog extends Enemy {
 
     //TODO Ask Ed what this method is meant to do, so you can JavaDoc properly.
     /**
-     *
-     * @param target
-     * @return */
+     * Implements a bidirectional search algorithm to find the shortest path
+     * from the current tile to the target tile.
+     * @param target is the tile which a path needs to be found.
+     * @return {@code True} if a path is found, updating the position.
+     * */
     public boolean biDirectionalSearch(final Tile target) {
         Queue<Tile> playerQueue = new LinkedList<>();
         Queue<Tile> frogQueue = new LinkedList<>();
@@ -144,6 +146,14 @@ public class Frog extends Enemy {
         return false;
     }
 
+    /**
+     * Finds the adjacent paths from the current tile.
+     * @param currentPath is the current tile.
+     * @param queue for search traversal.
+     * @param thisParents is the parent dictionary for the current search side.
+     * @param otherParents is the parent dictionary for the other search side.
+     * @return the intersecting tile if both searches meet.
+     */
     private Tile traverse(final Tile currentPath,
                           final Queue<Tile> queue,
                           final Dictionary<Tile, Tile> thisParents,
@@ -162,7 +172,12 @@ public class Frog extends Enemy {
         return null;
     }
 
-
+    /**
+     * Determines the next step in the path.
+     * @param frogPath is the path traced by the frog.
+     * @param intersection is where both searches meet.
+     * @return the next tile to move to.
+     */
     private Tile getNextStep(final Dictionary<Tile, Tile> frogPath,
                              final Tile intersection) {
 
@@ -175,6 +190,11 @@ public class Frog extends Enemy {
         return nextStep;
     }
 
+    /**
+     * Determines which direction to move to based on the next tile.
+     * @param nextTile is the tile to move to.
+     * @return the direction to face.
+     */
     private Direction changeDirection(final Tile nextTile) {
         if (getPosition().getUp() == nextTile) {
             return Direction.UP;
