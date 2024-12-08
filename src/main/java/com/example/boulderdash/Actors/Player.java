@@ -21,7 +21,7 @@ import java.util.Map;
  * is controlled by the keyboard.
  */
 public class Player extends Actor {
-
+    private static final double VOLUME = 0.5;
     /**
      * A Map of all Directions to their corresponding Images with the
      * correct orientation.
@@ -152,7 +152,7 @@ public class Player extends Actor {
             Tile nextTile = getNextTile(getCurrentDirection());
             if (nextTile != null) {
                 processMove(nextTile);
-                Audio.getInstance().playSoundEffect("/Music/Move.mp3", 1.0);
+                Audio.getInstance().playSoundEffect("/Music/Move.mp3", VOLUME);
             }
             tickCoolDown = 2;
         }
