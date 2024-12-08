@@ -133,8 +133,6 @@ public class GameManager extends Application {
     private boolean dead = false;
     private boolean isPaused = false;
 
-
-
     /**
      * Starts the application, sets up home screen and displays it.
      * @param primaryStage is the main stage of the application.
@@ -185,12 +183,10 @@ public class GameManager extends Application {
 
         grid.getChildren().clear(); // Clears the grid first
 
-
         // Retrieve the level's tiles and dimensions
         List<List<Tile>> tiles = level.getTiles();
         int rows = level.getRows();
         int columns = level.getCols();
-
 
         Map<ImageView, Actor> actorsToAnimate = new HashMap<>();
 
@@ -225,11 +221,9 @@ public class GameManager extends Application {
                         actorsToAnimate.put(actorImageView, occupier);
                         occupier.stopTransferring();
 
-
                     } else {
                         stackPane.getChildren().add(actorImageView);
                     }
-
                 }
 
                 // Place the visual representation in the grid
@@ -339,7 +333,6 @@ public class GameManager extends Application {
             tickTimeline.stop();
             showGameOverScreen();
         }
-
     }
 
     /**
@@ -1123,7 +1116,6 @@ public class GameManager extends Application {
         }
     }
 
-
     /**
      * Loads a previously saved game state.
      * @param gameName the name of the game to load.
@@ -1177,7 +1169,6 @@ public class GameManager extends Application {
                     + " -fx-font-size: 48; "
                     + "-fx-font-family: monospace;");
 
-
             Label causeLabel = new Label(deathCause);
             causeLabel.setStyle("-fx-text-fill: darkred;"
                     + " -fx-font-size: 24; "
@@ -1186,14 +1177,12 @@ public class GameManager extends Application {
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
 
-
             Button exitButton = new Button("Exit Game");
             exitButton.setStyle("-fx-background-color: grey; "
                     + "-fx-border-color: white darkgrey darkgrey white; "
                     + "-fx-border-width: 4; -fx-text-fill: white; "
                     + "-fx-font-family: monospace; -fx-font-size: 16;"
                     + "-fx-cursor: hand;");
-
 
             Button restartButton = new Button("Restart Game");
             restartButton.setStyle("-fx-background-color: grey; "
@@ -1239,11 +1228,8 @@ public class GameManager extends Application {
 
         GameState.setupSate(level, player, this);
         gameOverMenu = null;
-
-
         drawGame();
         tickTimeline.play();
-
     }
 
     /**
