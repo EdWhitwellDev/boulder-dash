@@ -468,20 +468,23 @@ public class GameManager extends Application {
         currentUserLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         currentUserLabel.setStyle("-fx-text-fill: white;");
 
-        JSONObject completedTheGame = (JSONObject) userProfileObj.get("CompletedTheGame");
+        JSONObject completedTheGame = (JSONObject)
+                userProfileObj.get("CompletedTheGame");
         if (completedTheGame != null) {
-            Label completedGameLabel = new Label("Congratulations! You have completed the game!");
-            completedGameLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+            Label completedGameLabel = new
+                    Label("Congratulations! You have completed the game!");
+            completedGameLabel.setFont(new
+                    Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
             completedGameLabel.setStyle("-fx-text-fill: white;");
             homeScreen.getChildren().add(completedGameLabel);
         }
 
         HBox buttonBox = new HBox(VBOX_SPACING);
         buttonBox.setStyle("-fx-alignment: center;");
-        String buttonStyleHome = "-fx-background-color: #3a3a3a;" +
-                "-fx-text-fill: white;" +
-                "-fx-background-radius: 5;" +
-                "-fx-padding: 8 15 8 15;";
+        String buttonStyleHome = "-fx-background-color: #3a3a3a;"
+                + "-fx-text-fill: white;"
+                + "-fx-background-radius: 5;"
+                + "-fx-padding: 8 15 8 15;";
 
 
         // Start Game button
@@ -617,7 +620,8 @@ public class GameManager extends Application {
 
                 levelCard.setOnMouseExited(e -> {
                     if (selectedLevel.get() == null
-                            || !selectedLevel.get().equals("Level " + levelNum)) {
+                            || !selectedLevel.get().equals("Level "
+                            + levelNum)) {
                         levelCard.setStyle("-fx-background-color: #3a3a3a;"
                                 + "-fx-background-radius: 10;"
                                 + "-fx-padding: 15;"
@@ -672,7 +676,8 @@ public class GameManager extends Application {
         playLevelButton.setStyle(buttonStyle);
         playLevelButton.setOnAction(e -> {
             if (selectedLevel.get() != null) {
-                int levelNumber = Integer.parseInt(selectedLevel.get().split(" ")[1]);
+                int levelNumber = Integer.parseInt(selectedLevel.get().
+                        split(" ")[1]);
                 if (completedLevelsList.contains(levelNumber)) {
                     loadLevel(levelNumber);
                 } else {
@@ -870,7 +875,8 @@ public class GameManager extends Application {
                         + "-fx-alignment: center;");
 
                 Label numberLabel = new Label(String.valueOf(newNumber));
-                numberLabel.setStyle("-fx-text-fill: white; -fx-font-size: 32; -fx-font-weight: bold;");
+                numberLabel.setStyle("-fx-text-fill: white;"
+                        + " -fx-font-size: 32; -fx-font-weight: bold;");
 
                 Label nameLabel = new Label(newUser);
                 nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
@@ -905,7 +911,8 @@ public class GameManager extends Application {
                 } else {
                     profilesContainer.getChildren().removeIf(node -> {
                         if (node instanceof VBox) {
-                            Label label = (Label) ((VBox) node).getChildren().get(1);
+                            Label label = (Label)
+                                    ((VBox) node).getChildren().get(1);
                             return label.getText().equals(selectedUser.get());
                         }
                         return false;
@@ -919,7 +926,8 @@ public class GameManager extends Application {
                     int[] newCount = {1};
                     profilesContainer.getChildren().forEach(node -> {
                         if (node instanceof VBox) {
-                            Label numberLabel = (Label) ((VBox) node).getChildren().get(0);
+                            Label numberLabel = (Label)
+                                    ((VBox) node).getChildren().get(0);
                             numberLabel.setText(String.valueOf(newCount[0]++));
                         }
                     });
@@ -947,7 +955,8 @@ public class GameManager extends Application {
                 removeUserButton, selectUserButton, backButton);
         buttonBox.setStyle("-fx-alignment: center; -fx-padding: 15 0 0 0");
 
-        userMenuScreen.getChildren().addAll(userMenuLabel, scrollPane, buttonBox);
+        userMenuScreen.getChildren().addAll(userMenuLabel,
+                scrollPane, buttonBox);
 
         Scene userMenuScene = new Scene(userMenuScreen);
         primaryStage.setScene(userMenuScene);
@@ -1038,7 +1047,8 @@ public class GameManager extends Application {
                     + "-fx-max-width: 150;"
                     + "-fx-min-height: 150;"
                     + "-fx-alignment: center;");
-            ImageView keyImage = (saveCount[0] % KEY_AMOUNT) == 0 ? KEY_ICON_BLUE
+            ImageView keyImage = (saveCount[0] % KEY_AMOUNT)
+                    == 0 ? KEY_ICON_BLUE
                     : (saveCount[0] % KEY_AMOUNT) == 1 ? KEY_ICON_RED
                     : (saveCount[0] % KEY_AMOUNT) == 2
                     ? KEY_ICON_GREEN : KEY_ICON_YELLOW;
