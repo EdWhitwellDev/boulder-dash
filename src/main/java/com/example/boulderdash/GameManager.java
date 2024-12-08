@@ -7,11 +7,7 @@ import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -607,8 +603,14 @@ public class GameManager extends Application {
      */
     private void userMenu() {
         VBox userMenuScreen = new VBox(VBOX_SPACING);
-        userMenuScreen.setStyle("-fx-padding: 20;"
-                + " -fx-alignment: center; -fx-background-color: #222;");
+        userMenuScreen.setStyle("-fx-padding: 20;" +
+                "-fx-alignment: center;" +
+                "-fx-background-color: #222;" +
+                "-fx-background-radius: 10;" +
+                "-fx-border-color: #333;" +
+                "-fx-border-width: 1;" +
+                "-fx-border-radius: 10;"
+        );
 
         Label userMenuLabel = new Label("User Menu");
         userMenuLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_USER_MENU));
@@ -616,25 +618,75 @@ public class GameManager extends Application {
 
         // ListView to display users
         ListView<String> userList = new ListView<>();
+        userList.setStyle("-fx-background-color: #222;" +
+                "-fx-control-inner-background: #222;" +
+                "-fx-border-color: #222;" +
+                "-fx-border-width: 1;" +
+                "-fx-border-radius: 10;" +
+                "-fx-background-radius: 10;" +
+                "-fx-text-fill: white;" +
+                "-fx-selection-bar: #505050;" +
+                "-fx-selection-bar-non-focused: #404040"
+        );
+
         JSONArray users = (JSONArray) playerProfileObj.get("Users");
         if (users != null) {
             users.forEach(user -> userList.getItems().add(user.toString()));
         }
 
-        // Adjust ListView height based on the number of users
+
         int userCount = users != null ? users.size() : 0;
         userList.setPrefHeight(Math.min(userCount
                 * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
         userList.setMaxWidth(USER_LIST_MAX_WIDTH);
 
-        // Add User button
+        userList.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle(null);
+                } else {
+                    setText(item);
+                    setStyle("-fx-text-fill: white;" +
+                            "-fx-padding: 8 12 8 12;");
+                    setOnMouseEntered(e-> {
+                        if (!isSelected()) {
+                            setStyle("-fx-background-color: #3d3d3d;" +
+                                    "-fx-text-fill: white;" +
+                                    "-fx-padding: 8 12 8 12;");
+                        }
+                    });
+                    setOnMouseExited(e-> {
+                        if (!isSelected()) {
+                            setStyle("-fx-background-color: transparent;" +
+                                    "-fx-text-fill: white;" +
+                                    "-fx-padding: 8 12 8 12;");
+                        }
+                    });
+                }
+            }
+        });
+
+        String buttonStyle = "-fx-background-color: #3a3a3a;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-radius: 5;" +
+                "-fx-padding: 8 15 8 15;";
+
         Button addUserButton = new Button("Add User");
         addUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        addUserButton.setStyle(buttonStyle);
         addUserButton.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Add User");
             dialog.setHeaderText("Add a new user");
             dialog.setContentText("Enter username:");
+
+            DialogPane dialogPane = dialog.getDialogPane();
+            dialogPane.setStyle("-fx-background-color: #333;");
+            dialogPane.lookup(".content.label").setStyle("-fx-text-fill: white;");
+            dialogPane.lookup(".header-panel").setStyle("-fx-background-color: #222;");
 
             String newUser = dialog.showAndWait().orElse("").trim();
             if (!newUser.isEmpty() && !userList.getItems().contains(newUser)) {
@@ -647,16 +699,14 @@ public class GameManager extends Application {
                 newUserObj.put("CompletedLevels", new JSONArray());
                 playerProfileObj.put(newUser, newUserObj);
                 savePlayerProfile();
-
-                // Update ListView height after adding a new user
                 userList.setPrefHeight(Math.min(users.size()
                         * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
             }
         });
 
-        // Remove User button
         Button removeUserButton = new Button("Remove User");
         removeUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        removeUserButton.setStyle(buttonStyle);
         removeUserButton.setOnAction(e -> {
             String selectedUser = userList.getSelectionModel().
                     getSelectedItem();
@@ -673,17 +723,15 @@ public class GameManager extends Application {
                     users.remove(selectedUser);
                     playerProfileObj.remove(selectedUser);
                     savePlayerProfile();
-
-                    // Update ListView height after removing a user
                     userList.setPrefHeight(Math.min(users.size()
                             * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
                 }
             }
         });
 
-        // Select User button
         Button selectUserButton = new Button("Select User");
         selectUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        selectUserButton.setStyle(buttonStyle);
         selectUserButton.setOnAction(e -> {
             String selectedUser =
                     userList.getSelectionModel().getSelectedItem();
@@ -694,14 +742,14 @@ public class GameManager extends Application {
             }
         });
 
-        // Back button
         Button backButton = new Button("Back");
         backButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        backButton.setStyle(buttonStyle);
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
         HBox buttonBox = new HBox(VBOX_SPACING, addUserButton,
                 removeUserButton, selectUserButton, backButton);
-        buttonBox.setStyle("-fx-alignment: center;");
+        buttonBox.setStyle("-fx-alignment: center; -fx-padding: 15 0 0 0");
 
         userMenuScreen.getChildren().addAll(userMenuLabel, userList, buttonBox);
 
