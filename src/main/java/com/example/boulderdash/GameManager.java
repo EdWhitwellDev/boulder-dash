@@ -87,7 +87,6 @@ public class GameManager extends Application {
     private static final int LOGO_WIDTH = 400;
     private static final int LEVELS_LIST_WIDTH = 400;
     private static final int LEVELS_LIST_HEIGHT = 300;
-    private static final int USER_LIST_MAX_WIDTH = 500;
     private static final double ICON_SCALE = 0.5;
     private static final double ICON_WIDTH_SCALE_CLOCK = 0.4;
     private static final double INFO_BAR_HEIGHT_RATIO = 0.7;
