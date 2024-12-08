@@ -104,6 +104,7 @@ public class Frog extends Enemy {
      * @return {@code True} if a path is found, updating the position.
      * */
     public boolean biDirectionalSearch(final Tile target) {
+        // Set up for Breadth First Search for both the player and the frog
         Queue<Tile> playerQueue = new LinkedList<>();
         Queue<Tile> frogQueue = new LinkedList<>();
 
@@ -119,13 +120,15 @@ public class Frog extends Enemy {
         Tile nextStep = null;
 
         while (!frogQueue.isEmpty() && !playerQueue.isEmpty()) {
+            // while both queues have more tiles to explore
             Tile currentFrogTile = frogQueue.poll();
 
             Tile potNextStep = traverse(
                     currentFrogTile, frogQueue,
-                    frogParents, playerParents);
-            if (potNextStep != null) {
+                    frogParents, playerParents); // Traverse the frog's path
+            if (potNextStep != null) { // If the frog has found the intersection
                 frogParents.put(potNextStep, currentFrogTile);
+                // Get next step by backtracking the path of the frog
                 nextStep = getNextStep(frogParents, potNextStep);
                 break;
             }
@@ -133,6 +136,9 @@ public class Frog extends Enemy {
             if (playerQueue.isEmpty()) {
                 break;
             }
+
+            // Repeat the process for the player
+
             Tile currentPlayerTile = playerQueue.poll();
             potNextStep = traverse(
                     currentPlayerTile, playerQueue,
@@ -143,8 +149,8 @@ public class Frog extends Enemy {
             }
         }
 
-        if (nextStep != null) {
-            this.changePos(nextStep);
+        if (nextStep != null) { // If a path has been found
+            this.changePos(nextStep);  // Move the frog to the next step
             return true;
         }
         return false;
@@ -165,6 +171,7 @@ public class Frog extends Enemy {
 
     /**
      * Finds the adjacent paths from the current tile.
+     * and checks if any have been found by the other search.
      * @param currentPath is the current tile.
      * @param queue for search traversal.
      * @param thisParents is the parent dictionary for the current search side.
@@ -175,12 +182,14 @@ public class Frog extends Enemy {
                           final Queue<Tile> queue,
                           final Dictionary<Tile, Tile> thisParents,
                           final Dictionary<Tile, Tile> otherParents) {
-
+        // Get the adjacent paths and only the paths
         List<Tile> nextPaths = currentPath.adjacentPaths();
         for (Tile nextPath : nextPaths) {
             if (otherParents.get(nextPath) != null) {
-                return nextPath;
+                return nextPath; // Found the intersection
             } else if (thisParents.get(nextPath) == null) {
+                // If the path has not been visited
+                // add it to the queue for this side of the search
                 thisParents.put(nextPath, currentPath);
                 queue.add(nextPath);
             }
