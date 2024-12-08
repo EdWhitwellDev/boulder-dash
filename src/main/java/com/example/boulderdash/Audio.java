@@ -8,8 +8,14 @@ import javafx.scene.media.MediaPlayer;
  * @author Viraj Shah
  * @version 1.0
  */
-public class Audio {
+public final class Audio {
+    /**
+     * Single instance of the Audio class.
+     */
     private static Audio instance;
+    /**
+     * The MediaPlayer object used for audio playback.
+     */
     private MediaPlayer mediaPlayer;
 
     /**
@@ -30,20 +36,20 @@ public class Audio {
      * @param loop {@code True} to loop the music.
      * @param volume the volume of the music (0.0 to 1.0).
      */
-    public void playMusic(String filePath, boolean loop, double volume) {
+    public void playMusic(final String filePath,
+                          final boolean loop, final double volume) {
         try {
+            // Convert file path to a URL for the Media object.
             String music = getClass().getResource(filePath).toExternalForm();
             Media media = new Media(music);
-
             if (mediaPlayer != null) {
                 mediaPlayer.stop();
             }
 
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.setVolume(volume);
-
-
             if (loop) {
+                // Continuously play music.
                 mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             }
 
@@ -58,8 +64,9 @@ public class Audio {
      * @param filePath is where the music is located.
      * @param volume the volume of the music (0.0 to 1.0).
      */
-    public void playSoundEffect(String filePath, double volume) {
+    public void playSoundEffect(final String filePath, final double volume) {
         try {
+            // Convert file path to a URL for the Media object.
             String sound = getClass().getResource(filePath).toExternalForm();
             Media media = new Media(sound);
             MediaPlayer soundEffectPlayer = new MediaPlayer(media);
