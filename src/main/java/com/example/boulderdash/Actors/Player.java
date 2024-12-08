@@ -195,6 +195,7 @@ public class Player extends Actor {
                     Audio.getInstance().playSoundEffect(
                             "/Music/DiamondCollect.mp3",
                             1.0);
+                    ((Diamond) occupier).setHasBeenCollectedThisTick(true);
                     GameState.getManager().killActor(occupier);
 
                     //If the tile holds a Boulder. If the Boulder

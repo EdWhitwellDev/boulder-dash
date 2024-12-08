@@ -14,6 +14,7 @@ import com.example.boulderdash.Tiles.MagicWall;
  */
 public class Diamond extends FallingObject {
 
+    private boolean hasBeenCollectedThisTick = false;
     /**
      * Constructor for a Diamond at a specific starting tile.
      * @param startPosition is the initial {@link Tile} position of the diamond.
@@ -21,6 +22,10 @@ public class Diamond extends FallingObject {
     public Diamond(final Tile startPosition) {
         super(startPosition);
         setImage(new Image("Actor Images/diamond.png"));
+    }
+
+    public void setHasBeenCollectedThisTick(boolean hasBeenCollectedThisTick) {
+        this.hasBeenCollectedThisTick = hasBeenCollectedThisTick;
     }
 
     /**
@@ -36,6 +41,9 @@ public class Diamond extends FallingObject {
      * Handles the falling and rolling of the diamond.
      */
     public void move() {
+        if (hasBeenCollectedThisTick){
+            return;
+        }
         super.fall();
     }
     /**
