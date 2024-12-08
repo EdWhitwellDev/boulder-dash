@@ -282,9 +282,10 @@ public class GameManager extends Application {
         JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
         JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
 
+        long currentLevelLong = currentLevel;
         // check if the level has been completed before
-        if (!completedLevels.contains(currentLevel)){
-            completedLevels.add(currentLevel);
+        if (!completedLevels.contains(currentLevelLong)){
+            completedLevels.add(currentLevelLong);
         }
 
         // get the scores for the current level
@@ -300,8 +301,6 @@ public class GameManager extends Application {
         if (scores.size() > 10){
             scores = scores.subList(0, 10);
         }
-
-
 
         highScoresObj.put(("Level"+ currentLevel), scores);
 
@@ -929,25 +928,32 @@ public class GameManager extends Application {
         Button saveButton = new Button("Save Game");
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Exit Game");
+        Button restartButton = new Button("Restart Game");
 
         resumeButton.setStyle(buttonStyle);
         saveButton.setStyle(buttonStyle);
         loadButton.setStyle(buttonStyle);
         exitButton.setStyle(buttonStyle);
+        restartButton.setStyle(buttonStyle);
 
         resumeButton.setPrefWidth(buttonWidth);
         saveButton.setPrefWidth(buttonWidth);
         loadButton.setPrefWidth(buttonWidth);
         exitButton.setPrefWidth(buttonWidth);
+        restartButton.setPrefWidth(buttonWidth);
 
         resumeButton.setOnAction(e -> togglePause());
         saveButton.setOnAction(e -> saveGame());
         exitButton.setOnAction(e -> exitGame());
+        restartButton.setOnAction(e -> {
+            restartGame();
+            togglePause();
+        });
 
         pauseMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);" +
                 "-fx-padding: 20;");
 
-        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, exitButton);
+        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, restartButton, exitButton);
 
     }
 
@@ -1102,7 +1108,7 @@ public class GameManager extends Application {
      * onto the next level or exit application.
      */
     private void showLevelCompleteScreen() {
-        tickTimeline.stop();
+        tickTimeline.pause();
         int score = player.getDiamondsCollected() * 10 + timeRemaining()*2;
         if (levelCompleteMenu == null) {
             levelCompleteMenu = new StackPane();
@@ -1159,8 +1165,12 @@ public class GameManager extends Application {
         updateCurrentLevel();
         level = new Level(currentLevel);
         player = level.getPlayer();
+        dead = false;
         timeElapsed = 0;
         GameState.setupSate(level, player, this);
+        tickTimeline.play();
+        stackPane.getChildren().remove(levelCompleteMenu);
+        drawGame();
     }
     private void updateCurrentLevel(){
         userProfileObj.put("CurrentLevel", currentLevel);
