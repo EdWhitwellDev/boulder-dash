@@ -71,9 +71,11 @@ public abstract class Actor {
      * and another actor in a neighbouring tile.
      */
     public boolean checkCollisions() {
+        // Get all actors in adjacent tiles
         List<Actor> collisionOther = position.checkAdjacent();
         if (!collisionOther.isEmpty()) {
             for (Actor collider : collisionOther) {
+                // Check collision between Player and Enemy
                 if (collider instanceof Enemy && this instanceof Player) {
                     Class<?> enemyClass = collider.getClass();
                     String enemyType = enemyClass.getSimpleName();
@@ -94,6 +96,7 @@ public abstract class Actor {
                                 1.0);
                     }
                     return true;
+                // Check collision between Enemy and Player
                 } else if (this instanceof Enemy
                         && collider instanceof Player) {
 
@@ -116,9 +119,10 @@ public abstract class Actor {
                                 1.0);
                     }
                     return true;
+                // Check collision between Enemy and Amoeba
                 } else if (this instanceof Enemy
                         && collider instanceof Amoeba) {
-
+                    // Trigger explosion
                     ((Enemy) this).explodeSingle();
                     return true;
                 }
