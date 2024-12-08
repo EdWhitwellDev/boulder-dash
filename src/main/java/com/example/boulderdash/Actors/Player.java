@@ -132,7 +132,9 @@ public class Player extends Actor {
      * @param direction The new direction of the Player
      * */
     public void setDirection(final Direction direction) {
-        tickCoolDown = 0;
+        if (direction != getCurrentDirection()) {
+            tickCoolDown = 0;
+        }
         setCurrentDirection(direction);
         if (getCurrentDirection() != Direction.STATIONARY) {
             setImage(ORIENTATION.get(getCurrentDirection()));
