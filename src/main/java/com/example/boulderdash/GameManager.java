@@ -936,7 +936,6 @@ public class GameManager extends Application {
             JSONObject highScoresObj = (JSONObject) userObj.get("HighScores");
             List<Long> scores =
                     (List<Long>) highScoresObj.get("Level" + currentLevel);
-            System.out.println(scores);
             if (scores != null) {
                 for (long scoreLong : scores) {
                     Integer score = (int) scoreLong;

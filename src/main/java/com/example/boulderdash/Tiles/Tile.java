@@ -248,7 +248,6 @@ public class Tile {
      * @return The new path tile replacing the destroyed tile.
      */
     public Tile destroy() {
-        System.out.println("Tile destroyed at: " + row + ", " + column);
         //If the tile is occupied, kills the occupant.
         if (occupier != null) {
             if (occupier instanceof Player) {
