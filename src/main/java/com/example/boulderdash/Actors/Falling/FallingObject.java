@@ -192,6 +192,11 @@ public abstract class FallingObject extends Actor {
             return false;
         }
         if (underTile.isPath() || underTile instanceof MagicWall) {
+            if (underTile instanceof MagicWall) {
+                return underTile.getDown() != null
+                        && underTile.getDown().isPath()
+                        && !underTile.getDown().isOccupied();
+            }
             Actor occupant = underTile.getOccupier();
             if (occupant == null) {
                 return true;

@@ -97,7 +97,6 @@ public class GameManager extends Application {
     private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
     private static final int USER_LIST_ITEM_HEIGHT = 35;
     private static final int PAUSE_MENU_SPACING = 5;
-
     // Attributes
     private String deathCause = "";
     private List<Actor> deadActors = new ArrayList<>();
@@ -466,6 +465,14 @@ public class GameManager extends Application {
         currentUserLabel = new Label("Current User: " + currentUser);
         currentUserLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         currentUserLabel.setStyle("-fx-text-fill: white;");
+
+        JSONObject completedTheGame = (JSONObject) userProfileObj.get("CompletedTheGame");
+        if (completedTheGame != null) {
+            Label completedGameLabel = new Label("Congratulations! You have completed the game!");
+            completedGameLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+            completedGameLabel.setStyle("-fx-text-fill: white;");
+            homeScreen.getChildren().add(completedGameLabel);
+        }
 
         HBox buttonBox = new HBox(VBOX_SPACING);
         buttonBox.setStyle("-fx-alignment: center;");
@@ -1652,17 +1659,26 @@ public class GameManager extends Application {
      * Loads the next level once current level has been completed.
      */
     private void loadNextLevel() {
-        currentLevel++;
-        updateCurrentLevel();
-        level = new Level(currentLevel);
-        player = level.getPlayer();
-        dead = false;
-        timeElapsed = 0;
-        GameState.setupSate(level, player, this);
-        tickTimeline.play();
-        stackPane.getChildren().remove(levelCompleteMenu);
-        drawGame();
+        if (currentLevel == NUMBER_OF_LEVELS) {
+            currentLevel = 1;
+            userProfileObj.put("CompletedTheGame", true);
+            updateCurrentLevel();
+            restartGame();
 
+            primaryStage.setScene(homeScene);
+        } else {
+
+            currentLevel++;
+            updateCurrentLevel();
+            level = new Level(currentLevel);
+            player = level.getPlayer();
+            dead = false;
+            timeElapsed = 0;
+            GameState.setupSate(level, player, this);
+            tickTimeline.play();
+            stackPane.getChildren().remove(levelCompleteMenu);
+            drawGame();
+        }
     }
     private void updateCurrentLevel() {
         userProfileObj.put("CurrentLevel", currentLevel);
