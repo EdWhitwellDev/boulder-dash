@@ -161,7 +161,7 @@ public class GameManager extends Application {
         primaryStage.setY(screenBounds.getMinY());
         primaryStage.setWidth(screenBounds.getWidth());
         primaryStage.setHeight(screenBounds.getHeight());
-        //primaryStage.setFullScreen(true);
+
         primaryStage.show();
     }
 
@@ -704,6 +704,7 @@ public class GameManager extends Application {
 
         drawGame();
         primaryStage.setScene(scene);
+
         Audio.getInstance().playMusic("/Music/MinecraftChill.mp3", true, 1);
     }
 
@@ -1387,8 +1388,7 @@ public class GameManager extends Application {
 
             drawGame();
             primaryStage.setScene(scene);
-            primaryStage.setHeight(level.getRows() * tileSize);
-            primaryStage.setWidth(level.getCols() * tileSize);
+
         }
     }
 

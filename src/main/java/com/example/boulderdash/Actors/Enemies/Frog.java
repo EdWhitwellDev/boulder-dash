@@ -13,12 +13,19 @@ import java.util.Queue;
 import java.util.Random;
 
 public class Frog extends Enemy {
+
+    /**
+     * This is the number of ticks, after moving, before the Frog can
+     * move again.
+     * */
     private static final int TICK_COOL_DOWN_RESET = 16;
-    //TODO Add comment to describe TICK_COOL_DOWN_RESET and tickCoolDown
     /**
      * The Player that is being targeted by this Frog.
      * */
     private Player player;
+    /**
+     * The number of ticks before the Frog can move again.
+     * */
     private int tickCoolDown = 1;
     /**
      * Constructor for a Frog *with* a Targeted Player. Set's the
@@ -90,7 +97,6 @@ public class Frog extends Enemy {
         }
     }
 
-    //TODO Ask Ed what this method is meant to do, so you can JavaDoc properly.
     /**
      * Implements a bidirectional search algorithm to find the shortest path
      * from the current tile to the target tile.

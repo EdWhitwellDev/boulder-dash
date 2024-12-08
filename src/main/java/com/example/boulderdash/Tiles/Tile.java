@@ -10,115 +10,200 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to represent a tile, the basic unit of space in the game. All square and same size, and
- * can be occupied by Actors (e.g. Player, Butterfly) and affected by events (e.g. Explosion).
+ * Class to represent a tile, the basic unit of space in the game. All
+ * square and same size, and can be occupied by Actors (e.g. Player, Butterfly)
+ * and affected by events (e.g. Explosion).
  *
  * @author Ed Whitwell
  */
 public class Tile {
 
-    // References to adjacent tiles.
-    protected Tile left;
-    protected Tile right;
-    protected Tile up;
-    protected Tile down;
+    /**
+     * Reference to the tile to the left of the current tile.
+     * */
+    private Tile left;
+    /**
+     * Reference to the tile to the right of the current tile.
+     * */
+    private Tile right;
+    /**
+     * Reference to the tile above the current tile.
+     * */
+    private Tile up;
+    /**
+     * Reference to the tile below the current tile.
+     * */
+    private Tile down;
 
-    //Attribute to hold the Image for the tile
-    protected Image image;
+    /**
+     * Attribute to hold the Image for the tile.
+     * */
+    private Image image;
 
-    //Attributes holding the row and column that the tile is in. (It's coordinates)
-    protected int row;
-    protected int column;
+    /**
+     * The row that the tile is in.
+     * */
+    private int row;
+    /**
+     * The column that the tile is in.
+     * */
+    private int column;
 
-    // Indicates if the tile is a path
-    //in Floor class, but set to default value of 'false'.
-    protected boolean isPath;
+    /**
+     * Indicates if the tile is a path
+     * in Floor class, but set to default value of 'false'.
+     * */
+    private boolean isPath;
 
-    //Attribute to hold the Actor object currently occupying the tile.
+    /**
+     * Attribute to hold the Actor object currently occupying the tile.
+     * */
     private Actor occupier;
 
     /**
      * This is the constructor for a Tile. It takes in integer values for
-     * a tile's row and column, and a boolean value for whether it is a Path Tile.
-     * It also sets the tile to contain no actors upon instantiation.
+     * a tile's row and column, and a boolean value for whether it is a
+     * Path Tile. It also sets the tile to contain no actors upon
+     * instantiation.
      *
-     * @param row An integer representing the Grid Row that the tile is in.
-     * @param col An integer representing the Grid Column that the tile is in.
-     * @param isPath The boolean value representing whether a tile is a Path tile.
+     * @param newRow An integer representing the Grid Row that the tile is in.
+     * @param newCol An integer representing the Grid Column that the tile is
+     *               in.
+     * @param ifIsPath The boolean value representing whether a tile is a Path
+     *               tile.
      */
-    public Tile(int row, int col, boolean isPath) {
-        this.row = row;
-        this.column = col;
-        this.isPath = isPath;
+    public Tile(final int newRow, final int newCol, final boolean ifIsPath) {
+        this.row = newRow;
+        this.column = newCol;
+        this.isPath = ifIsPath;
         this.occupier = null;
     }
 
-    // Accessor methods for the tile object's Image, Occupier, isPath value,
+    //Getters
+    /**
+     * Accessor method for the tile object's Image.
+     * @return The Image representing the Tile.
+     * */
     public Image getImage() {
         return image;
     }
-
+    /**
+     * Accessor method for the tile's occupier.
+     * @return The Actor occupying the tile.
+     * */
     public Actor getOccupier() {
         return occupier;
     }
-
+    /**
+     * Accessor method for whether the tile is occupied.
+     * @return Whether the tile is occupied.
+     * */
     public boolean isOccupied() {
         return occupier != null;
     }
-
+    /**
+     * Accessor method for the tile's row.
+     * @return The number of the row which the tile is in
+     * */
     public int getRow() {
         return row;
     }
-
+    /**
+     * Accessor method for the tile's column.
+     * @return The number of the column which the tile is in
+     * */
     public int getColumn() {
         return column;
     }
-
+    /**
+     * Accessor method for whether the tile is a Path.
+     * @return Whether the tile is a Path.
+     * */
     public boolean isPath() {
         return isPath;
     }
-
+    /**
+     * Accessor method for the tile above the current tile.
+     * @return The Tile above a given tile.
+     * */
     public Tile getUp() {
         return up;
     }
-
+    /**
+     * Accessor method for the tile below the current tile.
+     * @return The Tile below a given tile.
+     * */
     public Tile getDown() {
         return down;
     }
-
+    /**
+     * Accessor method for the tile to the left of the current tile.
+     * @return The Tile left of a given tile.
+     * */
     public Tile getLeft() {
         return left;
     }
-
+    /**
+     * Accessor method for the tile to the right of the current tile.
+     * @return The Tile right of a given tile.
+     * */
     public Tile getRight() {
         return right;
     }
 
-    // Mutator methods for the tile object's Occupier, Tiles to the
-    public void setDown(Tile down) {
-        this.down = down;
-    }
-
-    public void setLeft(Tile left) {
-        this.left = left;
-    }
-
-    public void setRight(Tile right) {
-        this.right = right;
-    }
-
-    public void setUp(Tile up) {
-        this.up = up;
-    }
-
+    //Setters
     /**
-     * This method sets a tile's occupier to the one inputted, and sets the tile to be
-     * occupied if there is an actor in it.
+     * Mutator methods to set the tile's Image.
+     * @param newImage The image to be set to represent the tile.
+     * */
+    public void setImage(final Image newImage) {
+        this.image = newImage;
+    }
+    /**
+     * Mutator methods to set the tile below the current tile.
+     * @param downTile The Tile to be referenced below a given tile.
+     * */
+    public void setDown(final Tile downTile) {
+        this.down = downTile;
+    }
+    /**
+     * Mutator methods to set the tile left of the current tile.
+     * @param leftTile The Tile to be referenced to the left of a
+     *                 given tile.
+     * */
+    public void setLeft(final Tile leftTile) {
+        this.left = leftTile;
+    }
+    /**
+     * Mutator methods to set the tile right of the current tile.
+     * @param rightTile The Tile to be referenced to the left of a
+     *                   given tile.
+     * */
+    public void setRight(final Tile rightTile) {
+        this.right = rightTile;
+    }
+    /**
+     * Mutator methods to set the tile above the current tile.
+     * @param upTile The Tile to be referenced above a given tile.
+     * */
+    public void setUp(final Tile upTile) {
+        this.up = upTile;
+    }
+    /**
+     * Mutator methods to set whether the current tile is a Path tile.
+     * @param ifIsPath Whether a given tile is a Path tile.
+     * */
+    public void setIsPath(final boolean ifIsPath) {
+        this.isPath = ifIsPath;
+    }
+    /**
+     * This method sets a tile's occupier to the one inputted, and sets the
+     * tile to be occupied if there is an actor in it.
      *
-     * @param occupier The actor occupying the tile
+     * @param newOccupier The actor occupying the tile
      */
-    public void setOccupier(Actor occupier) {
-        this.occupier = occupier;
+    public void setOccupier(final Actor newOccupier) {
+        this.occupier = newOccupier;
     }
 
     /**
@@ -133,7 +218,8 @@ public class Tile {
         List<Actor> adjacentActors = new ArrayList<>();
 
         // For each adjacent tile reference ,checks if empty.
-        // check if referenced tile is occupied. If occupied, we add the occupant.
+        // check if referenced tile is occupied. If occupied, we add the
+        // occupant.
         if (up != null) {
             if (up.isOccupied()) {
                  adjacentActors.add(up.getOccupier());
@@ -191,26 +277,29 @@ public class Tile {
     }
 
     /**
-     * This method creates a list of the Tiles on either side of the current tile,
-     * as well ass the current tile itself. (leftTile - thisTile - rightTile)
+     * This method creates a list of the Tiles on either side of the current
+     * tile, as well ass the current tile itself.
+     * (leftTile - thisTile - rightTile)
      *
-     * @return An immutable list of Tiles horizontally adjacent to the current tile.
+     * @return An immutable list of Tiles horizontally adjacent to the current
+     *          tile.
      */
     public List<Tile> getAdjacentHorizontal() {
         return List.of(new Tile[]{left, this, right});
     }
 
     /**
-     * This method allows one to get the 3x3 block of tiles containing the current tile
-     * at its epicentre. It adds each row of the block to one big list.
+     * This method allows one to get the 3x3 block of tiles containing the
+     * current tile at its epicentre. It adds each row of the block to one
+     * big list.
      *
-     * @return An immutable list of Tiles lists, each containing a centre tile and
-     * those horizontally adjacent to it.
+     * @return An immutable list of Tiles lists, each containing a centre
+     * tile and those horizontally adjacent to it.
      */
     public List<Tile> get3x3() {
 
-        // Create the Big list and add to it, a smaller list of the current tile and
-        // those horizontally adjacent to it.
+        // Create the Big list and add to it, a smaller list of the current
+        // tile and those horizontally adjacent to it.
         List<Tile> surrounding = new ArrayList<>(this.getAdjacentHorizontal());
 
         if (up != null) {
@@ -224,14 +313,14 @@ public class Tile {
     }
 
     /**
-     * This method retrieves the tile in a certain direction from the current tile. It
-     * makes use of the Direction enum.
+     * This method retrieves the tile in a certain direction from the current
+     * tile. It makes use of the Direction enum.
      *
-     * @param direction This is the direction of the desired tile from the current tile.
-     *                 (Direction Enum only)
+     * @param direction This is the direction of the desired tile from the
+     *                  current tile.(Direction Enum only)
      * @return The desired Tile
      */
-    public Tile getNeighbour(Direction direction) {
+    public Tile getNeighbour(final Direction direction) {
         return switch (direction) {
             case UP -> up;
             case DOWN -> down;
@@ -242,8 +331,8 @@ public class Tile {
     }
 
     /**
-     * This method is to turn a tile (either occupied or unoccupied) into a path. Can be called
-     * when an explosion occurs.
+     * This method is to turn a tile (either occupied or unoccupied) into a
+     * path. Can be called when an explosion occurs.
      *
      * @return The new path tile replacing the destroyed tile.
      */
@@ -256,7 +345,8 @@ public class Tile {
             GameState.getManager().killActor(occupier);
         }
 
-        //Creates a new Path tile, replaces the current tile with this new tile and returns the new tile.
+        // Creates a new Path tile, replaces the current tile with this new
+        // tile and returns the new tile.
         Tile remains = new Floor(row, column, true);
         GameState.getLevel().replaceTile(remains, this);
         return remains;

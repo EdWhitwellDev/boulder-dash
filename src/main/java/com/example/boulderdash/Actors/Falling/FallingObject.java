@@ -15,8 +15,11 @@ import com.example.boulderdash.Tiles.Tile;
  */
 public abstract class FallingObject extends Actor {
 
-    private static final int DELAY = 3;
+
     //Variables
+    /**
+     * */
+    private static final int DELAY = 3;
     /**
      * Boolean to show whether a falling object
      * explodes/causes an explosion.
@@ -27,7 +30,6 @@ public abstract class FallingObject extends Actor {
      */
     private boolean isFalling = false;
 
-    //TODO Ask Add JavaDoc Comments about fallDelay and rollDelay
     /**
      * Slows the falling speed.
      */

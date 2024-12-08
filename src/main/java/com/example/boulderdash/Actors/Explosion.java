@@ -12,9 +12,10 @@ import java.util.Random;
  * @author Ed Whitwell
  */
 public class Explosion extends Actor {
-    //TODO Write comment describing LIFE_TIME and ticksOld in Explosion.
 
-    /** */
+    /**
+     * How many ticks the explosion exists for before it dies down.
+     * */
     private static final int LIFE_TIME = 9;
     /**
      * An Array of images representing the explosion lifecycle.
@@ -32,7 +33,9 @@ public class Explosion extends Actor {
      * complete.
      * */
     private final boolean dropDiamond;
-    /** */
+    /**
+     * The number is ticks since the explosion was created.
+     * */
     private int ticksOld;
 
     /**

@@ -11,8 +11,6 @@ import java.util.Map;
  * @author Ed Whitewell
  */
 public class Fly extends Enemy {
-    //TODO Set Comments for TICK_COOL_DOWN_RESET, handSide, tickCoolDown
-    // and consecutive turning.
 
     /**
      * An array of the possible directions that the fly can move in,
@@ -56,15 +54,32 @@ public class Fly extends Enemy {
             Direction.RIGHT,
                 new Image("Actor Images/Firefly/firefly_right.png")
     );
+    /**
+     * This is the number of ticks, after moving, before the Fly can move again.
+     * */
     private static final int TICK_COOL_DOWN_RESET = 3;
+    /**
+     * The number of turns that when reached indicate whether a Fly is moving
+     * in a loop.
+     * */
     private static final int MAX_TURN = 5;
 
     /**
      * Boolean to check if the 'Fly' is moving Right or Left.
      * */
     private final boolean rightHanded;
+    /**
+     * This is the direction perpendicular to the current direction of the Fly.
+     * */
     private Direction handSide;
+    /**
+     * The number of ticks before the Fly can move again.
+     * */
     private int tickCoolDown = 1;
+    /**
+     * This is the number of turns the Fly has done in a row, if it reaches 5
+     * then it is moving in a loop.
+     * */
     private int consecutiveTurning = 0;
 
     /**
@@ -109,7 +124,6 @@ public class Fly extends Enemy {
         } else {
             boolean turnFlag = false;
             if (consecutiveTurning > MAX_TURN) {
-                //TODO Make into a Constant, not a Magic Number!
                 explodeSingle();
             } else {
                 Tile side = findTile(handSide);
@@ -142,7 +156,7 @@ public class Fly extends Enemy {
                 symbol + ","
                         + getPosition().getRow()
                         + "," + getPosition().getColumn()
-                        + "," + isButtery() + ","
+                        + "," + rightHanded + ","
                         + getCurrentDirection().toString();
     }
 
