@@ -597,6 +597,7 @@ public class GameManager extends Application {
 
         drawGame();
         primaryStage.setScene(scene);
+        Audio.getInstance().playMusic("/Music/MinecraftChill.mp3", true, 1);
     }
 
     /**
