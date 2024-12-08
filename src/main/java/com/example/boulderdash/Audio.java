@@ -9,8 +9,8 @@ public class Audio {
     private MediaPlayer mediaPlayer;
 
     // Private constructor to enforce singleton
-    private Audio() {}
-
+    private Audio() {
+    }
     // Get the single instance of MusicManager
     public static Audio getInstance() {
         if (instance == null) {

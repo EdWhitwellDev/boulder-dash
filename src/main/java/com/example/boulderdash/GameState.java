@@ -11,13 +11,10 @@ import java.util.List;
  */
 public class GameState {
 
-
-    private static GameManager manager; // Responsible for controlling the game loop and rendering
+    private static GameManager manager; // Controls game loop and rendering
     private static Level level; // Current level being played
     private static Player player; // Player character in the game
     private static List<Actor> actors; // Global list of actors
-
-
 
     /**
      * Sets up the game state with the current level, player, and game manager.
@@ -28,7 +25,8 @@ public class GameState {
      * @param currentPlayer  - player character for this session.
      * @param management - game manager controlling the session.
      */
-    public static void setupSate(Level currentLevel, Player currentPlayer, GameManager management) {
+    public static void setupSate(Level currentLevel,
+                                 Player currentPlayer, GameManager management) {
         level = currentLevel;
         player = currentPlayer;
         manager = management;

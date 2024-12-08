@@ -1,23 +1,42 @@
 package com.example.boulderdash;
 
-import com.example.boulderdash.Actors.*;
-import com.example.boulderdash.Actors.Enemies.*;
-import com.example.boulderdash.Actors.Falling.*;
-import com.example.boulderdash.Tiles.*;
+import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.Actors.Amoeba;
+import com.example.boulderdash.Actors.Enemies.Fly;
+import com.example.boulderdash.Actors.Enemies.Frog;
+import com.example.boulderdash.Actors.Falling.Diamond;
+import com.example.boulderdash.Actors.Falling.Boulder;
+import com.example.boulderdash.Tiles.Tile;
+import com.example.boulderdash.Tiles.MagicWall;
+import com.example.boulderdash.Tiles.Floor;
+import com.example.boulderdash.Tiles.Exit;
+import com.example.boulderdash.Tiles.LockedDoor;
+import com.example.boulderdash.Tiles.TitaniumWall;
+import com.example.boulderdash.Tiles.NormalWall;
+import com.example.boulderdash.Tiles.Key;
 import com.example.boulderdash.enums.Direction;
 import com.example.boulderdash.enums.KeyColours;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import java.nio.charset.StandardCharsets;
 
-import java.util.*;
-
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.json.simple.JSONArray;
-import org.json.simple.parser.*;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  * This class is responsible for getting the level's tiles,
@@ -25,11 +44,16 @@ import org.json.simple.JSONObject;
  */
 public class Level {
 
-    private final List<List<Tile>> tiles;// Grid of tiles that make up the level
-    private final List<Actor> actors;// List of all active actors in the level
-    private Player player;// The player character
-    private int rows;// Number of rows in the level
-    private int cols;// Number of columns in the level
+    private static final int COLS_INDEX = 3;
+    private static final int AMOEBA_GROWTH_RATE_INDEX = 4;
+    private static final int AMOEBA_MAX_SIZE_INDEX = 5;
+    private static final int FLY_ACTIVE_INDEX = 3;
+    private static final int FLY_DIRECTION_INDEX = 4;
+    private final List<List<Tile>> tiles; // Grid of tiles to create the level
+    private final List<Actor> actors; // List of all active actors in the level
+    private Player player; // The player character
+    private int rows; // Number of rows in the level
+    private int cols; // Number of columns in the level
     private int timeLimit;
     private int diamondsRequired;
     private int tileSize;
@@ -40,6 +64,7 @@ public class Level {
     /**
      * Constructor for the Level class. Sets tiles, actors, and player and
      * reads the tile layout from a file and sets up actor positions
+     * @param levelNum is the level to be read.
      */
     public Level(int levelNum) {
         tiles = new ArrayList<>();
@@ -57,7 +82,8 @@ public class Level {
      * @param saveFile contains the level data.
      */
     public Level(String user, String saveFile) {
-        System.out.println("Loading level for user: " + user + " and save file: " + saveFile);
+        System.out.println("Loading level for user: "
+                + user + " and save file: " + saveFile);
         tiles = new ArrayList<>();
         actors = new ArrayList<>();
 
@@ -74,19 +100,25 @@ public class Level {
     public void loadLevel(String user, String saveFile) {
         JSONParser parser = new JSONParser();
         try {
-            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
-            JSONObject userObj = (JSONObject) PlayerProfileObj.get(user);
+            JSONObject playerProfileObj = (JSONObject)
+                    parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObj = (JSONObject) playerProfileObj.get(user);
             JSONObject savedLevelsObj = (JSONObject) userObj.get("SavedLevels");
             JSONObject levelObj = (JSONObject) savedLevelsObj.get(saveFile);
 
             JSONArray actorsArrayJson = (JSONArray) levelObj.get("Actors");
             JSONArray tilesArrayJson = (JSONArray) levelObj.get("Tiles");
 
-            diamondsRequired = Integer.parseInt(levelObj.get("DiamondsRequired").toString());
-            timeLimit = Integer.parseInt(levelObj.get("TimeRemaining").toString());
-            tileSize = Integer.parseInt(levelObj.get("TileSize").toString());
-            amoebaGrowthRate = Integer.parseInt(levelObj.get("AmoebaGrowthRate").toString());
-            amoebaMaxSize = Integer.parseInt(levelObj.get("AmoebaMaxSize").toString());
+            diamondsRequired = Integer.parseInt(levelObj.
+                    get("DiamondsRequired").toString());
+            timeLimit = Integer.parseInt(levelObj.
+                    get("TimeRemaining").toString());
+            tileSize = Integer.parseInt(levelObj.
+                    get("TileSize").toString());
+            amoebaGrowthRate = Integer.parseInt(levelObj.
+                    get("AmoebaGrowthRate").toString());
+            amoebaMaxSize = Integer.parseInt(levelObj.
+                    get("AmoebaMaxSize").toString());
 
             List<String> actorsArray = jsonArrayToList(actorsArrayJson);
             List<String> tilesArray = jsonArrayToList(tilesArrayJson);
@@ -94,13 +126,15 @@ public class Level {
             readTiles(tilesArray);
             readActors(actorsArray);
 
-            int collectedDiamonds = Integer.parseInt(levelObj.get("DiamondsCollected").toString());
+            int collectedDiamonds = Integer.parseInt(levelObj.
+                    get("DiamondsCollected").toString());
             player.setDiamondsCollected(collectedDiamonds);
 
             Map<KeyColours, Integer> keys = new HashMap<>();
             JSONObject keysObj = (JSONObject) levelObj.get("KeysCollected");
             for (KeyColours keyColour : KeyColours.values()) {
-                keys.put(keyColour, Integer.parseInt(keysObj.get(keyColour.toString()).toString()));
+                keys.put(keyColour, Integer.parseInt(keysObj.
+                        get(keyColour.toString()).toString()));
             }
             player.setKeys(keys);
 
@@ -110,13 +144,14 @@ public class Level {
     }
 
     /**
-     * Removes an actor from the level
+     * Removes an actor from the level.
      *
-     * @param actorToRemove the actor to remove
+     * @param actorToRemove the actor to remove.
      */
     public void removeActor(Actor actorToRemove) {
         actors.remove(actorToRemove);
-        if (actorToRemove.getPosition() != null && actorToRemove.getPosition().getOccupier() == actorToRemove){
+        if (actorToRemove.getPosition() != null
+                && actorToRemove.getPosition().getOccupier() == actorToRemove) {
             actorToRemove.getPosition().setOccupier(null);
         }
     }
@@ -134,7 +169,7 @@ public class Level {
      * @param newTile is the tile to replace the old tile.
      * @param oldTile is the tile to be replaced.
      */
-    public void replaceTile(Tile newTile, Tile oldTile){
+    public void replaceTile(Tile newTile, Tile oldTile) {
         if (oldTile.getDown() != null) {
             oldTile.getDown().setUp(newTile);
         }
@@ -201,13 +236,15 @@ public class Level {
 
         try {
             JSONParser parser = new JSONParser();
-            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
-            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(user);
-            JSONObject savedLevelsObjOld = (JSONObject) userObjOld.get("SavedLevels");
+            JSONObject playerProfileObj = (JSONObject) parser.
+                    parse(new FileReader("PlayerProfile.json"));
+            JSONObject userObjOld = (JSONObject) playerProfileObj.get(user);
+            JSONObject savedLevelsObjOld =
+                    (JSONObject) userObjOld.get("SavedLevels");
             savedLevelsObjOld.put(saveFile, levelObj);
 
             FileWriter file = new FileWriter("PlayerProfile.json");
-            file.write(PlayerProfileObj.toJSONString());
+            file.write(playerProfileObj.toJSONString());
             file.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -228,20 +265,23 @@ public class Level {
     }
 
     /**
-     * Reads the level configuration from a text file and parses the tiles and actors based on the format.
+     * Reads the level configuration from a text file and parses the tiles
+     * and actors based on the format.
      * @param levelNum the specific level to load.
      */
-    private void readLevelFile(int levelNum){
+    private void readLevelFile(int levelNum) {
         String levelFile = "Level" + levelNum + ".txt";
         Dictionary<String, List<String>> levelSections = new Hashtable<>();
         String currentSection = "";
-        try (InputStream inputStream = Level.class.getClassLoader().getResourceAsStream(levelFile))
-        {
-            if (inputStream == null){
+        try (InputStream inputStream =
+                     Level.class.getClassLoader().
+                             getResourceAsStream(levelFile)) {
+            if (inputStream == null) {
                 throw new IllegalArgumentException("File not found");
             }
 
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(
+                    inputStream, StandardCharsets.UTF_8))) {
                 String line;
 
                 while ((line = in.readLine()) != null) {
@@ -249,7 +289,8 @@ public class Level {
                     if (line.startsWith("[") && line.endsWith("]")) {
                         currentSection = line.substring(1, line.length() - 1);
                     } else {
-                        List<String> currentList = levelSections.get(currentSection);
+                        List<String> currentList =
+                                levelSections.get(currentSection);
                         if (currentList == null) {
                             currentList = new ArrayList<>();
 
@@ -265,14 +306,15 @@ public class Level {
             e.printStackTrace();
         }
 
-
-        String[] winConditions = levelSections.get("WIN CONDITIONS").get(0).split(",");
+        String[] winConditions =
+                levelSections.get("WIN CONDITIONS").get(0).split(",");
         diamondsRequired = Integer.parseInt(winConditions[0]);
         timeLimit = Integer.parseInt(winConditions[1]);
         rows = Integer.parseInt(winConditions[2]);
-        cols = Integer.parseInt(winConditions[3]);
-        amoebaGrowthRate = Integer.parseInt(winConditions[4]);
-        amoebaMaxSize = Integer.parseInt(winConditions[5]);
+        cols = Integer.parseInt(winConditions[COLS_INDEX]);
+        amoebaGrowthRate = Integer.parseInt(winConditions
+                [AMOEBA_GROWTH_RATE_INDEX]);
+        amoebaMaxSize = Integer.parseInt(winConditions[AMOEBA_MAX_SIZE_INDEX]);
 
         readTiles(levelSections.get("TILES"));
         readActors(levelSections.get("ACTORS"));
@@ -310,28 +352,36 @@ public class Level {
                         row.add(new Exit(rowIndex, colIndex));
                         break;
                     case "R":
-                        row.add(new LockedDoor(rowIndex, colIndex, KeyColours.RED));
+                        row.add(new LockedDoor(rowIndex,
+                                colIndex, KeyColours.RED));
                         break;
                     case "G":
-                        row.add(new LockedDoor(rowIndex, colIndex, KeyColours.GREEN));
+                        row.add(new LockedDoor(rowIndex,
+                                colIndex, KeyColours.GREEN));
                         break;
                     case "B":
-                        row.add(new LockedDoor(rowIndex, colIndex, KeyColours.BLUE));
+                        row.add(new LockedDoor(rowIndex,
+                                colIndex, KeyColours.BLUE));
                         break;
                     case "Y":
-                        row.add(new LockedDoor(rowIndex, colIndex, KeyColours.YELLOW));
+                        row.add(new LockedDoor(rowIndex,
+                                colIndex, KeyColours.YELLOW));
                         break;
                     case "r":
-                        row.add(new Key(rowIndex, colIndex, KeyColours.RED));
+                        row.add(new Key(rowIndex,
+                                colIndex, KeyColours.RED));
                         break;
                     case "g":
-                        row.add(new Key(rowIndex, colIndex, KeyColours.GREEN));
+                        row.add(new Key(rowIndex,
+                                colIndex, KeyColours.GREEN));
                         break;
                     case "b":
-                        row.add(new Key(rowIndex, colIndex, KeyColours.BLUE));
+                        row.add(new Key(rowIndex,
+                                colIndex, KeyColours.BLUE));
                         break;
                     case "y":
-                        row.add(new Key(rowIndex, colIndex, KeyColours.YELLOW));
+                        row.add(new Key(rowIndex,
+                                colIndex, KeyColours.YELLOW));
                         break;
                     default:
                         break;
@@ -349,7 +399,7 @@ public class Level {
      * Reads in actors to the level from a list of strings.
      * @param actorStrings is the list of strings representing the actors.
      */
-    private void readActors(List<String> actorStrings){
+    private void readActors(List<String> actorStrings) {
         List<Frog> frogsWithoutPlayer = new ArrayList<>();
         for (String line : actorStrings) {
             String[] actorInfo = line.split(",");
@@ -369,13 +419,20 @@ public class Level {
                     actors.add(new Player(startTile));
                     break;
                 case "A":
-                    actors.add(new Amoeba(startTile, amoebaGrowthRate, amoebaMaxSize));
+                    actors.add(new Amoeba(startTile,
+                            amoebaGrowthRate, amoebaMaxSize));
                     break;
                 case "F":
-                    actors.add(new Fly(startTile, Boolean.parseBoolean(actorInfo[3]), false, getDirectionFromString(actorInfo[4])));
+                    actors.add(new Fly(startTile,
+                            Boolean.parseBoolean(actorInfo[FLY_ACTIVE_INDEX]),
+                            false, getDirectionFromString(actorInfo
+                            [FLY_DIRECTION_INDEX])));
                     break;
                 case "BF":
-                    actors.add(new Fly(startTile, Boolean.parseBoolean(actorInfo[3]), true, getDirectionFromString(actorInfo[4])));
+                    actors.add(new Fly(startTile,
+                            Boolean.parseBoolean(actorInfo[FLY_ACTIVE_INDEX]),
+                            true, getDirectionFromString(actorInfo
+                            [FLY_DIRECTION_INDEX])));
                     break;
                 case "D":
                     actors.add(new Diamond(startTile));
@@ -396,8 +453,9 @@ public class Level {
                     break;
             }
         }
-        player = (Player) actors.stream().filter(actor -> actor instanceof Player).findFirst().orElse(null);
-        if (player == null){
+        player = (Player) actors.stream().filter(actor
+                -> actor instanceof Player).findFirst().orElse(null);
+        if (player == null) {
             throw new IllegalArgumentException("No player found");
         }
         for (Frog frog : frogsWithoutPlayer) {
@@ -406,11 +464,12 @@ public class Level {
     }
 
     /**
-     * Converts a string representing a direction to its corresponding {@link Direction} value.
+     * Converts a string representing a direction to
+     * its corresponding {@link Direction} value.
      * @param direction represents the direction.
      * @return the {@link Direction} value.
      */
-    private Direction getDirectionFromString(String direction){
+    private Direction getDirectionFromString(String direction) {
         return switch (direction) {
             case "UP" -> Direction.UP;
             case "DOWN" -> Direction.DOWN;
@@ -450,57 +509,61 @@ public class Level {
     // Getters for accessing level properties
 
     /**
-     * Returns the player character
+     * Returns the player character.
      *
-     * @return the player instance
+     * @return the player instance.
      */
     public Player getPlayer() {
         return player;
     }
-    
     /**
-     * Returns the diamond actor in the level
+     * Returns the diamond actor in the level.
      *
-     * @return the diamond instance
+     * @return the diamond instance.
      */
-    public int getDiamondsRequired(){
+    public int getDiamondsRequired() {
         return diamondsRequired;
     }
-    public int getTimeLimit(){
+
+    /**
+     * Gets the time limit.
+     * @return the time limit.
+     */
+    public int getTimeLimit() {
         return timeLimit;
     }
 
     /**
-     * Returns the number of columns in the level
+     * Returns the number of columns in the level.
      *
-     * @return the column count
+     * @return the column count.
      */
     public int getCols() {
         return cols;
     }
 
     /**
-     * Returns the number of rows in the level
+     * Returns the number of rows in the level.
      *
-     * @return the row count
+     * @return the row count.
      */
     public int getRows() {
         return rows;
     }
 
     /**
-     * Returns the list of all active actors in the level
+     * Returns the list of all active actors in the level.
      *
-     * @return the list of actors
+     * @return the list of actors.
      */
     public List<Actor> getActors() {
         return actors;
     }
 
     /**
-     * Returns the grid of tiles that make up the level
+     * Returns the grid of tiles that make up the level.
      *
-     * @return the tile grid
+     * @return the tile grid.
      */
     public List<List<Tile>> getTiles() {
         return tiles;
