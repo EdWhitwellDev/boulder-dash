@@ -29,13 +29,13 @@ public class GameState {
     private static List<Actor> actors; // Global list of actors
 
     /**
-     * Sets up the game state with the current level, player, and game manager
-     * This method sets the static references to ensure shared access
-     * across different parts of the program
+     * Sets up the game state with the current level, player, and game manager.
+     * This method sets the static references to ensure shared access.
+     * across different parts of the program.
      *
-     * @param currentLevel - current level being played
-     * @param currentPlayer  - player character for this session
-     * @param management - game manager controlling the session
+     * @param currentLevel - current level being played.
+     * @param currentPlayer  - player character for this session.
+     * @param management - game manager controlling the session.
      */
     public static void setupSate(Level currentLevel, Player currentPlayer, GameManager management) {
         level = currentLevel;
