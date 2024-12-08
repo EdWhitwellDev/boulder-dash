@@ -632,7 +632,6 @@ public class GameManager extends Application {
             users.forEach(user -> userList.getItems().add(user.toString()));
         }
 
-
         int userCount = users != null ? users.size() : 0;
         userList.setPrefHeight(Math.min(userCount
                 * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
