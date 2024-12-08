@@ -20,20 +20,22 @@ public abstract class FallingObject extends Actor {
     /**
      * Boolean to show whether a falling object
      * explodes/causes an explosion.
-     * */
+     */
     private boolean exploded = false;
     /**
      * Boolean to show whether a falling object is currently falling.
-     * */
+     */
     private boolean isFalling = false;
 
     //TODO Ask Add JavaDoc Comments about fallDelay and rollDelay
-    /** */
+    /**
+     * Slows the falling speed.
+     */
     private int fallDelay = 0;
-    /** */
+    /**
+     * Slows the rolling speed.
+     */
     private int rollDelay = 0;
-
-    //Constructors
     /**
      * Constructor for a FallingObject at a specific starting tile.
      *
@@ -50,7 +52,7 @@ public abstract class FallingObject extends Actor {
      *
      * @return Boolean to show whether the falling object exploded.
      */
-    protected boolean isExploded() {
+    public boolean isExploded() {
         return exploded;
     }
     /**
@@ -58,7 +60,7 @@ public abstract class FallingObject extends Actor {
      *
      * @return Boolean to show whether the falling object is falling.
      */
-    protected boolean isFalling() {
+    public boolean isFalling() {
         return isFalling;
     }
 
@@ -69,7 +71,7 @@ public abstract class FallingObject extends Actor {
      * @param ifIsExploded The value to represent whether the falling
      *                     object exploded .
      * */
-    protected void setExploded(final boolean ifIsExploded) {
+    public void setExploded(final boolean ifIsExploded) {
         this.exploded = ifIsExploded;
     }
     /**
@@ -78,7 +80,7 @@ public abstract class FallingObject extends Actor {
      * @param falling The value to represent whether the falling
      *                object is falling .
      * */
-    protected void setFalling(final boolean falling) {
+    public void setFalling(final boolean falling) {
         isFalling = falling;
     }
 
@@ -154,7 +156,6 @@ public abstract class FallingObject extends Actor {
             rollDelay--;
             return;
         }
-        //TODO Make this a Constant instead of a Magic Number!
         rollDelay = DELAY;
         Tile leftTile = getPosition().getLeft();
         Tile rightTile = getPosition().getRight();

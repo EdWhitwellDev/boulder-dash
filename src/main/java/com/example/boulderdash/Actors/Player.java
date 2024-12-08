@@ -68,8 +68,6 @@ public class Player extends Actor {
         keys.put(KeyColours.YELLOW, 0);
         setCurrentDirection(Direction.STATIONARY);
     }
-
-
     //Getters
     /**
      * The accessor method for the number of Diamonds the Player has
@@ -87,22 +85,6 @@ public class Player extends Actor {
      * */
     public Map<KeyColours, Integer> getKeys() {
         return keys;
-    }
-    /**
-     * This method retrieves the Tile in a specified direction from the
-     * tile currently occupied by the Player.
-     *
-     * @param direction The direction of the Tile desired
-     * @return The Tile desired
-     * */
-    private Tile getNextTile(final Direction direction) {
-        return switch (direction) {
-            case UP -> getPosition().getUp();
-            case DOWN -> getPosition().getDown();
-            case LEFT -> getPosition().getLeft();
-            case RIGHT -> getPosition().getRight();
-            default -> null;
-        };
     }
 
     //Setters
@@ -168,7 +150,34 @@ public class Player extends Actor {
         keys.put(keyColour, keys.get(keyColour) + 1);
         Audio.getInstance().playSoundEffect("/Music/Key.mp3", 1);
     }
+    /**
+     * This method retrieves the Tile in a specified direction from the
+     * tile currently occupied by the Player.
+     *
+     * @param direction The direction of the Tile desired
+     * @return The Tile desired
+     * */
+    private Tile getNextTile(final Direction direction) {
+        return switch (direction) {
+            case UP -> getPosition().getUp();
+            case DOWN -> getPosition().getDown();
+            case LEFT -> getPosition().getLeft();
+            case RIGHT -> getPosition().getRight();
+            default -> null;
+        };
+    }
 
+    /**
+     * This is a method to represent a Player object in the desired
+     * string format.
+     *
+     * @return A string in the format :
+     *             P,v1,v2 (where v1 = RowNumber and v2 = ColumnNumber)
+     * */
+    public String toString() {
+        return "P" + "," + getPosition().getRow() + ","
+                + getPosition().getColumn();
+    }
     /**
      * This method checks if the Player can move into a new tile, and
      * blocks movement if certain conditions aren't met. (Player
@@ -237,17 +246,5 @@ public class Player extends Actor {
             }
             changePos(nextTile);
         }
-    }
-
-    /**
-     * This is a method to represent a Player object in the desired
-     * string format.
-     *
-     * @return A string in the format :
-     *             P,v1,v2 (where v1 = RowNumber and v2 = ColumnNumber)
-     * */
-    public String toString() {
-        return "P" + "," + getPosition().getRow() + ","
-                + getPosition().getColumn();
     }
 }

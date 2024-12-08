@@ -24,8 +24,6 @@ public abstract class Actor {
      * The current Tile on which the Actor is located.
      * */
     private Tile position;
-
-
     private int tickCoolDown;
 
     /**
@@ -54,11 +52,6 @@ public abstract class Actor {
             position.setOccupier(this);
         }
     }
-
-    //Getters
-
-
-
     /**
      * Specifies how the actor moves on the grid.
      * Overridden by subclasses for specific movement.
@@ -260,5 +253,4 @@ public abstract class Actor {
 
         isTransferring = true;
     }
-
 }

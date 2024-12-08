@@ -113,6 +113,46 @@ public class Amoeba extends Actor {
     }
 
     /**
+     * Transforms the Amoeba into a Diamond or Boulder on its current
+     * tile.
+     *
+     * @param isBoulder Indicates whether to transform into a
+     *                  Boulder (true) or a Diamond (false).
+     */
+    public void transform(final Boolean isBoulder) {
+        System.out.println("Amoeba transformed at: "
+                + getPosition().getRow() + ","
+                + getPosition().getColumn());
+
+        FallingObject fallingObject =
+                isBoulder ? new Boulder(getPosition())
+                        : new Diamond(getPosition());
+        getPosition().setOccupier(fallingObject);
+
+        GameState.getManager().addActor(fallingObject);
+        GameState.getManager().killActor(this);
+    }
+
+    /**
+     * Sets whether the cluster has grown during the current tick.
+     *
+     * @param newClusterGrown True if the cluster has grown, false otherwise.
+     */
+    public void setClusterGrown(final boolean newClusterGrown) {
+        this.clusterGrown = newClusterGrown;
+    }
+
+    //toString
+    /**
+     * Returns a string representation of the Amoeba, including its position.
+     *
+     * @return A string representation of the Amoeba.
+     */
+    public String toString() {
+        return "A," + getPosition().getRow() + "," + getPosition().getColumn();
+    }
+
+    /**
      * Attempts to grow the Amoeba into a random adjacent tile.
      */
     private void grow() {
@@ -134,7 +174,8 @@ public class Amoeba extends Actor {
     }
 
     /**
-     * Gets the list of adjacent tiles, from the current tile it's in, in which the Amoeba
+     * Gets the list of adjacent tiles, from the current tile it's in,
+     * in which the Amoeba
      * can grow.
      *
      * @return A list of tiles that are valid for Amoeba growth.
@@ -213,46 +254,6 @@ public class Amoeba extends Actor {
 
         return tile != null && !tile.isOccupied()
                 && tile.getClass() == Floor.class;
-    }
-
-    /**
-     * Transforms the Amoeba into a Diamond or Boulder on its current
-     * tile.
-     *
-     * @param isBoulder Indicates whether to transform into a
-     *                  Boulder (true) or a Diamond (false).
-     */
-    public void transform(final Boolean isBoulder) {
-        System.out.println("Amoeba transformed at: "
-                + getPosition().getRow() + ","
-                + getPosition().getColumn());
-
-        FallingObject fallingObject =
-                isBoulder ? new Boulder(getPosition())
-                        : new Diamond(getPosition());
-        getPosition().setOccupier(fallingObject);
-
-        GameState.getManager().addActor(fallingObject);
-        GameState.getManager().killActor(this);
-    }
-
-    /**
-     * Sets whether the cluster has grown during the current tick.
-     *
-     * @param newClusterGrown True if the cluster has grown, false otherwise.
-     */
-    public void setClusterGrown(final boolean newClusterGrown) {
-        this.clusterGrown = newClusterGrown;
-    }
-
-    //toString
-    /**
-     * Returns a string representation of the Amoeba, including its position.
-     *
-     * @return A string representation of the Amoeba.
-     */
-    public String toString() {
-        return "A," + getPosition().getRow() + "," + getPosition().getColumn();
     }
 
     /**
