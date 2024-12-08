@@ -465,26 +465,35 @@ public class GameManager extends Application {
 
         HBox buttonBox = new HBox(VBOX_SPACING);
         buttonBox.setStyle("-fx-alignment: center;");
+        String buttonStyleHome = "-fx-background-color: #3a3a3a;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-radius: 5;" +
+                "-fx-padding: 8 15 8 15;";
+
 
         // Start Game button
         Button startButton = new Button("Start");
         startButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         startButton.setOnAction(e -> startNewGame());
+        startButton.setStyle(buttonStyleHome);
 
         // Load Game button
         Button loadButton = new Button("Load Game");
         loadButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         loadButton.setOnAction(e -> showSavedGamesScreen());
+        loadButton.setStyle(buttonStyleHome);
 
         // User Menu button
         Button userMenuButton = new Button("User Menu");
         userMenuButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         userMenuButton.setOnAction(e -> userMenu());
+        userMenuButton.setStyle(buttonStyleHome);
 
         // Load unlocked levels
         Button levelsButton = new Button("Levels");
         levelsButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         levelsButton.setOnAction(e -> levelsMenu());
+        levelsButton.setStyle(buttonStyleHome);
 
         // High Score Table
         Label highScoreLabel =
