@@ -15,6 +15,7 @@ import com.example.boulderdash.Tiles.Tile;
  */
 public abstract class FallingObject extends Actor {
 
+    private static final int DELAY = 3;
     //Variables
     /**
      * Boolean to show whether a falling object
@@ -154,7 +155,7 @@ public abstract class FallingObject extends Actor {
             return;
         }
         //TODO Make this a Constant instead of a Magic Number!
-        rollDelay = 3;
+        rollDelay = DELAY;
         Tile leftTile = getPosition().getLeft();
         Tile rightTile = getPosition().getRight();
 
