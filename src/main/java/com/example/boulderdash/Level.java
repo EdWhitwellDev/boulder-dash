@@ -49,11 +49,26 @@ public class Level {
     private static final int AMOEBA_MAX_SIZE_INDEX = 5;
     private static final int FLY_ACTIVE_INDEX = 3;
     private static final int FLY_DIRECTION_INDEX = 4;
-    private final List<List<Tile>> tiles; // Grid of tiles to create the level
-    private final List<Actor> actors; // List of all active actors in the level
-    private Player player; // The player character
-    private int rows; // Number of rows in the level
-    private int cols; // Number of columns in the level
+    /**
+     * Grid of tiles to create the level.
+     */
+    private final List<List<Tile>> tiles;
+    /**
+     * List of all active actors in the level.
+     */
+    private final List<Actor> actors;
+    /**
+     * The player character.
+     */
+    private Player player;
+    /**
+     * Number of rows in the level.
+     */
+    private int rows;
+    /**
+     * Number of columns in the level.
+     */
+    private int cols;
     private int timeLimit;
     private int diamondsRequired;
     private int tileSize;
@@ -66,7 +81,7 @@ public class Level {
      * reads the tile layout from a file and sets up actor positions
      * @param levelNum is the level to be read.
      */
-    public Level(int levelNum) {
+    public Level(final int levelNum) {
         tiles = new ArrayList<>();
         actors = new ArrayList<>();
 
@@ -81,7 +96,7 @@ public class Level {
      * @param user is the user associated with the save file.
      * @param saveFile contains the level data.
      */
-    public Level(String user, String saveFile) {
+    public Level(final String user, final String saveFile) {
         System.out.println("Loading level for user: "
                 + user + " and save file: " + saveFile);
         tiles = new ArrayList<>();
@@ -97,7 +112,7 @@ public class Level {
      * @param user is the user associated with the save file.
      * @param saveFile contains the level data.
      */
-    public void loadLevel(String user, String saveFile) {
+    public void loadLevel(final String user, final String saveFile) {
         System.out.println("Loading level for user: "
                 + user + " and save file: " + saveFile);
         JSONParser parser = new JSONParser();
@@ -153,7 +168,7 @@ public class Level {
      *
      * @param actorToRemove the actor to remove.
      */
-    public void removeActor(Actor actorToRemove) {
+    public void removeActor(final Actor actorToRemove) {
         actors.remove(actorToRemove);
         if (actorToRemove.getPosition() != null
                 && actorToRemove.getPosition().getOccupier() == actorToRemove) {
@@ -165,7 +180,7 @@ public class Level {
      * Adds actors to the level.
      * @param actor is the list of {@link Actor} objects to be added.
      */
-    public void addActors(List<Actor> actor) {
+    public void addActors(final List<Actor> actor) {
         actors.addAll(actor);
     }
 
@@ -174,7 +189,7 @@ public class Level {
      * @param newTile is the tile to replace the old tile.
      * @param oldTile is the tile to be replaced.
      */
-    public void replaceTile(Tile newTile, Tile oldTile) {
+    public void replaceTile(final Tile newTile, final Tile oldTile) {
         if (oldTile.getDown() != null) {
             oldTile.getDown().setUp(newTile);
         }
@@ -201,7 +216,7 @@ public class Level {
      * @param user is the user under which the file should be saved.
      * @param saveFile is the name of the save file.
      */
-    public void saveLevel(String user, String saveFile) {
+    public void saveLevel(final String user, final String saveFile) {
         JSONObject levelObj = new JSONObject();
         JSONArray actorsArrayJson = new JSONArray();
         JSONArray tilesArrayJson = new JSONArray();
@@ -261,7 +276,7 @@ public class Level {
      * @param jsonArray is the array to be converted.
      * @return a list of strings.
      */
-    private List<String> jsonArrayToList(JSONArray jsonArray) {
+    private List<String> jsonArrayToList(final JSONArray jsonArray) {
         List<String> list = new ArrayList<>();
         for (Object obj : jsonArray) {
             list.add(obj.toString());
@@ -336,7 +351,7 @@ public class Level {
      * and actors based on the format.
      * @param levelNum the specific level to load.
      */
-    private void readLevelFile(int levelNum) {
+    private void readLevelFile(final int levelNum) {
         String levelFile = "Level" + levelNum + ".txt";
         Dictionary<String, List<String>> levelSections = new Hashtable<>();
         String currentSection = "";
@@ -391,7 +406,7 @@ public class Level {
      * Adds tiles to the level from a list of strings.
      * @param tileStrings is the list of strings representing the tiles.
      */
-    private void readTiles(List<String> tileStrings) {
+    private void readTiles(final List<String> tileStrings) {
         int rowIndex = 0;
         int colIndex = 0;
 
@@ -466,7 +481,7 @@ public class Level {
      * Reads in actors to the level from a list of strings.
      * @param actorStrings is the list of strings representing the actors.
      */
-    private void readActors(List<String> actorStrings) {
+    private void readActors(final List<String> actorStrings) {
         List<Frog> frogsWithoutPlayer = new ArrayList<>();
         for (String line : actorStrings) {
             String[] actorInfo = line.split(",");
@@ -536,7 +551,7 @@ public class Level {
      * @param direction represents the direction.
      * @return the {@link Direction} value.
      */
-    private Direction getDirectionFromString(String direction) {
+    private Direction getDirectionFromString(final String direction) {
         return switch (direction) {
             case "UP" -> Direction.UP;
             case "DOWN" -> Direction.DOWN;
@@ -550,23 +565,23 @@ public class Level {
      * Sets the neighbouring tiles for each tile.
      */
     private void setNeighbors() {
-        int rows = tiles.size();
-        int cols = tiles.get(0).size();
+        int row = tiles.size();
+        int col = tiles.get(0).size();
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
                 Tile current = tiles.get(i).get(j);
 
                 if (i > 0) {
                     current.setUp(tiles.get(i - 1).get(j));
                 }
-                if (i < rows - 1) {
+                if (i < row - 1) {
                     current.setDown(tiles.get(i + 1).get(j));
                 }
                 if (j > 0) {
                     current.setLeft(tiles.get(i).get(j - 1));
                 }
-                if (j < cols - 1) {
+                if (j < col - 1) {
                     current.setRight(tiles.get(i).get(j + 1));
                 }
             }
