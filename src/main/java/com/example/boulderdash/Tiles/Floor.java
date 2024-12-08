@@ -28,11 +28,11 @@ public class Floor extends Tile {
     public Floor(final int row, final int col, final boolean isPath) {
         //Passing values into the Superclass(Tile) Constructor
         super(row, col, isPath);
-        this.isPath = isPath;
+        setIsPath(isPath);
 
         //Sets the Tile's image based on whether it is
-        image = isPath ? new Image("Tile Images/path.png")
-                : new Image("Tile Images/dirt.png");
+        setImage(isPath ? new Image("Tile Images/path.png")
+                : new Image("Tile Images/dirt.png"));
     }
 
     /**
@@ -52,9 +52,9 @@ public class Floor extends Tile {
         }
 
         // Transform Dirt to Path if occupied by a Player.
-        if (!isPath && occupant instanceof Player) {
-            isPath = true;
-            image = new Image("Tile Images/path.png");
+        if (!isPath() && occupant instanceof Player) {
+            setIsPath(true);
+            setImage(new Image("Tile Images/path.png"));
         }
 
     }
@@ -67,7 +67,7 @@ public class Floor extends Tile {
      * @return Whether the tile is a Path tile or not.
      */
     public boolean getIsPath() {
-        return isPath;
+        return isPath();
     }
 
     /**
@@ -77,7 +77,7 @@ public class Floor extends Tile {
      * @return "P" if the tile is a path, otherwise "D".
      */
     public String toString() {
-        return isPath ? "P" : "D";
+        return getIsPath() ? "P" : "D";
     }
 
 }

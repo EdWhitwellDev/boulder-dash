@@ -24,6 +24,9 @@ public abstract class Actor {
      * The current Tile on which the Actor is located.
      * */
     private Tile position;
+    /**
+     * The number of ticks before the Actor can move again.
+     * */
     private int tickCoolDown;
 
     /**
@@ -35,6 +38,9 @@ public abstract class Actor {
      * The Image representing the Actor.
      * */
     private Image image;
+    /**
+     * Whether the Actor is transferring.
+     * */
     private boolean isTransferring;
 
     /**
@@ -225,7 +231,7 @@ public abstract class Actor {
      * Sets the state of the transferring flag.
      * @param transferring {@code True} if transferring is occuring.
      */
-    public void setTransferring(boolean transferring) {
+    public void setTransferring(final boolean transferring) {
         isTransferring = transferring;
     }
 
@@ -233,7 +239,7 @@ public abstract class Actor {
      * Sets the previous position of an entity.
      * @param newPreviousPosition the new position set as the previous position.
      */
-    public void setPreviousPosition(Tile newPreviousPosition) {
+    public void setPreviousPosition(final Tile newPreviousPosition) {
         previousPosition = newPreviousPosition;
     }
 

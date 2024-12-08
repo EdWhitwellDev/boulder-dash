@@ -13,6 +13,10 @@ import com.example.boulderdash.Tiles.MagicWall;
  */
 public class Diamond extends FallingObject {
 
+    /**
+     * Boolean to check whether this diamond has been collected during a certain
+     * tick.
+     * */
     private boolean hasBeenCollectedThisTick = false;
     /**
      * Constructor for a Diamond at a specific starting tile.
@@ -25,11 +29,13 @@ public class Diamond extends FallingObject {
 
     /**
      * Indicates whether an item has been collected during the current tick.
-     * @param hasBeenCollectedThisTick {@code True} if the item has
+     * @param ifHasBeenCollectedThisTick {@code True} if the item has
      *                                            been collected this tick.
      */
-    public void setHasBeenCollectedThisTick(boolean hasBeenCollectedThisTick) {
-        this.hasBeenCollectedThisTick = hasBeenCollectedThisTick;
+    public void setHasBeenCollectedThisTick(
+            final boolean ifHasBeenCollectedThisTick) {
+
+        this.hasBeenCollectedThisTick = ifHasBeenCollectedThisTick;
     }
 
     /**
