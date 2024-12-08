@@ -13,13 +13,6 @@ public class Audio {
     private MediaPlayer mediaPlayer;
 
     /**
-     * Private constructor for single patterns.
-     * Initialises audio only once.
-     */
-    private Audio() {
-    }
-
-    /**
      * Returns the single instance of the Audio class.
      * Creates one if it does not exist.
      * @return the single instance.
@@ -77,5 +70,12 @@ public class Audio {
         } catch (Exception e) {
             System.err.println("Error playing sound effect: " + e.getMessage());
         }
+    }
+
+    /**
+     * Private constructor for single patterns.
+     * Initialises audio only once.
+     */
+    private Audio() {
     }
 }

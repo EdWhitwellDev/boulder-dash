@@ -264,6 +264,68 @@ public class Level {
         return list;
     }
 
+    // Getters for accessing level properties
+    /**
+     * Returns the player character.
+     *
+     * @return the player instance.
+     */
+    public Player getPlayer() {
+        return player;
+    }
+    /**
+     * Returns the diamond actor in the level.
+     *
+     * @return the diamond instance.
+     */
+    public int getDiamondsRequired() {
+        return diamondsRequired;
+    }
+
+    /**
+     * Gets the time limit.
+     * @return the time limit.
+     */
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+
+    /**
+     * Returns the number of columns in the level.
+     *
+     * @return the column count.
+     */
+    public int getCols() {
+        return cols;
+    }
+
+    /**
+     * Returns the number of rows in the level.
+     *
+     * @return the row count.
+     */
+    public int getRows() {
+        return rows;
+    }
+
+    /**
+     * Returns the list of all active actors in the level.
+     *
+     * @return the list of actors.
+     */
+    public List<Actor> getActors() {
+        return actors;
+    }
+
+    /**
+     * Returns the grid of tiles that make up the level.
+     *
+     * @return the tile grid.
+     */
+    public List<List<Tile>> getTiles() {
+        return tiles;
+    }
+
     /**
      * Reads the level configuration from a text file and parses the tiles
      * and actors based on the format.
@@ -504,68 +566,5 @@ public class Level {
                 }
             }
         }
-    }
-
-    // Getters for accessing level properties
-
-    /**
-     * Returns the player character.
-     *
-     * @return the player instance.
-     */
-    public Player getPlayer() {
-        return player;
-    }
-    /**
-     * Returns the diamond actor in the level.
-     *
-     * @return the diamond instance.
-     */
-    public int getDiamondsRequired() {
-        return diamondsRequired;
-    }
-
-    /**
-     * Gets the time limit.
-     * @return the time limit.
-     */
-    public int getTimeLimit() {
-        return timeLimit;
-    }
-
-    /**
-     * Returns the number of columns in the level.
-     *
-     * @return the column count.
-     */
-    public int getCols() {
-        return cols;
-    }
-
-    /**
-     * Returns the number of rows in the level.
-     *
-     * @return the row count.
-     */
-    public int getRows() {
-        return rows;
-    }
-
-    /**
-     * Returns the list of all active actors in the level.
-     *
-     * @return the list of actors.
-     */
-    public List<Actor> getActors() {
-        return actors;
-    }
-
-    /**
-     * Returns the grid of tiles that make up the level.
-     *
-     * @return the tile grid.
-     */
-    public List<List<Tile>> getTiles() {
-        return tiles;
     }
 }
