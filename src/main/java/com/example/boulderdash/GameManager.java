@@ -56,6 +56,49 @@ import java.util.Comparator;
  * user input, game state management, and the main game loop.
  */
 public class GameManager extends Application {
+    // Constants
+    private static final ImageView DIAMOND_COUNT_ICON =
+            new ImageView(new Image("Actor Images/diamond.png"));
+    private static final ImageView CLOCK_ICON =
+            new ImageView(new Image("clock.png"));
+    private static final ImageView KEY_ICON_BLUE =
+            new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
+    private static final ImageView KEY_ICON_RED =
+            new ImageView(new Image("Key Icon Images/red_key_icon.png"));
+    private static final ImageView KEY_ICON_GREEN =
+            new ImageView(new Image("Key Icon Images/green_key_icon.png"));
+    private static final ImageView KEY_ICON_YELLOW =
+            new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
+    private static final int NUMBER_OF_LEVELS = 5;
+    private static final double TILE_SIZE_SCALE_FACTOR = 0.8;
+    private static final int MAX_SCORES_AMOUNT = 10;
+    private static final String FONT_ARIAL = "Arial";
+    private static final int FONT_SIZE_GAME_OVER = 75;
+    private static final int FONT_SIZE_TITLE = 40;
+    private static final int FONT_SIZE_CURRENT_USER = 20;
+    private static final int FONT_SIZE_HIGH_SCORE = 25;
+    private static final int FONT_SIZE_LEVELS_LABEL = 20;
+    private static final int FONT_SIZE_USER_MENU = 30;
+    private static final int FONT_SIZE_NO_SCORES = 18;
+    private static final int FONT_SIZE_SCORE_LABEL = 18;
+    private static final int VBOX_SPACING = 20;
+    private static final int HBOX_SPACING = 10;
+    private static final int LOGO_HEIGHT = 200;
+    private static final int LOGO_WIDTH = 400;
+    private static final int LEVELS_LIST_WIDTH = 400;
+    private static final int LEVELS_LIST_HEIGHT = 300;
+    private static final int USER_LIST_MAX_WIDTH = 500;
+    private static final double ICON_SCALE = 0.5;
+    private static final double ICON_WIDTH_SCALE_CLOCK = 0.4;
+    private static final double INFO_BAR_HEIGHT_RATIO = 0.7;
+    private static final int PAUSE_MENU_LAYOUT_OFFSET = 200;
+    private static final int PAUSE_MENU_MAX_WIDTH = 250;
+    private static final int PAUSE_MENU_MAX_HEIGHT = 200;
+    private static final int BUTTON_WIDTH = 150;
+    private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
+    private static final int USER_LIST_ITEM_HEIGHT = 35;
+    private static final int PAUSE_MENU_SPACING = 5;
+    // Attributes
     private String deathCause = "";
     private List<Actor> deadActors = new ArrayList<>();
     private List<Actor> newBorns = new ArrayList<>();
@@ -83,21 +126,6 @@ public class GameManager extends Application {
     private final Label keyLabelRed = new Label();
     private final Label keyLabelGreen = new Label();
     private final Label keyLabelYellow = new Label();
-    private static final ImageView DIAMOND_COUNT_ICON =
-            new ImageView(new Image("Actor Images/diamond.png"));
-    private static final ImageView CLOCK_ICON =
-            new ImageView(new Image("clock.png"));
-    private static final ImageView KEY_ICON_BLUE =
-            new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
-    private static final ImageView KEY_ICON_RED =
-            new ImageView(new Image("Key Icon Images/red_key_icon.png"));
-    private static final ImageView KEY_ICON_GREEN =
-            new ImageView(new Image("Key Icon Images/green_key_icon.png"));
-    private static final ImageView KEY_ICON_YELLOW =
-            new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
-    private static final int NUMBER_OF_LEVELS = 5;
-    private static final double TILE_SIZE_SCALE_FACTOR = 0.8;
-    private static final int MAX_SCORES_AMOUNT = 10;
     private final float tickTime = 0.1f;
     private float timeElapsed;
     private int tileSize;
@@ -105,32 +133,7 @@ public class GameManager extends Application {
     private boolean dead = false;
     private boolean isPaused = false;
 
-    private static final String FONT_ARIAL = "Arial";
-    private static final int FONT_SIZE_GAME_OVER = 75;
-    private static final int FONT_SIZE_TITLE = 40;
-    private static final int FONT_SIZE_CURRENT_USER = 20;
-    private static final int FONT_SIZE_HIGH_SCORE = 25;
-    private static final int FONT_SIZE_LEVELS_LABEL = 20;
-    private static final int FONT_SIZE_USER_MENU = 30;
-    private static final int FONT_SIZE_NO_SCORES = 18;
-    private static final int FONT_SIZE_SCORE_LABEL = 18;
-    private static final int VBOX_SPACING = 20;
-    private static final int HBOX_SPACING = 10;
-    private static final int LOGO_HEIGHT = 200;
-    private static final int LOGO_WIDTH = 400;
-    private static final int LEVELS_LIST_WIDTH = 400;
-    private static final int LEVELS_LIST_HEIGHT = 300;
-    private static final int USER_LIST_MAX_WIDTH = 500;
-    private static final double ICON_SCALE = 0.5;
-    private static final double ICON_WIDTH_SCALE_CLOCK = 0.4;
-    private static final double INFO_BAR_HEIGHT_RATIO = 0.7;
-    private static final int PAUSE_MENU_LAYOUT_OFFSET = 200;
-    private static final int PAUSE_MENU_MAX_WIDTH = 250;
-    private static final int PAUSE_MENU_MAX_HEIGHT = 200;
-    private static final int BUTTON_WIDTH = 150;
-    private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
-    private static final int USER_LIST_ITEM_HEIGHT = 35;
-    private static final int PAUSE_MENU_SPACING = 5;
+
 
     /**
      * Starts the application, sets up home screen and displays it.
@@ -623,7 +626,8 @@ public class GameManager extends Application {
 
         // Adjust ListView height based on the number of users
         int userCount = users != null ? users.size() : 0;
-        userList.setPrefHeight(Math.min(userCount * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
+        userList.setPrefHeight(Math.min(userCount
+                * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
         userList.setMaxWidth(USER_LIST_MAX_WIDTH);
 
         // Add User button
@@ -648,7 +652,8 @@ public class GameManager extends Application {
                 savePlayerProfile();
 
                 // Update ListView height after adding a new user
-                userList.setPrefHeight(Math.min(users.size() * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
+                userList.setPrefHeight(Math.min(users.size()
+                        * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
             }
         });
 
@@ -673,7 +678,8 @@ public class GameManager extends Application {
                     savePlayerProfile();
 
                     // Update ListView height after removing a user
-                    userList.setPrefHeight(Math.min(users.size() * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
+                    userList.setPrefHeight(Math.min(users.size()
+                            * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
                 }
             }
         });
@@ -767,7 +773,8 @@ public class GameManager extends Application {
 
         // Load selected game button
         Button loadSelectedButton = new Button("Load Selected Game");
-        loadSelectedButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        loadSelectedButton.setFont(new Font(FONT_ARIAL,
+                FONT_SIZE_CURRENT_USER));
         loadSelectedButton.setOnAction(e -> {
             String selectedGame =
                     savedGamesList.getSelectionModel().getSelectedItem();
@@ -900,7 +907,8 @@ public class GameManager extends Application {
     private VBox createHighScoreBoard() {
         getHighScores();
 
-        VBox highScoreBoard = new VBox(HBOX_SPACING); // Vertical spacing between scores
+        // Vertical spacing between scores
+        VBox highScoreBoard = new VBox(HBOX_SPACING);
         highScoreBoard.setStyle("-fx-padding: 10; -fx-alignment: center;");
         highScoreBoard.setAlignment(Pos.CENTER);
 
@@ -1016,8 +1024,10 @@ public class GameManager extends Application {
             createPauseMenu(); // Initialize the pause menu if it doesn't exist
         }
         if (!stackPane.getChildren().contains(pauseMenu)) {
-            pauseMenu.setLayoutX((scene.getWidth() - PAUSE_MENU_LAYOUT_OFFSET) / 2);
-            pauseMenu.setLayoutY((scene.getHeight() - PAUSE_MENU_LAYOUT_OFFSET) / 2);
+            pauseMenu.setLayoutX((scene.getWidth()
+                    - PAUSE_MENU_LAYOUT_OFFSET) / 2);
+            pauseMenu.setLayoutY((scene.getHeight()
+                    - PAUSE_MENU_LAYOUT_OFFSET) / 2);
             // Add the pause menu to the grid
             stackPane.getChildren().add(pauseMenu);
         }
@@ -1244,7 +1254,8 @@ public class GameManager extends Application {
      */
     private void showLevelCompleteScreen() {
         tickTimeline.pause();
-        int score = player.getDiamondsCollected() * SCORE_MULTIPLIER_DIAMONDS + timeRemaining() * 2;
+        int score = player.getDiamondsCollected()
+                * SCORE_MULTIPLIER_DIAMONDS + timeRemaining() * 2;
         if (levelCompleteMenu == null) {
             levelCompleteMenu = new StackPane();
             levelCompleteMenu.setStyle(
