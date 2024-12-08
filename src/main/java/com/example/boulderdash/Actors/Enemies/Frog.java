@@ -1,60 +1,89 @@
 package com.example.boulderdash.Actors.Enemies;
 
-import com.example.boulderdash.Actors.Explosion;
 import com.example.boulderdash.Actors.Player;
-import com.example.boulderdash.GameState;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
 import javafx.scene.image.Image;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
 
-public class Frog extends Enemy{
+public class Frog extends Enemy {
+    //TODO Add comment to describe TICK_COOL_DOWN_RESET and tickCoolDown
+    /**
+     * The Player that is being targeted by this Frog.
+     * */
     private Player player;
-    private final static int TICK_COOL_DOWN_RESET = 16;
+    private static final int TICK_COOL_DOWN_RESET = 16;
     private int tickCoolDown = 1;
 
-
-    public Frog(Tile startPosition, Player player) {
+    //Constructors
+    /**
+     * Constructor for a Frog *with* a Targeted Player. Set's the
+     * Frog's starting position Tile, it's target and it's image.
+     *
+     * @param startPosition The tile on which the Frog is initially
+     *                      located.
+     * @param targetedPlayer The player that the Frog is targeting.
+     * */
+    public Frog(final Tile startPosition, final Player targetedPlayer) {
         super(startPosition);
-        this.player = player;
-        this.image = new Image("Actor Images/Frog/frog.png");
+        this.player = targetedPlayer;
+        this.setImage(new Image("Actor Images/Frog/frog.png"));
     }
-
-    public Frog(Tile startPosition) {
+    /**
+     * Constructor for a Frog *without* a Targeted Player. Set's the
+     * Frog's starting position Tile and it's image.
+     *
+     * @param startPosition The tile on which the Frog is initially
+     *                      located.
+     * */
+    public Frog(final Tile startPosition) {
         super(startPosition);
         this.player = null;
-        this.image = new Image("Actor Images/Frog/frog.png");
+        this.setImage(new Image("Actor Images/Frog/frog.png"));
     }
 
-    public void setPlayer(Player player){
-        this.player = player;
+    /**
+     * Mutator method to set the Player being targeted by this Frog.
+     *
+     * @param newTargetedPlayer The Player that the Frog going to target.
+     * */
+    public void setPlayer(final Player newTargetedPlayer) {
+        this.player = newTargetedPlayer;
     }
 
-    public void move(){
-        if (crushed){
+    /**
+     * Method to move the frog to the player by using the shortest route,
+     * also accounting for explosions.
+     * */
+    public void move() {
+        if (isCrushed()) {
             explode();
         }
-        if (tickCoolDown > 0){
+        if (tickCoolDown > 0) {
             tickCoolDown--;
-        }
-        else {
+        } else {
             tickCoolDown = TICK_COOL_DOWN_RESET;
-            if(!biDirectionalSearch(player.getPosition())){
+            if (!biDirectionalSearch(player.getPosition())) {
                 Random random = new Random();
-                List<Tile> options = position.adjacentPaths();
-                if (!options.isEmpty()){
+                List<Tile> options = getPosition().adjacentPaths();
+                if (!options.isEmpty()) {
                     Tile nextMove = null;
                     do {
                         int randomPath = random.nextInt(options.size());
-                        if (!options.get(randomPath).isOccupied()){
+                        if (!options.get(randomPath).isOccupied()) {
                             nextMove = options.get(randomPath);
                         }
                         options.remove(randomPath);
                     } while (nextMove == null && !options.isEmpty());
 
                     if (nextMove != null) {
-                        currentDirection = changeDirection(nextMove);
+                        setCurrentDirection(changeDirection(nextMove));
                         changePos(nextMove);
                     }
 
@@ -63,26 +92,33 @@ public class Frog extends Enemy{
         }
     }
 
-    public boolean biDirectionalSearch(Tile target){
+    //TODO Ask Ed what this method is meant to do, so you can JavaDoc properly.
+    /**
+     *
+     * @param target
+     * @return */
+    public boolean biDirectionalSearch(final Tile target) {
         Queue<Tile> playerQueue = new LinkedList<>();
         Queue<Tile> frogQueue = new LinkedList<>();
 
         Dictionary<Tile, Tile> frogParents = new Hashtable<>();
         Dictionary<Tile, Tile> playerParents = new Hashtable<>();
 
-        frogParents.put(this.position, this.position);
+        frogParents.put(this.getPosition(), this.getPosition());
         playerParents.put(target, target);
 
-        frogQueue.add(this.position);
+        frogQueue.add(this.getPosition());
         playerQueue.add(target);
 
         Tile nextStep = null;
 
-        while (!frogQueue.isEmpty() && !playerQueue.isEmpty()){
+        while (!frogQueue.isEmpty() && !playerQueue.isEmpty()) {
             Tile currentFrogTile = frogQueue.poll();
 
-            Tile potNextStep = traverse(currentFrogTile, frogQueue, frogParents, playerParents);
-            if (potNextStep != null){
+            Tile potNextStep = traverse(
+                    currentFrogTile, frogQueue,
+                    frogParents, playerParents);
+            if (potNextStep != null) {
                 frogParents.put(potNextStep, currentFrogTile);
                 nextStep = getNextStep(frogParents, potNextStep);
                 break;
@@ -92,24 +128,29 @@ public class Frog extends Enemy{
                 break;
             }
             Tile currentPlayerTile = playerQueue.poll();
-            potNextStep = traverse(currentPlayerTile, playerQueue, playerParents, frogParents);
-            if (potNextStep != null){
+            potNextStep = traverse(
+                    currentPlayerTile, playerQueue,
+                    playerParents, frogParents);
+            if (potNextStep != null) {
                 nextStep = getNextStep(frogParents, potNextStep);
                 break;
             }
         }
 
-        if (nextStep != null){
+        if (nextStep != null) {
             this.changePos(nextStep);
             return true;
         }
         return false;
     }
 
-    private Tile traverse(Tile currentPath, Queue<Tile> queue,
-                          Dictionary<Tile, Tile> thisParents, Dictionary<Tile, Tile> otherParents) {
+    private Tile traverse(final Tile currentPath,
+                          final Queue<Tile> queue,
+                          final Dictionary<Tile, Tile> thisParents,
+                          final Dictionary<Tile, Tile> otherParents) {
+
         List<Tile> nextPaths = currentPath.adjacentPaths();
-        for (Tile nextPath : nextPaths){
+        for (Tile nextPath : nextPaths) {
             if (otherParents.get(nextPath) != null) {
                 return nextPath;
             } else if (thisParents.get(nextPath) == null) {
@@ -122,34 +163,45 @@ public class Frog extends Enemy{
     }
 
 
-    private Tile getNextStep(Dictionary<Tile, Tile> frogPath, Tile intersection){
+    private Tile getNextStep(final Dictionary<Tile, Tile> frogPath,
+                             final Tile intersection) {
+
         Tile nextStep = intersection;
-        while (frogPath.get(nextStep) != this.position){
+        while (frogPath.get(nextStep) != this.getPosition()) {
             nextStep = frogPath.get(nextStep);
         }
 
-        currentDirection = changeDirection(nextStep);
+        setCurrentDirection(changeDirection(nextStep));
         return nextStep;
     }
 
-    private Direction changeDirection(Tile nextTile){
-        if (position.getUp() == nextTile){
+    private Direction changeDirection(final Tile nextTile) {
+        if (getPosition().getUp() == nextTile) {
             return Direction.UP;
         }
-        if (position.getDown() == nextTile){
+        if (getPosition().getDown() == nextTile) {
             return Direction.DOWN;
         }
-        if (position.getRight() == nextTile){
+        if (getPosition().getRight() == nextTile) {
             return Direction.RIGHT;
         }
-        if (position.getLeft() == nextTile){
+        if (getPosition().getLeft() == nextTile) {
             return Direction.LEFT;
         }
         return Direction.STATIONARY;
     }
 
-    public String toString(){
-        return "R" + "," + position.getRow() + "," + position.getColumn();
+    /**
+     * This is a method to represent a Frog object in the desired
+     * string format.
+     *
+     * @return A string in the format :
+     *             R,v1,v2 (where v1 = RowNumber and v2 = ColumnNumber)
+     * */
+    public String toString() {
+        return "R" + ","
+                + getPosition().getRow()
+                + "," + getPosition().getColumn();
     }
 
 }

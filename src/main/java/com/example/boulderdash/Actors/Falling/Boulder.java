@@ -19,9 +19,9 @@ public class Boulder extends FallingObject {
      * Constructor for a boulder at a specific tile.
      * @param startPosition is the initial {@link Tile} position of the boulder.
      */
-    public Boulder(Tile startPosition) {
+    public Boulder(final Tile startPosition) {
         super(startPosition);
-        image = new Image("Actor Images/boulder.png");
+        setImage(new Image("Actor Images/boulder.png"));
     }
 
     /**
@@ -29,27 +29,32 @@ public class Boulder extends FallingObject {
      * @param direction the {@link Direction} to push the boulder to.
      * @return {@code True} if the boulder has been pushed.
      */
-    public boolean push(Direction direction) {
+    public boolean push(final Direction direction) {
         if (direction != Direction.LEFT && direction != Direction.RIGHT) {
             return false;
         }
-        Tile nextTile = position.getNeighbour(direction); // Gets a direction to push to
+        // Gets a direction to push to.
+        Tile nextTile = getPosition().getNeighbour(direction);
 
-        // Checks if the next tile is a path and sets the position of boulder to that path
+        // Checks if the next tile is a path and sets the position of boulder
+        // to that path.
         if (isAbleToPushTo(nextTile)) {
             setPosition(nextTile);
-            Audio.getInstance().playSoundEffect("/Music/BoulderFall.mp3", 1.0);
+            Audio.getInstance().playSoundEffect(
+                    "/Music/BoulderFall.mp3",
+                    1.0);
             return true;
         }
         return false;
     }
 
     /**
-     * Transforms and removes the boulder into a {@link Diamond} when interacting with a {@link MagicWall}
+     * Transforms and removes the boulder into a {@link Diamond} when
+     * interacting with a {@link MagicWall}.
      */
     public void transform() {
         GameState.manager.killActor(this);
-        GameState.manager.addActor(new Diamond(position));
+        GameState.manager.addActor(new Diamond(getPosition()));
     }
 
     /**
@@ -61,14 +66,24 @@ public class Boulder extends FallingObject {
 
     /**
      * Handles the pushing behaviour.
+     *
      * @param tile is the {@link Tile} to check if it can be occupied.
      * @return {@code True} if the boulder can be pushed to the tile.
      */
-    private boolean isAbleToPushTo(Tile tile) {
+    private boolean isAbleToPushTo(final Tile tile) {
         return tile != null && tile.isPath() && !tile.isOccupied();
     }
 
-    public String toString(){
-        return "B" + "," + position.getRow() + "," + position.getColumn();
+    /**
+     * This is a method to represent a Boulder object in the desired
+     * string format.
+     *
+     * @return A string in the format :
+     *             B,v1,v2 (where v1 = RowNumber and v2 = ColumnNumber)
+     * */
+    public String toString() {
+        return "B" + ","
+                + getPosition().getRow() + ","
+                + getPosition().getColumn();
     }
 }

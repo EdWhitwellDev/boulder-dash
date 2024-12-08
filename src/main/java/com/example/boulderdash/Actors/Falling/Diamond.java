@@ -18,17 +18,18 @@ public class Diamond extends FallingObject {
      * Constructor for a Diamond at a specific starting tile.
      * @param startPosition is the initial {@link Tile} position of the diamond.
      */
-    public Diamond(Tile startPosition) {
+    public Diamond(final Tile startPosition) {
         super(startPosition);
-        image = new Image("Actor Images/diamond.png");
+        setImage(new Image("Actor Images/diamond.png"));
     }
 
     /**
-     * Transforms and removes the diamond into a {@link Boulder} when interacting with a {@link MagicWall}
+     * Transforms and removes the diamond into a {@link Boulder} when
+     * interacting with a {@link MagicWall}.
      */
     public void transform() {
         GameState.manager.killActor(this);
-        GameState.manager.addActor(new Boulder(position));
+        GameState.manager.addActor(new Boulder(getPosition()));
     }
 
     /**
@@ -37,7 +38,16 @@ public class Diamond extends FallingObject {
     public void move() {
         super.fall();
     }
-    public String toString(){
-        return "D" + "," + position.getRow() + "," + position.getColumn();
+    /**
+     * This is a method to represent a Diamond object in the desired
+     * string format.
+     *
+     * @return A string in the format :
+     *             D,v1,v2 (where v1 = RowNumber and v2 = ColumnNumber)
+     * */
+    public String toString() {
+        return "D" + ","
+                + getPosition().getRow() + ","
+                + getPosition().getColumn();
     }
 }
