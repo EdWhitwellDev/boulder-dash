@@ -689,6 +689,7 @@ public class GameManager extends Application {
                     userList.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
                 changeCurrentUser(selectedUser);
+                setupHomeScreen();
                 primaryStage.setScene(homeScene);
             }
         });
@@ -712,6 +713,9 @@ public class GameManager extends Application {
         currentUser = newUser;
         userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
         currentUserLabel.setText("Current User: " + currentUser);
+        currentLevel = userProfileObj.get("CurrentLevel") != null
+                ? Integer.parseInt(userProfileObj.get("CurrentLevel").
+                        toString()) : 1;
 
         // Update the current user in the JSON file
         try {
