@@ -21,6 +21,9 @@ import java.util.Map;
  * is controlled by the keyboard.
  */
 public class Player extends Actor {
+    /**
+     * volume control.
+     */
     private static final double VOLUME = 0.5;
     /**
      * A Map of all Directions to their corresponding Images with the
@@ -239,7 +242,8 @@ public class Player extends Actor {
             // the number of Diamonds required to exit. Otherwise,
             // the Player's movement is blocked.
             if (nextTile instanceof Exit) {
-                if (diamondsCollected < GameState.getLevel().getDiamondsRequired()) {
+                if (diamondsCollected
+                        < GameState.getLevel().getDiamondsRequired()) {
                     return;
                 }
 
