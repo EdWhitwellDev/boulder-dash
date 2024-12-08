@@ -817,6 +817,9 @@ public class GameManager extends Application {
     private void UISetUp() {
         grid.setHgap(0);
         grid.setVgap(0);
+        infoBar.getChildren().clear();
+        stackPane.getChildren().clear();
+        stackPane = new StackPane();
 
         DIAMOND_COUNT_ICON.setFitHeight(tileSize * ICON_SCALE);
         DIAMOND_COUNT_ICON.setFitWidth(tileSize * ICON_SCALE);
@@ -940,6 +943,12 @@ public class GameManager extends Application {
      * Loads the level and game state.
      */
     private void startNewGame() {
+
+        if (tickTimeline != null) { // resets timeline
+            tickTimeline.stop();
+            tickTimeline = null;
+        }
+
         deathCause = "";
         currentLevel = userProfileObj.get("CurrentLevel") != null
                 ? Integer.parseInt(userProfileObj.get("CurrentLevel").
@@ -1057,18 +1066,21 @@ public class GameManager extends Application {
         Button loadButton = new Button("Load Game");
         Button exitButton = new Button("Exit Game");
         Button restartButton = new Button("Restart Game");
+        Button mainMenuButton = new Button("Main Menu");
 
         resumeButton.setStyle(buttonStyle);
         saveButton.setStyle(buttonStyle);
         loadButton.setStyle(buttonStyle);
         exitButton.setStyle(buttonStyle);
         restartButton.setStyle(buttonStyle);
+        mainMenuButton.setStyle(buttonStyle);
 
         resumeButton.setPrefWidth(buttonWidth);
         saveButton.setPrefWidth(buttonWidth);
         loadButton.setPrefWidth(buttonWidth);
         exitButton.setPrefWidth(buttonWidth);
         restartButton.setPrefWidth(buttonWidth);
+        mainMenuButton.setPrefWidth(buttonWidth);
 
         resumeButton.setOnAction(e -> togglePause());
         saveButton.setOnAction(e -> saveGame());
@@ -1077,12 +1089,21 @@ public class GameManager extends Application {
             restartGame();
             togglePause();
         });
+        mainMenuButton.setOnAction(e -> {
+                isPaused = false;
+                if (tickTimeline != null) {
+                    tickTimeline.stop();
+                    tickTimeline = null;
+                }
+                hidePauseMenu();
+                primaryStage.setScene(homeScene);
+    });
 
         pauseMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);"
                 + "-fx-padding: 20;");
 
         pauseMenu.getChildren().addAll(resumeButton, saveButton,
-                loadButton, restartButton, exitButton);
+                loadButton, restartButton, mainMenuButton, exitButton);
 
     }
 
@@ -1192,14 +1213,26 @@ public class GameManager extends Application {
                     + "-fx-font-family: monospace; -fx-font-size: 16;"
                     + "-fx-cursor: hand;");
 
+            Button gameOverMainMenuButton = new Button("Main Menu");
+            gameOverMainMenuButton.setStyle("-fx-background-color: grey; "
+                    + "-fx-border-color: white darkgrey darkgrey white; "
+                    + "-fx-border-width: 4; -fx-text-fill: white; "
+                    + "-fx-font-family: monospace; -fx-font-size: 16;"
+                    + "-fx-cursor: hand;");
+
+            gameOverMainMenuButton.setPrefWidth(buttonWidth);
             restartButton.setPrefWidth(buttonWidth);
             exitButton.setPrefWidth(buttonWidth);
 
             exitButton.setOnAction(e -> exitGame());
             restartButton.setOnAction(e -> restartGame());
+            gameOverMainMenuButton.setOnAction(e -> {
+                restartGame();
+                primaryStage.setScene(homeScene);
+            });
 
             gameOverBox.getChildren().addAll(messageLabel,
-                    causeLabel, scoreBoard, restartButton, exitButton);
+                    causeLabel, scoreBoard, restartButton, gameOverMainMenuButton, exitButton);
             gameOverBox.setLayoutX(scene.getWidth() / 2
                     - gameOverBox.getPrefWidth() / 2);
             gameOverBox.setLayoutY(scene.getHeight() / 2
@@ -1280,11 +1313,22 @@ public class GameManager extends Application {
                     + "-fx-font-family: monospace; -fx-font-size: 16;"
                     + "-fx-cursor: hand;");
 
+            Button mainMenuButton = new Button("Main Menu");
+            mainMenuButton.setStyle("-fx-background-color: grey; "
+                    + "-fx-border-color: white darkgrey darkgrey white; "
+                    + "-fx-border-width: 4; -fx-text-fill: white;"
+                    + "-fx-font-family: monospace; -fx-font-size: 16;"
+                    + "-fx-cursor: hand;");
+
             nextLevelButton.setOnAction(e -> loadNextLevel());
             exitButton.setOnAction(e -> exitGame());
+            mainMenuButton.setOnAction(e -> {
+                restartGame();
+                primaryStage.setScene(homeScene);
+            });
 
             levelCompleteBox.getChildren().addAll(messageLabel,
-                    scoreLabel, scoreBoard, nextLevelButton, exitButton);
+                    scoreLabel, scoreBoard, nextLevelButton, mainMenuButton, exitButton);
 
             levelCompleteMenu.getChildren().add(levelCompleteBox);
         }
