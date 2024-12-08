@@ -84,12 +84,18 @@ public class GameManager extends Application {
     private final Label keyLabelRed = new Label();
     private final Label keyLabelGreen = new Label();
     private final Label keyLabelYellow = new Label();
-    private static final ImageView DIAMOND_COUNT_ICON = new ImageView(new Image("Actor Images/diamond.png"));
-    private static final ImageView CLOCK_ICON = new ImageView(new Image("clock.png"));
-    private static final ImageView KEY_ICON_BLUE = new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
-    private static final ImageView KEY_ICON_RED = new ImageView(new Image("Key Icon Images/red_key_icon.png"));
-    private static final ImageView KEY_ICON_GREEN = new ImageView(new Image("Key Icon Images/green_key_icon.png"));
-    private static final ImageView KEY_ICON_YELLOW = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
+    private static final ImageView DIAMOND_COUNT_ICON =
+            new ImageView(new Image("Actor Images/diamond.png"));
+    private static final ImageView CLOCK_ICON =
+            new ImageView(new Image("clock.png"));
+    private static final ImageView KEY_ICON_BLUE =
+            new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
+    private static final ImageView KEY_ICON_RED =
+            new ImageView(new Image("Key Icon Images/red_key_icon.png"));
+    private static final ImageView KEY_ICON_GREEN =
+            new ImageView(new Image("Key Icon Images/green_key_icon.png"));
+    private static final ImageView KEY_ICON_YELLOW =
+            new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
     private static final int NUMBER_OF_LEVELS = 5;
     private static final double TILE_SIZE_SCALE_FACTOR = 0.8;
     private static final int MAX_SCORES_AMOUNT = 10;
@@ -180,8 +186,10 @@ public class GameManager extends Application {
                     Actor occupier = tile.getOccupier();
                     ImageView actorImageView =
                             new ImageView(occupier.getImage());
-                    actorImageView.setFitHeight(tileSize * TILE_SIZE_SCALE_FACTOR);
-                    actorImageView.setFitWidth(tileSize * TILE_SIZE_SCALE_FACTOR);
+                    actorImageView.setFitHeight(tileSize
+                            * TILE_SIZE_SCALE_FACTOR);
+                    actorImageView.setFitWidth(tileSize
+                            * TILE_SIZE_SCALE_FACTOR);
                     // if the actor is transferring animate the transfer
                     if (occupier.getIsTransferring()) {
                         // add the actor to the offset map
@@ -239,9 +247,9 @@ public class GameManager extends Application {
     }
 
     /**
-     * Processes user input to control the player or state
+     * Processes user input to control the player or state.
      *
-     * @param event the KeyEvent triggered by a key press
+     * @param event the KeyEvent triggered by a key press.
      */
     public void processKeyEvent(KeyEvent event) {
         switch (event.getCode()) {
@@ -291,6 +299,7 @@ public class GameManager extends Application {
 
     /**
      * Ends the game, marked it as a loss.
+     * @param cause is the reason of death.
      */
     public void looseGame(String cause) {
         if (!dead) {
@@ -416,10 +425,13 @@ public class GameManager extends Application {
      */
     private void setupHomeScreen() {
         VBox homeScreen = new VBox(20);
-        homeScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+        homeScreen.setStyle("-fx-padding: 20;"
+                + " -fx-alignment: center; -fx-background-color: #222;");
 
         // Add a logo
-        ImageView logo = new ImageView(new Image(Objects.requireNonNull(getClass().getResource("/logo.png")).toExternalForm()));
+        ImageView logo =
+                new ImageView(new Image(Objects.requireNonNull(getClass()
+                        .getResource("/logo.png")).toExternalForm()));
         logo.setFitHeight(200);
         logo.setFitWidth(400);
 
@@ -456,24 +468,29 @@ public class GameManager extends Application {
         levelsButton.setOnAction(e -> levelsMenu());
 
         // High Score Table
-        Label highScoreLabel = new Label("Level " + currentLevel + " Highest Scores:");
+        Label highScoreLabel =
+                new Label("Level " + currentLevel + " Highest Scores:");
         highScoreLabel.setFont(new Font("Arial", 25));
         highScoreLabel.setStyle("-fx-text-fill: white;");
 
         VBox highScoreBoard = createHighScoreBoard();
 
-        buttonBox.getChildren().addAll(startButton, loadButton, userMenuButton, levelsButton);
+        buttonBox.getChildren().addAll(startButton,
+                loadButton, userMenuButton, levelsButton);
 
-        homeScreen.getChildren().addAll(logo, titleLabel, currentUserLabel, buttonBox, highScoreLabel, highScoreBoard);
+        homeScreen.getChildren().addAll(logo, titleLabel,
+                currentUserLabel, buttonBox, highScoreLabel, highScoreBoard);
         homeScene = new Scene(homeScreen);
     }
 
     /**
-     * Displays the levels screen, allowing users to select and play unlocked levels.
+     * Displays the levels screen, allowing users to select
+     * and play unlocked levels.
      */
     private void levelsMenu() {
         VBox levelsScreen = new VBox(20);
-        levelsScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+        levelsScreen.setStyle("-fx-padding: 20;"
+                + " -fx-alignment: center; -fx-background-color: #222;");
 
         Label levelsLabel = new Label("Select a Level to Play");
         levelsLabel.setFont(new Font("Arial", 20));
@@ -482,10 +499,11 @@ public class GameManager extends Application {
         ListView<String> levelsList = new ListView<>();
         levelsList.setPrefSize(400, 300);
 
-        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
+        JSONArray completedLevels = (JSONArray)
+                userProfileObj.get("CompletedLevels");
 
         List<Integer> completedLevelsList = new ArrayList<>();
-        for (Object level : completedLevels){
+        for (Object level : completedLevels) {
             completedLevelsList.add(Integer.parseInt(level.toString()));
         }
         // Populate the list with unlocked levels
@@ -502,7 +520,8 @@ public class GameManager extends Application {
         Button playLevelButton = new Button("Play Selected Level");
         playLevelButton.setFont(new Font("Arial", 20));
         playLevelButton.setOnAction(e -> {
-            String selectedLevel = levelsList.getSelectionModel().getSelectedItem();
+            String selectedLevel =
+                    levelsList.getSelectionModel().getSelectedItem();
             if (selectedLevel != null) {
                 int levelNumber = Integer.parseInt(selectedLevel.split(" ")[1]);
                 if (completedLevelsList.contains(levelNumber)) {
@@ -511,7 +530,8 @@ public class GameManager extends Application {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText("Level Locked");
-                    alert.setContentText("Please complete this level to unlock replays");
+                    alert.setContentText(
+                            "Please complete this level to unlock replays");
                     alert.showAndWait();
                 }
                 loadLevel(levelNumber);
@@ -528,7 +548,8 @@ public class GameManager extends Application {
         backButton.setFont(new Font("Arial", 20));
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
-        levelsScreen.getChildren().addAll(levelsLabel, levelsList, playLevelButton, backButton);
+        levelsScreen.getChildren().addAll(levelsLabel,
+                levelsList, playLevelButton, backButton);
 
         Scene levelsScene = new Scene(levelsScreen);
         primaryStage.setScene(levelsScene);
@@ -555,7 +576,8 @@ public class GameManager extends Application {
     }
 
     /**
-     * Displays the User Menu screen, allowing users to add, remove, or select users.
+     * Displays the User Menu screen, allowing users to add, remove,
+     * or select users.
      */
     private void userMenu() {
         VBox userMenuScreen = new VBox(20);
@@ -608,13 +630,15 @@ public class GameManager extends Application {
         Button removeUserButton = new Button("Remove User");
         removeUserButton.setFont(new Font("Arial", 20));
         removeUserButton.setOnAction(e -> {
-            String selectedUser = userList.getSelectionModel().getSelectedItem();
+            String selectedUser = userList.getSelectionModel().
+                    getSelectedItem();
             if (selectedUser != null) {
                 if (selectedUser.equals(currentUser)) {
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                     errorAlert.setTitle("Error");
                     errorAlert.setHeaderText("Current user cannot be removed!");
-                    errorAlert.setContentText("Please switch to a different user and try again.");
+                    errorAlert.setContentText(
+                            "Please switch to a different user and try again.");
                     errorAlert.showAndWait();
                 } else {
                     userList.getItems().remove(selectedUser);
@@ -681,7 +705,8 @@ public class GameManager extends Application {
     }
 
     /**
-     * Displays the saved games to the user, allowing them to choose between the save files.
+     * Displays the saved games to the user,
+     * allowing them to choose between the save files.
      */
     private void showSavedGamesScreen() {
         VBox savedGamesScreen = new VBox(20);
@@ -711,7 +736,8 @@ public class GameManager extends Application {
         // ListView to display saved games
         ListView<String> savedGamesList = new ListView<>();
         savedGamesList.setPrefSize(400, 300);
-        savedGamesList.getItems().addAll(savedGames); // loadSavedGames() returns a list of saved games
+        // loadSavedGames() returns a list of saved games
+        savedGamesList.getItems().addAll(savedGames);
 
         // Load selected game button
         Button loadSelectedButton = new Button("Load Selected Game");
@@ -802,9 +828,11 @@ public class GameManager extends Application {
 
         scene = new Scene(stackPane);  // width: 400, height: 400
         scene.setOnKeyPressed(this::processKeyEvent);
-        scene.setOnKeyReleased(event -> player.setDirection(Direction.STATIONARY));
+        scene.setOnKeyReleased(event
+                -> player.setDirection(Direction.STATIONARY));
 
-        tickTimeline = new Timeline(new KeyFrame(Duration.seconds(tickTime), event -> tick()));
+        tickTimeline = new Timeline(new KeyFrame(Duration.seconds(tickTime),
+                event -> tick()));
         tickTimeline.setCycleCount(Animation.INDEFINITE);
     }
 
@@ -816,7 +844,7 @@ public class GameManager extends Application {
             JSONObject userObj = (JSONObject) playerProfileObj.get(user);
             JSONObject highScoresObj = (JSONObject) userObj.get("HighScores");
             List<Long> scores =
-                    (List<Long>) highScoresObj.get("Level"+ currentLevel);
+                    (List<Long>) highScoresObj.get("Level" + currentLevel);
             System.out.println(scores);
             if (scores != null) {
                 for (long scoreLong : scores) {
@@ -955,7 +983,7 @@ public class GameManager extends Application {
     }
 
     /**
-     * Displays the pause menu on the screen
+     * Displays the pause menu on the screen.
      */
     private void showPauseMenu() {
         if (pauseMenu == null) {
@@ -985,7 +1013,7 @@ public class GameManager extends Application {
     private void createPauseMenu() {
         pauseMenu = new VBox(5);
         pauseMenu.setStyle("-fx-padding: 20;");
-        pauseMenu.setMaxSize(250,200);
+        pauseMenu.setMaxSize(250, 200);
         pauseMenu.setAlignment(javafx.geometry.Pos.CENTER);
 
         double buttonWidth = 150;
@@ -1029,7 +1057,7 @@ public class GameManager extends Application {
     }
 
     /**
-     * Saves the current game state
+     * Saves the current game state.
      */
     private void saveGame() {
         // textbox for save name input
@@ -1184,7 +1212,8 @@ public class GameManager extends Application {
 
     /**
      * Shows the level complete screen when the player completes a level.
-     * Stops the game loop to display the screen, shows the high score board, and provides option for moving
+     * Stops the game loop to display the screen, shows the high score board,
+     * and provides option for moving.
      * onto the next level or exit application.
      */
     private void showLevelCompleteScreen() {
@@ -1260,7 +1289,8 @@ public class GameManager extends Application {
         userProfileObj.put("CurrentLevel", currentLevel);
         try {
             JSONParser parser = new JSONParser();
-            JSONObject playerProfileJSON = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject playerProfileJSON = (JSONObject)
+                    parser.parse(new FileReader("PlayerProfile.json"));
             FileWriter file = new FileWriter("PlayerProfile.json");
             playerProfileJSON.put(currentUser, userProfileObj);
             file.write(playerProfileJSON.toJSONString());
