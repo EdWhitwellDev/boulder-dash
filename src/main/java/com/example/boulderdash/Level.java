@@ -98,6 +98,8 @@ public class Level {
      * @param saveFile contains the level data.
      */
     public void loadLevel(String user, String saveFile) {
+        System.out.println("Loading level for user: "
+                + user + " and save file: " + saveFile);
         JSONParser parser = new JSONParser();
         try {
             JSONObject playerProfileObj = (JSONObject)

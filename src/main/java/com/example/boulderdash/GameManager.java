@@ -993,22 +993,102 @@ public class GameManager extends Application {
         }
 
         // ListView to display saved games
-        ListView<String> savedGamesList = new ListView<>();
-        savedGamesList.setPrefSize(LEVELS_LIST_WIDTH, LEVELS_LIST_HEIGHT);
-        // loadSavedGames() returns a list of saved games
-        savedGamesList.getItems().addAll(savedGames);
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setStyle("-fx-background: #222; " +
+                "-fx-background-color: transparent; " +
+                "-fx-border-color: transparent;");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        HBox savesContainer = new HBox(20);
+        savesContainer.setStyle("-fx-background-color: transparent; -fx-padding: 20;");
+        savesContainer.setAlignment(Pos.CENTER);
+
+        StringProperty selectedGame = new SimpleStringProperty(null);
+
+        String[] keyImages = {"blue", "red",
+                "green", "yellow"};
+
+        int[] saveCount = {1}; // Array to allow modification in lambda
+        savedGames.forEach(save -> {
+            VBox gameCard = new VBox(10);
+            gameCard.setStyle("-fx-background-color: #3a3a3a;" +
+                    "-fx-background-radius: 10;" +
+                    "-fx-padding: 15;" +
+                    "-fx-min-width: 150;" +
+                    "-fx-max-width: 150;" +
+                    "-fx-min-height: 150;" +
+                    "-fx-alignment: center;");
+            ImageView keyImage = (saveCount[0] % 4) == 0 ? KEY_ICON_BLUE :
+                    (saveCount[0] % 4) == 1 ? KEY_ICON_RED :
+                            (saveCount[0] % 4) == 2 ? KEY_ICON_GREEN : KEY_ICON_YELLOW;
+            keyImage.setFitHeight(50);
+            keyImage.setFitWidth(50);
+            Label nameLabel = new Label(save);
+            nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
+            gameCard.getChildren().addAll(keyImage, nameLabel);
+            gameCard.setOnMouseEntered(e -> {
+                gameCard.setStyle("-fx-background-color: #4a4a4a;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-padding: 15;" +
+                        "-fx-min-width: 150;" +
+                        "-fx-max-width: 150;" +
+                        "-fx-min-height: 150;" +
+                        "-fx-alignment: center;" +
+                        "-fx-scale-x: 1.1;" +
+                        "-fx-scale-y: 1.1;");
+                gameCard.setCursor(Cursor.HAND);
+            });
+            gameCard.setOnMouseExited(e -> {
+                if (selectedGame.get() == null ||
+                        !selectedGame.get().equals(save)) {
+                    gameCard.setStyle("-fx-background-color: #3a3a3a;" +
+                            "-fx-background-radius: 10;" +
+                            "-fx-padding: 15;" +
+                            "-fx-min-width: 150;" +
+                            "-fx-max-width: 150;" +
+                            "-fx-min-height: 150;" +
+                            "-fx-alignment: center;" +
+                            "-fx-scale-x: 1;" +
+                            "-fx-scale-y: 1;");
+                }
+            });
+            gameCard.setOnMouseClicked(e -> {
+                savesContainer.getChildren().forEach(node -> {
+                    if (node instanceof VBox) {
+                        node.setStyle("-fx-background-color: #3a3a3a;" +
+                                "-fx-background-radius: 10;" +
+                                "-fx-padding: 15;" +
+                                "-fx-min-width: 150;" +
+                                "-fx-max-width: 150;" +
+                                "-fx-min-height: 150;" +
+                                "-fx-alignment: center;");
+                    }
+                });
+                gameCard.setStyle("-fx-background-color: #4a4a4a;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-padding: 15;" +
+                        "-fx-min-width: 150;" +
+                        "-fx-max-width: 150;" +
+                        "-fx-min-height: 150;" +
+                        "-fx-alignment: center;");
+                selectedGame.set(save);
+            });
+            savesContainer.getChildren().add(gameCard);
+            saveCount[0]++;
+        });
+        scrollPane.setContent(savesContainer);
+        scrollPane.setPrefHeight(200);
+        scrollPane.setMaxWidth(USE_PREF_SIZE);
 
         // Load selected game button
         Button loadSelectedButton = new Button("Load Selected Game");
         loadSelectedButton.setFont(new Font(FONT_ARIAL,
                 FONT_SIZE_CURRENT_USER));
         loadSelectedButton.setOnAction(e -> {
-            String selectedGame =
-                    savedGamesList.getSelectionModel().getSelectedItem();
-            if (selectedGame != null) {
-                System.out.println("Loading selected game: " + selectedGame);
-                loadSelectedGame(selectedGame);
-            }
+            System.out.println("Loading selected game: " + selectedGame.toString());
+            loadSelectedGame(selectedGame.get());
         });
 
         // Back button
@@ -1017,7 +1097,7 @@ public class GameManager extends Application {
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
         savedGamesScreen.getChildren().addAll(savedGamesLabel,
-                savedGamesList, loadSelectedButton, backButton);
+                scrollPane, loadSelectedButton, backButton);
 
         Scene savedGamesScene = new Scene(savedGamesScreen);
         primaryStage.setScene(savedGamesScene);
