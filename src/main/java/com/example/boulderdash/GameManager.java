@@ -6,9 +6,7 @@ import com.example.boulderdash.enums.KeyColours;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
-
 import javafx.scene.control.*;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
