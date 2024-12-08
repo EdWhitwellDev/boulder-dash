@@ -1,37 +1,55 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
-
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-
-
 import com.example.boulderdash.enums.KeyColours;
-import javafx.animation.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
+
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Alert;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.stage.Stage;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Pos;
 import javafx.stage.Screen;
 import javafx.util.Duration;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
@@ -1171,6 +1189,7 @@ public class GameManager extends Application {
         tickTimeline.play();
         stackPane.getChildren().remove(levelCompleteMenu);
         drawGame();
+
     }
     private void updateCurrentLevel(){
         userProfileObj.put("CurrentLevel", currentLevel);
