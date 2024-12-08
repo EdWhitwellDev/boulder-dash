@@ -51,7 +51,6 @@ import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Comparator;
 
-
 /**
  * Main controller for the game. This class handles game initialisation,
  * user input, game state management, and the main game loop.
@@ -105,6 +104,33 @@ public class GameManager extends Application {
     private int currentLevel = 1;
     private boolean dead = false;
     private boolean isPaused = false;
+
+    private static final String FONT_ARIAL = "Arial";
+    private static final int FONT_SIZE_GAME_OVER = 75;
+    private static final int FONT_SIZE_TITLE = 40;
+    private static final int FONT_SIZE_CURRENT_USER = 20;
+    private static final int FONT_SIZE_HIGH_SCORE = 25;
+    private static final int FONT_SIZE_LEVELS_LABEL = 20;
+    private static final int FONT_SIZE_USER_MENU = 30;
+    private static final int FONT_SIZE_NO_SCORES = 18;
+    private static final int FONT_SIZE_SCORE_LABEL = 18;
+    private static final int VBOX_SPACING = 20;
+    private static final int HBOX_SPACING = 10;
+    private static final int LOGO_HEIGHT = 200;
+    private static final int LOGO_WIDTH = 400;
+    private static final int LEVELS_LIST_WIDTH = 400;
+    private static final int LEVELS_LIST_HEIGHT = 300;
+    private static final int USER_LIST_MAX_WIDTH = 500;
+    private static final double ICON_SCALE = 0.5;
+    private static final double ICON_WIDTH_SCALE_CLOCK = 0.4;
+    private static final double INFO_BAR_HEIGHT_RATIO = 0.7;
+    private static final int PAUSE_MENU_LAYOUT_OFFSET = 200;
+    private static final int PAUSE_MENU_MAX_WIDTH = 250;
+    private static final int PAUSE_MENU_MAX_HEIGHT = 200;
+    private static final int BUTTON_WIDTH = 150;
+    private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
+    private static final int USER_LIST_ITEM_HEIGHT = 35;
+    private static final int PAUSE_MENU_SPACING = 5;
 
     /**
      * Starts the application, sets up home screen and displays it.
@@ -304,7 +330,7 @@ public class GameManager extends Application {
     public void looseGame(String cause) {
         if (!dead) {
             Text gameOverText = new Text("Game Over");
-            gameOverText.setFont(new Font("Arial", 75));
+            gameOverText.setFont(new Font(FONT_ARIAL, FONT_SIZE_GAME_OVER));
             dead = true;
             deathCause = cause;
             tickTimeline.stop();
@@ -424,7 +450,7 @@ public class GameManager extends Application {
      * Sets up the home screen with the UI.
      */
     private void setupHomeScreen() {
-        VBox homeScreen = new VBox(20);
+        VBox homeScreen = new VBox(VBOX_SPACING);
         homeScreen.setStyle("-fx-padding: 20;"
                 + " -fx-alignment: center; -fx-background-color: #222;");
 
@@ -432,45 +458,45 @@ public class GameManager extends Application {
         ImageView logo =
                 new ImageView(new Image(Objects.requireNonNull(getClass()
                         .getResource("/logo.png")).toExternalForm()));
-        logo.setFitHeight(200);
-        logo.setFitWidth(400);
+        logo.setFitHeight(LOGO_HEIGHT);
+        logo.setFitWidth(LOGO_WIDTH);
 
         // Add a title label
         Label titleLabel = new Label("PRESS START TO PLAY");
-        titleLabel.setFont(new Font("Arial", 40));
+        titleLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_TITLE));
         titleLabel.setStyle("-fx-text-fill: white;");
 
         currentUserLabel = new Label("Current User: " + currentUser);
-        currentUserLabel.setFont(new Font("Arial", 20));
+        currentUserLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         currentUserLabel.setStyle("-fx-text-fill: white;");
 
-        HBox buttonBox = new HBox(20);
+        HBox buttonBox = new HBox(VBOX_SPACING);
         buttonBox.setStyle("-fx-alignment: center;");
 
         // Start Game button
         Button startButton = new Button("Start");
-        startButton.setFont(new Font("Arial", 20));
+        startButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         startButton.setOnAction(e -> startNewGame());
 
         // Load Game button
         Button loadButton = new Button("Load Game");
-        loadButton.setFont(new Font("Arial", 20));
+        loadButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         loadButton.setOnAction(e -> showSavedGamesScreen());
 
         // User Menu button
         Button userMenuButton = new Button("User Menu");
-        userMenuButton.setFont(new Font("Arial", 20));
+        userMenuButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         userMenuButton.setOnAction(e -> userMenu());
 
         // Load unlocked levels
         Button levelsButton = new Button("Levels");
-        levelsButton.setFont(new Font("Arial", 20));
+        levelsButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         levelsButton.setOnAction(e -> levelsMenu());
 
         // High Score Table
         Label highScoreLabel =
                 new Label("Level " + currentLevel + " Highest Scores:");
-        highScoreLabel.setFont(new Font("Arial", 25));
+        highScoreLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_HIGH_SCORE));
         highScoreLabel.setStyle("-fx-text-fill: white;");
 
         VBox highScoreBoard = createHighScoreBoard();
@@ -488,16 +514,16 @@ public class GameManager extends Application {
      * and play unlocked levels.
      */
     private void levelsMenu() {
-        VBox levelsScreen = new VBox(20);
+        VBox levelsScreen = new VBox(VBOX_SPACING);
         levelsScreen.setStyle("-fx-padding: 20;"
                 + " -fx-alignment: center; -fx-background-color: #222;");
 
         Label levelsLabel = new Label("Select a Level to Play");
-        levelsLabel.setFont(new Font("Arial", 20));
+        levelsLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_LEVELS_LABEL));
         levelsLabel.setStyle("-fx-text-fill: white;");
 
         ListView<String> levelsList = new ListView<>();
-        levelsList.setPrefSize(400, 300);
+        levelsList.setPrefSize(LEVELS_LIST_WIDTH, LEVELS_LIST_HEIGHT);
 
         JSONArray completedLevels = (JSONArray)
                 userProfileObj.get("CompletedLevels");
@@ -518,7 +544,7 @@ public class GameManager extends Application {
         }
 
         Button playLevelButton = new Button("Play Selected Level");
-        playLevelButton.setFont(new Font("Arial", 20));
+        playLevelButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         playLevelButton.setOnAction(e -> {
             String selectedLevel =
                     levelsList.getSelectionModel().getSelectedItem();
@@ -545,7 +571,7 @@ public class GameManager extends Application {
         });
 
         Button backButton = new Button("Back");
-        backButton.setFont(new Font("Arial", 20));
+        backButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
         levelsScreen.getChildren().addAll(levelsLabel,
@@ -580,12 +606,12 @@ public class GameManager extends Application {
      * or select users.
      */
     private void userMenu() {
-        VBox userMenuScreen = new VBox(20);
+        VBox userMenuScreen = new VBox(VBOX_SPACING);
         userMenuScreen.setStyle("-fx-padding: 20;"
                 + " -fx-alignment: center; -fx-background-color: #222;");
 
         Label userMenuLabel = new Label("User Menu");
-        userMenuLabel.setFont(new Font("Arial", 30));
+        userMenuLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_USER_MENU));
         userMenuLabel.setStyle("-fx-text-fill: white;");
 
         // ListView to display users
@@ -597,12 +623,12 @@ public class GameManager extends Application {
 
         // Adjust ListView height based on the number of users
         int userCount = users != null ? users.size() : 0;
-        userList.setPrefHeight(Math.min(userCount * 35, 300));
-        userList.setMaxWidth(500);
+        userList.setPrefHeight(Math.min(userCount * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
+        userList.setMaxWidth(USER_LIST_MAX_WIDTH);
 
         // Add User button
         Button addUserButton = new Button("Add User");
-        addUserButton.setFont(new Font("Arial", 20));
+        addUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         addUserButton.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Add User");
@@ -622,13 +648,13 @@ public class GameManager extends Application {
                 savePlayerProfile();
 
                 // Update ListView height after adding a new user
-                userList.setPrefHeight(Math.min(users.size() * 35, 300));
+                userList.setPrefHeight(Math.min(users.size() * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
             }
         });
 
         // Remove User button
         Button removeUserButton = new Button("Remove User");
-        removeUserButton.setFont(new Font("Arial", 20));
+        removeUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         removeUserButton.setOnAction(e -> {
             String selectedUser = userList.getSelectionModel().
                     getSelectedItem();
@@ -647,14 +673,14 @@ public class GameManager extends Application {
                     savePlayerProfile();
 
                     // Update ListView height after removing a user
-                    userList.setPrefHeight(Math.min(users.size() * 35, 300));
+                    userList.setPrefHeight(Math.min(users.size() * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
                 }
             }
         });
 
         // Select User button
         Button selectUserButton = new Button("Select User");
-        selectUserButton.setFont(new Font("Arial", 20));
+        selectUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         selectUserButton.setOnAction(e -> {
             String selectedUser =
                     userList.getSelectionModel().getSelectedItem();
@@ -666,10 +692,10 @@ public class GameManager extends Application {
 
         // Back button
         Button backButton = new Button("Back");
-        backButton.setFont(new Font("Arial", 20));
+        backButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
-        HBox buttonBox = new HBox(10, addUserButton,
+        HBox buttonBox = new HBox(VBOX_SPACING, addUserButton,
                 removeUserButton, selectUserButton, backButton);
         buttonBox.setStyle("-fx-alignment: center;");
 
@@ -709,23 +735,23 @@ public class GameManager extends Application {
      * allowing them to choose between the save files.
      */
     private void showSavedGamesScreen() {
-        VBox savedGamesScreen = new VBox(20);
+        VBox savedGamesScreen = new VBox(VBOX_SPACING);
         savedGamesScreen.setStyle("-fx-padding: 20; "
                 + "-fx-alignment: center; -fx-background-color: #222;");
 
         Label savedGamesLabel = new Label("Select a Saved Game");
-        savedGamesLabel.setFont(new Font("Arial", 30));
+        savedGamesLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_USER_MENU));
         savedGamesLabel.setStyle("-fx-text-fill: white;");
 
         List<String> savedGames = loadSavedGames();
 
         if (savedGames.isEmpty()) {
             Label noSavesLabel = new Label("No saved games found!");
-            noSavesLabel.setFont(new Font("Arial", 18));
+            noSavesLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_NO_SCORES));
             noSavesLabel.setStyle("-fx-text-fill: grey;");
             savedGamesScreen.getChildren().add(noSavesLabel);
             Button backButton = new Button("Back");
-            backButton.setFont(new Font("Arial", 20));
+            backButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
             backButton.setOnAction(e -> primaryStage.setScene(homeScene));
             savedGamesScreen.getChildren().add(backButton);
             Scene savedGamesScene = new Scene(savedGamesScreen);
@@ -735,13 +761,13 @@ public class GameManager extends Application {
 
         // ListView to display saved games
         ListView<String> savedGamesList = new ListView<>();
-        savedGamesList.setPrefSize(400, 300);
+        savedGamesList.setPrefSize(LEVELS_LIST_WIDTH, LEVELS_LIST_HEIGHT);
         // loadSavedGames() returns a list of saved games
         savedGamesList.getItems().addAll(savedGames);
 
         // Load selected game button
         Button loadSelectedButton = new Button("Load Selected Game");
-        loadSelectedButton.setFont(new Font("Arial", 20));
+        loadSelectedButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         loadSelectedButton.setOnAction(e -> {
             String selectedGame =
                     savedGamesList.getSelectionModel().getSelectedItem();
@@ -753,7 +779,7 @@ public class GameManager extends Application {
 
         // Back button
         Button backButton = new Button("Back");
-        backButton.setFont(new Font("Arial", 20));
+        backButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
         savedGamesScreen.getChildren().addAll(savedGamesLabel,
@@ -791,23 +817,23 @@ public class GameManager extends Application {
         grid.setHgap(0);
         grid.setVgap(0);
 
-        DIAMOND_COUNT_ICON.setFitHeight(tileSize * 0.5);
-        DIAMOND_COUNT_ICON.setFitWidth(tileSize * 0.5);
-        CLOCK_ICON.setFitHeight(tileSize * 0.5);
-        CLOCK_ICON.setFitWidth(tileSize * 0.4);
-        KEY_ICON_BLUE.setFitHeight(tileSize * 0.5);
-        KEY_ICON_BLUE.setFitWidth(tileSize * 0.5);
-        KEY_ICON_RED.setFitHeight(tileSize * 0.5);
-        KEY_ICON_RED.setFitWidth(tileSize * 0.5);
-        KEY_ICON_GREEN.setFitHeight(tileSize * 0.5);
-        KEY_ICON_GREEN.setFitWidth(tileSize * 0.5);
-        KEY_ICON_YELLOW.setFitHeight(tileSize * 0.5);
-        KEY_ICON_YELLOW.setFitWidth(tileSize * 0.5);
+        DIAMOND_COUNT_ICON.setFitHeight(tileSize * ICON_SCALE);
+        DIAMOND_COUNT_ICON.setFitWidth(tileSize * ICON_SCALE);
+        CLOCK_ICON.setFitHeight(tileSize * ICON_SCALE);
+        CLOCK_ICON.setFitWidth(tileSize * ICON_WIDTH_SCALE_CLOCK);
+        KEY_ICON_BLUE.setFitHeight(tileSize * ICON_SCALE);
+        KEY_ICON_BLUE.setFitWidth(tileSize * ICON_SCALE);
+        KEY_ICON_RED.setFitHeight(tileSize * ICON_SCALE);
+        KEY_ICON_RED.setFitWidth(tileSize * ICON_SCALE);
+        KEY_ICON_GREEN.setFitHeight(tileSize * ICON_SCALE);
+        KEY_ICON_GREEN.setFitWidth(tileSize * ICON_SCALE);
+        KEY_ICON_YELLOW.setFitHeight(tileSize * ICON_SCALE);
+        KEY_ICON_YELLOW.setFitWidth(tileSize * ICON_SCALE);
         infoBar.getChildren().addAll(CLOCK_ICON, timeLabel, DIAMOND_COUNT_ICON,
                 diamondsLabel, KEY_ICON_BLUE, keyLabelBlue,
                 KEY_ICON_RED, keyLabelRed, KEY_ICON_GREEN, keyLabelGreen,
                 KEY_ICON_YELLOW, keyLabelYellow);
-        infoBar.setPrefHeight(tileSize * 0.7);
+        infoBar.setPrefHeight(tileSize * INFO_BAR_HEIGHT_RATIO);
         infoBar.setAlignment(javafx.geometry.Pos.CENTER);
         infoBar.setStyle("-fx-padding: 5; "
                 + "-fx-background-color: #333; -fx-text-fill: white;");
@@ -874,29 +900,29 @@ public class GameManager extends Application {
     private VBox createHighScoreBoard() {
         getHighScores();
 
-        VBox highScoreBoard = new VBox(10); // Vertical spacing between scores
+        VBox highScoreBoard = new VBox(HBOX_SPACING); // Vertical spacing between scores
         highScoreBoard.setStyle("-fx-padding: 10; -fx-alignment: center;");
         highScoreBoard.setAlignment(Pos.CENTER);
 
         if (highScores.isEmpty()) {
             Label noScoresLabel = new Label("No score yet!");
-            noScoresLabel.setFont(new Font("Arial", 18));
+            noScoresLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_NO_SCORES));
             noScoresLabel.setStyle("-fx-text-fill: grey;");
             highScoreBoard.getChildren().add(noScoresLabel);
         } else {
             List<Integer> highScoresInt =
                     new ArrayList<>(this.highScores.keySet());
             List<String> byUser = new ArrayList<>(this.highScores.values());
-            for (int i = 0; i < Math.min(highScoresInt.size(), 10); i++) {
+            for (int i = 0; i < Math.min(highScoresInt.size(), MAX_SCORES_AMOUNT); i++) {
                 Label scoreLabel = new Label(highScoresInt.get(i).toString());
                 Label userLabel =
                         new Label((i + 1) + ". " + byUser.get(i) + "  - ");
-                scoreLabel.setFont(new Font("Arial", 18));
+                scoreLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_SCORE_LABEL));
                 scoreLabel.setStyle("-fx-text-fill: white;");
-                userLabel.setFont(new Font("Arial", 18));
+                userLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_SCORE_LABEL));
                 userLabel.setStyle("-fx-text-fill: white;");
 
-                HBox scoreBox = new HBox(10);
+                HBox scoreBox = new HBox(HBOX_SPACING);
                 scoreBox.setAlignment(Pos.CENTER);
                 scoreBox.getChildren().addAll(userLabel, scoreLabel);
 
@@ -990,8 +1016,8 @@ public class GameManager extends Application {
             createPauseMenu(); // Initialize the pause menu if it doesn't exist
         }
         if (!stackPane.getChildren().contains(pauseMenu)) {
-            pauseMenu.setLayoutX((scene.getWidth() - 200) / 2);
-            pauseMenu.setLayoutY((scene.getHeight() - 200) / 2);
+            pauseMenu.setLayoutX((scene.getWidth() - PAUSE_MENU_LAYOUT_OFFSET) / 2);
+            pauseMenu.setLayoutY((scene.getHeight() - PAUSE_MENU_LAYOUT_OFFSET) / 2);
             // Add the pause menu to the grid
             stackPane.getChildren().add(pauseMenu);
         }
@@ -1011,12 +1037,12 @@ public class GameManager extends Application {
      * Creates the pause menu.
      */
     private void createPauseMenu() {
-        pauseMenu = new VBox(5);
+        pauseMenu = new VBox(PAUSE_MENU_SPACING);
         pauseMenu.setStyle("-fx-padding: 20;");
-        pauseMenu.setMaxSize(250, 200);
+        pauseMenu.setMaxSize(PAUSE_MENU_MAX_WIDTH, PAUSE_MENU_MAX_HEIGHT);
         pauseMenu.setAlignment(javafx.geometry.Pos.CENTER);
 
-        double buttonWidth = 150;
+        double buttonWidth = BUTTON_WIDTH;
         String buttonStyle =  "-fx-border-color: white darkgrey darkgrey white;"
                 + "-fx-border-width: 4; -fx-text-fill: black; "
                 + "-fx-font-family: monospace; -fx-font-size: 12; "
@@ -1132,8 +1158,8 @@ public class GameManager extends Application {
                     "-fx-background-color: rgba(51, 51, 51, 0.9);");
             gameOverMenu.setPrefSize(scene.getWidth(), scene.getHeight());
 
-            VBox gameOverBox = new VBox(20);
-            double buttonWidth = 150;
+            VBox gameOverBox = new VBox(VBOX_SPACING);
+            double buttonWidth = BUTTON_WIDTH;
             gameOverBox.setAlignment(Pos.CENTER);
 
             Label messageLabel = new Label("Game Over!");
@@ -1218,14 +1244,14 @@ public class GameManager extends Application {
      */
     private void showLevelCompleteScreen() {
         tickTimeline.pause();
-        int score = player.getDiamondsCollected() * 10 + timeRemaining() * 2;
+        int score = player.getDiamondsCollected() * SCORE_MULTIPLIER_DIAMONDS + timeRemaining() * 2;
         if (levelCompleteMenu == null) {
             levelCompleteMenu = new StackPane();
             levelCompleteMenu.setStyle(
                     "-fx-background-color: rgba(51, 51, 51, 0.9);");
             levelCompleteMenu.setPrefSize(scene.getWidth(), scene.getHeight());
 
-            VBox levelCompleteBox = new VBox(20);
+            VBox levelCompleteBox = new VBox(VBOX_SPACING);
             levelCompleteBox.setAlignment(Pos.CENTER);
 
             Label messageLabel = new Label("Level Complete!");
