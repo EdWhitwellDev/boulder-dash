@@ -522,71 +522,170 @@ public class GameManager extends Application {
      */
     private void levelsMenu() {
         VBox levelsScreen = new VBox(VBOX_SPACING);
-        levelsScreen.setStyle("-fx-padding: 20;"
-                + " -fx-alignment: center; -fx-background-color: #222;");
+        levelsScreen.setStyle("-fx-padding: 20;" +
+                "-fx-alignment: center;" +
+                "-fx-background-color: #222;" +
+                "-fx-background-radius: 10;" +
+                "-fx-border-color: #333;" +
+                "-fx-border-width: 1;" +
+                "-fx-border-radius: 10;");
 
         Label levelsLabel = new Label("Select a Level to Play");
         levelsLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_LEVELS_LABEL));
         levelsLabel.setStyle("-fx-text-fill: white;");
 
-        ListView<String> levelsList = new ListView<>();
-        levelsList.setPrefSize(LEVELS_LIST_WIDTH, LEVELS_LIST_HEIGHT);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setStyle("-fx-background: #222; " +
+                "-fx-background-color: transparent; " +
+                "-fx-border-color: transparent;");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        JSONArray completedLevels = (JSONArray)
-                userProfileObj.get("CompletedLevels");
+        HBox levelsContainer = new HBox(20);
+        levelsContainer.setStyle("-fx-background-color: transparent; -fx-padding: 20;");
+        levelsContainer.setAlignment(Pos.CENTER);
 
+        StringProperty selectedLevel = new SimpleStringProperty(null);
+
+        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
         List<Integer> completedLevelsList = new ArrayList<>();
         for (Object level : completedLevels) {
             completedLevelsList.add(Integer.parseInt(level.toString()));
         }
-        // Populate the list with unlocked levels
+
+        // Define image paths for each level
+        String[] levelImages = {
+                "/Tile Images/dirt.png",
+                "/Tile Images/normal_wall.png",
+                "/Tile Images/titanium_wall.png",
+                "/Tile Images/magic_wall.png",
+                "/Tile Images/exit.png"
+        };
+
         for (int i = 1; i <= NUMBER_OF_LEVELS; i++) {
-            String levelInfo = "Level " + i;
+            final int levelNum = i;
+            VBox levelCard = new VBox(10);
+            levelCard.setStyle("-fx-background-color: #3a3a3a;" +
+                    "-fx-background-radius: 10;" +
+                    "-fx-padding: 15;" +
+                    "-fx-min-width: 150;" +
+                    "-fx-max-width: 150;" +
+                    "-fx-min-height: 150;" +
+                    "-fx-alignment: center;");
+
+            // Use the corresponding image for each level
+            ImageView levelImage = new ImageView(new Image(getClass().getResourceAsStream(levelImages[i-1])));
+            levelImage.setFitWidth(60);
+            levelImage.setFitHeight(60);
+            levelImage.setPreserveRatio(true);
+
+            Label numberLabel = new Label("Level " + i);
+            numberLabel.setStyle("-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;");
+
+            Label statusLabel = new Label(completedLevelsList.contains(i) ? "(Completed)" : "(Locked)");
+            statusLabel.setStyle("-fx-text-fill: " + (completedLevelsList.contains(i) ? "#90EE90" : "#FF6B6B") +
+                    "; -fx-font-size: 14;");
+
+            levelCard.getChildren().addAll(levelImage, numberLabel, statusLabel);
+
             if (completedLevelsList.contains(i)) {
-                levelInfo += " (Completed)";
+                levelCard.setOnMouseEntered(e -> {
+                    levelCard.setStyle("-fx-background-color: #4a4a4a;" +
+                            "-fx-background-radius: 10;" +
+                            "-fx-padding: 15;" +
+                            "-fx-min-width: 150;" +
+                            "-fx-max-width: 150;" +
+                            "-fx-min-height: 150;" +
+                            "-fx-alignment: center;" +
+                            "-fx-scale-x: 1.1;" +
+                            "-fx-scale-y: 1.1;");
+                    levelCard.setCursor(Cursor.HAND);
+                });
+
+                levelCard.setOnMouseExited(e -> {
+                    if (selectedLevel.get() == null ||
+                            !selectedLevel.get().equals("Level " + levelNum)) {
+                        levelCard.setStyle("-fx-background-color: #3a3a3a;" +
+                                "-fx-background-radius: 10;" +
+                                "-fx-padding: 15;" +
+                                "-fx-min-width: 150;" +
+                                "-fx-max-width: 150;" +
+                                "-fx-min-height: 150;" +
+                                "-fx-alignment: center;" +
+                                "-fx-scale-x: 1;" +
+                                "-fx-scale-y: 1;");
+                    }
+                });
+
+                levelCard.setOnMouseClicked(e -> {
+                    levelsContainer.getChildren().forEach(node -> {
+                        if (node instanceof VBox) {
+                            node.setStyle("-fx-background-color: #3a3a3a;" +
+                                    "-fx-background-radius: 10;" +
+                                    "-fx-padding: 15;" +
+                                    "-fx-min-width: 150;" +
+                                    "-fx-max-width: 150;" +
+                                    "-fx-min-height: 150;" +
+                                    "-fx-alignment: center;");
+                        }
+                    });
+                    levelCard.setStyle("-fx-background-color: #4a4a4a;" +
+                            "-fx-background-radius: 10;" +
+                            "-fx-padding: 15;" +
+                            "-fx-min-width: 150;" +
+                            "-fx-max-width: 150;" +
+                            "-fx-min-height: 150;" +
+                            "-fx-alignment: center;");
+                    selectedLevel.set("Level " + levelNum);
+                });
             } else {
-                levelInfo += " (Locked)";
+                levelCard.setStyle(levelCard.getStyle() + "-fx-opacity: 0.6;");
             }
-            levelsList.getItems().add(levelInfo);
+
+            levelsContainer.getChildren().add(levelCard);
         }
+
+        scrollPane.setContent(levelsContainer);
+        scrollPane.setPrefHeight(200);
+        scrollPane.setMaxWidth(USE_PREF_SIZE);
+
+        String buttonStyle = "-fx-background-color: #3a3a3a;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-radius: 5;" +
+                "-fx-padding: 8 15 8 15;";
 
         Button playLevelButton = new Button("Play Selected Level");
         playLevelButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        playLevelButton.setStyle(buttonStyle);
         playLevelButton.setOnAction(e -> {
-            String selectedLevel =
-                    levelsList.getSelectionModel().getSelectedItem();
-            if (selectedLevel != null) {
-                int levelNumber = Integer.parseInt(selectedLevel.split(" ")[1]);
+            if (selectedLevel.get() != null) {
+                int levelNumber = Integer.parseInt(selectedLevel.get().split(" ")[1]);
                 if (completedLevelsList.contains(levelNumber)) {
                     loadLevel(levelNumber);
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText("Level Locked");
-                    alert.setContentText(
-                            "Please complete this level to unlock replays");
+                    alert.setContentText("Please complete previous levels to unlock this one.");
                     alert.showAndWait();
                 }
-                loadLevel(levelNumber);
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("No Level Selected");
-                alert.setContentText("Please select a level.");
-                alert.showAndWait();
             }
         });
 
         Button backButton = new Button("Back");
         backButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        backButton.setStyle(buttonStyle);
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
-        levelsScreen.getChildren().addAll(levelsLabel,
-                levelsList, playLevelButton, backButton);
+        HBox buttonBox = new HBox(VBOX_SPACING, playLevelButton, backButton);
+        buttonBox.setStyle("-fx-alignment: center; -fx-padding: 15 0 0 0");
+
+        levelsScreen.getChildren().addAll(levelsLabel, scrollPane, buttonBox);
 
         Scene levelsScene = new Scene(levelsScreen);
         primaryStage.setScene(levelsScene);
     }
+
 
     /**
      * Loads a specified level.
