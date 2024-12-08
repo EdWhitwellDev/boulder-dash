@@ -84,13 +84,15 @@ public class GameManager extends Application {
     private final Label keyLabelRed = new Label();
     private final Label keyLabelGreen = new Label();
     private final Label keyLabelYellow = new Label();
-    private static final ImageView diamondCountIcon = new ImageView(new Image("Actor Images/diamond.png"));
-    private static final ImageView clockIcon = new ImageView(new Image("clock.png"));
-    private static final ImageView keyIconBlue = new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
-    private static final ImageView keyIconRed = new ImageView(new Image("Key Icon Images/red_key_icon.png"));
-    private static final ImageView keyIconGreen = new ImageView(new Image("Key Icon Images/green_key_icon.png"));
-    private static final ImageView keyIconYellow = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
+    private static final ImageView DIAMOND_COUNT_ICON = new ImageView(new Image("Actor Images/diamond.png"));
+    private static final ImageView CLOCK_ICON = new ImageView(new Image("clock.png"));
+    private static final ImageView KEY_ICON_BLUE = new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
+    private static final ImageView KEY_ICON_RED = new ImageView(new Image("Key Icon Images/red_key_icon.png"));
+    private static final ImageView KEY_ICON_GREEN = new ImageView(new Image("Key Icon Images/green_key_icon.png"));
+    private static final ImageView KEY_ICON_YELLOW = new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
     private static final int NUMBER_OF_LEVELS = 5;
+    private static final double TILE_SIZE_SCALE_FACTOR = 0.8;
+    private static final int MAX_SCORES_AMOUNT = 10;
     private final float tickTime = 0.1f;
     private float timeElapsed;
     private int tileSize;
@@ -110,8 +112,9 @@ public class GameManager extends Application {
         getPlayerProfile();
         currentUser = playerProfileObj.get("CurrentUser").toString();
         userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
-        currentLevel = userProfileObj.get("CurrentLevel") != null ?
-                Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
+        currentLevel = userProfileObj.get("CurrentLevel") != null
+                ? Integer.parseInt(userProfileObj.get("CurrentLevel").
+                        toString()) : 1;
         this.primaryStage = primaryStage;
         highScores = new HashMap<>();
 
@@ -134,11 +137,12 @@ public class GameManager extends Application {
      * This includes the level tiles, actors, and the movement updates.
      * Handles the timer, diamonds collected, and key counts.
      */
-    public void drawGame(){
+    public void drawGame() {
         calcTileSize();
 
-        timeLabel.setText((int)(level.getTimeLimit() - timeElapsed) + "s");
-        diamondsLabel.setText(player.getDiamondsCollected() + "/" + level.getDiamondsRequired());
+        timeLabel.setText((int) (level.getTimeLimit() - timeElapsed) + "s");
+        diamondsLabel.setText(player.getDiamondsCollected() + "/"
+                + level.getDiamondsRequired());
         keyLabelBlue.setText("x" + (player.getKeys().get(KeyColours.BLUE)));
         keyLabelRed.setText("x" + (player.getKeys().get(KeyColours.RED)));
         keyLabelGreen.setText("x" + (player.getKeys().get(KeyColours.GREEN)));
@@ -153,15 +157,17 @@ public class GameManager extends Application {
         int columns = level.getCols();
 
 
-        Map<ImageView, Actor> actorsToAnimate= new HashMap<>();
+        Map<ImageView, Actor> actorsToAnimate = new HashMap<>();
 
         // Iterate through each tile and render it
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 Tile tile = tiles.get(row).get(col);
-                StackPane stackPane = new StackPane(); // Allows stacking multiple visuals
-                ImageView imageView = new ImageView(tile.getImage()); // Tile background
+                // Allows stacking multiple visuals
+                StackPane stackPane = new StackPane();
+                // Tile background
+                ImageView imageView = new ImageView(tile.getImage());
 
                 // Scale tile images to match grid size
                 imageView.setFitWidth(tileSize);
@@ -172,12 +178,14 @@ public class GameManager extends Application {
                 // If a tile is occupied, draw the actor occupying it
                 if (tile.isOccupied()) {
                     Actor occupier = tile.getOccupier();
-                    ImageView actorImageView = new ImageView(occupier.getImage());
-                    actorImageView.setFitHeight(tileSize*0.8);
-                    actorImageView.setFitWidth(tileSize*0.8);
-                    if (occupier.getIsTransferring()){
-                        // if the actor is transferring animate the transfer
-                        actorsToAnimate.put(actorImageView, occupier);   // add the actor to the offset map
+                    ImageView actorImageView =
+                            new ImageView(occupier.getImage());
+                    actorImageView.setFitHeight(tileSize * TILE_SIZE_SCALE_FACTOR);
+                    actorImageView.setFitWidth(tileSize * TILE_SIZE_SCALE_FACTOR);
+                    // if the actor is transferring animate the transfer
+                    if (occupier.getIsTransferring()) {
+                        // add the actor to the offset map
+                        actorsToAnimate.put(actorImageView, occupier);
                         occupier.stopTransferring();
 
 
@@ -193,7 +201,7 @@ public class GameManager extends Application {
         }
         transitionPane.getChildren().clear();
 
-        for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()){
+        for (Map.Entry<ImageView, Actor> entry : actorsToAnimate.entrySet()) {
             ImageView actorImageView = entry.getKey();
             Actor actor = entry.getValue();
             Tile previousPosition = actor.getPreviousPosition();
@@ -207,13 +215,21 @@ public class GameManager extends Application {
             double x = (widthStage - widthGrid) / 2;
             double y = (heightStage - heightGrid) / 2;
 
-            actorImageView.setTranslateX(previousPosition.getColumn() * tileSize + x); // Set the initial X position
-            actorImageView.setTranslateY(previousPosition.getRow() * tileSize + y); // Set the initial Y position
-            TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(tickTime), actorImageView);
-            translateTransition.setFromX(previousPosition.getColumn() * tileSize + x);
-            translateTransition.setFromY(previousPosition.getRow() * tileSize + y);
-            translateTransition.setToX(currentPosition.getColumn() * tileSize + x);
-            translateTransition.setToY(currentPosition.getRow() * tileSize + y);
+            actorImageView.setTranslateX(previousPosition.getColumn()
+                    * tileSize + x); // Set the initial X position
+            actorImageView.setTranslateY(previousPosition.getRow()
+                    * tileSize + y); // Set the initial Y position
+            TranslateTransition translateTransition =
+                    new TranslateTransition(Duration.seconds(tickTime),
+                            actorImageView);
+            translateTransition.setFromX(previousPosition.getColumn()
+                    * tileSize + x);
+            translateTransition.setFromY(previousPosition.getRow()
+                    * tileSize + y);
+            translateTransition.setToX(currentPosition.getColumn()
+                    * tileSize + x);
+            translateTransition.setToY(currentPosition.getRow()
+                    * tileSize + y);
 
             translateTransition.setOnFinished(e -> actor.checkCollisions());
 
@@ -248,18 +264,19 @@ public class GameManager extends Application {
                 player.setDirection(Direction.STATIONARY);
                 break;
         }
-        event.consume(); // Prevents further handling of this event by other UI elements
+        event.consume(); // prevents other UI elements from handling this event.
     }
 
     /**
-     * Updates the game state, processes actors' actions, and redraws the game screen
+     * Updates the game state, processes actors' actions,
+     * and redraws the game screen.
      * at each tick.
      */
     public void tick() {
         timeElapsed += tickTime;
-        removeActors();// Remove any dead actors
+        removeActors(); // Remove any dead actors
         createNewActors();
-        drawGame();// Redraw the grid
+        drawGame(); // Redraw the grid
 
         if (!dead) {
             for (Actor actor : level.getActors()) {
@@ -267,13 +284,13 @@ public class GameManager extends Application {
             }
         }
 
-        if (timeElapsed > level.getTimeLimit()){
+        if (timeElapsed > level.getTimeLimit()) {
             looseGame("Time Limit Reached!");
         }
     }
 
     /**
-     * Ends the game, marked it as a loss
+     * Ends the game, marked it as a loss.
      */
     public void looseGame(String cause) {
         if (!dead) {
@@ -288,7 +305,7 @@ public class GameManager extends Application {
     }
 
     /**
-     * Ends the current level
+     * Ends the current level.
      */
     public void winGame() {
         dead = true;
@@ -296,19 +313,29 @@ public class GameManager extends Application {
         showLevelCompleteScreen();
     }
 
+    /**
+     * Updates the player's high scores and completed levels
+     * in their user profile.
+     * If the current level is newly completed,
+     * it gets added to the completed levels.
+     * @param score
+     */
     public void saveScore(int score) {
-        JSONObject highScoresObj = (JSONObject) userProfileObj.get("HighScores");
-        JSONArray completedLevels = (JSONArray) userProfileObj.get("CompletedLevels");
+        JSONObject highScoresObj =
+                (JSONObject) userProfileObj.get("HighScores");
+        JSONArray completedLevels =
+                (JSONArray) userProfileObj.get("CompletedLevels");
 
         long currentLevelLong = currentLevel;
         // check if the level has been completed before
-        if (!completedLevels.contains(currentLevelLong)){
+        if (!completedLevels.contains(currentLevelLong)) {
             completedLevels.add(currentLevelLong);
         }
 
         // get the scores for the current level
-        List<Long> scores = (List<Long>) highScoresObj.get("Level"+ currentLevel);
-        if (scores == null){
+        List<Long> scores = (List<Long>)
+                highScoresObj.get("Level" + currentLevel);
+        if (scores == null) {
             scores = new ArrayList<>();
         }
         scores.add((long) score);
@@ -316,34 +343,41 @@ public class GameManager extends Application {
         // sort the scores in descending order
         scores.sort(Collections.reverseOrder());
         // keep only the top 10 scores
-        if (scores.size() > 10){
-            scores = scores.subList(0, 10);
+        if (scores.size() > MAX_SCORES_AMOUNT) {
+            scores = scores.subList(0, MAX_SCORES_AMOUNT);
         }
 
-        highScoresObj.put(("Level"+ currentLevel), scores);
+        highScoresObj.put(("Level" + currentLevel), scores);
 
         // update the high scores in the player profile
         try {
             JSONParser parser = new JSONParser();
-            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
-            JSONObject userObjOld = (JSONObject) PlayerProfileObj.get(currentUser);
+            JSONObject playerProfileJSON = (JSONObject) parser.parse(
+                    new FileReader("PlayerProfile.json"));
+            JSONObject userObjOld = (JSONObject)
+                    playerProfileJSON.get(currentUser);
             FileWriter file = new FileWriter("PlayerProfile.json");
             userObjOld.put("HighScores", highScoresObj);
             userObjOld.put("CompletedLevels", completedLevels);
-            file.write(PlayerProfileObj.toJSONString());
+            file.write(playerProfileJSON.toJSONString());
             file.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**
-     * Marks an actor for removal from the game
+     * Marks an actor for removal from the game.
+     * @param actor to be removed.
      */
     public void killActor(Actor actor) {
         deadActors.add(actor);
     }
+
+    /**
+     * Adds an actor to the game.
+     * @param actor to be added.
+     */
     public void addActor(Actor actor) {
         newBorns.add(actor);
     }
@@ -352,14 +386,14 @@ public class GameManager extends Application {
      * Shows the remaining time.
      * @return the remaining time in seconds.
      */
-    public int timeRemaining(){
-        return (int)(level.getTimeLimit() - timeElapsed);
+    public int timeRemaining() {
+        return (int) (level.getTimeLimit() - timeElapsed);
     }
 
     /**
-     * Main method to launch the program
+     * Main method to launch the program.
      *
-     * @param args command-line arguments
+     * @param args command-line arguments.
      */
 
     public static void main(String[] args) {
@@ -457,7 +491,7 @@ public class GameManager extends Application {
         // Populate the list with unlocked levels
         for (int i = 1; i <= NUMBER_OF_LEVELS; i++) {
             String levelInfo = "Level " + i;
-            if (completedLevelsList.contains(i) ) {
+            if (completedLevelsList.contains(i)) {
                 levelInfo += " (Completed)";
             } else {
                 levelInfo += " (Locked)";
@@ -525,7 +559,8 @@ public class GameManager extends Application {
      */
     private void userMenu() {
         VBox userMenuScreen = new VBox(20);
-        userMenuScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+        userMenuScreen.setStyle("-fx-padding: 20;"
+                + " -fx-alignment: center; -fx-background-color: #222;");
 
         Label userMenuLabel = new Label("User Menu");
         userMenuLabel.setFont(new Font("Arial", 30));
@@ -597,7 +632,8 @@ public class GameManager extends Application {
         Button selectUserButton = new Button("Select User");
         selectUserButton.setFont(new Font("Arial", 20));
         selectUserButton.setOnAction(e -> {
-            String selectedUser = userList.getSelectionModel().getSelectedItem();
+            String selectedUser =
+                    userList.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
                 changeCurrentUser(selectedUser);
                 primaryStage.setScene(homeScene);
@@ -609,7 +645,8 @@ public class GameManager extends Application {
         backButton.setFont(new Font("Arial", 20));
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
-        HBox buttonBox = new HBox(10, addUserButton, removeUserButton, selectUserButton, backButton);
+        HBox buttonBox = new HBox(10, addUserButton,
+                removeUserButton, selectUserButton, backButton);
         buttonBox.setStyle("-fx-alignment: center;");
 
         userMenuScreen.getChildren().addAll(userMenuLabel, userList, buttonBox);
@@ -648,7 +685,8 @@ public class GameManager extends Application {
      */
     private void showSavedGamesScreen() {
         VBox savedGamesScreen = new VBox(20);
-        savedGamesScreen.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: #222;");
+        savedGamesScreen.setStyle("-fx-padding: 20; "
+                + "-fx-alignment: center; -fx-background-color: #222;");
 
         Label savedGamesLabel = new Label("Select a Saved Game");
         savedGamesLabel.setFont(new Font("Arial", 30));
@@ -679,7 +717,8 @@ public class GameManager extends Application {
         Button loadSelectedButton = new Button("Load Selected Game");
         loadSelectedButton.setFont(new Font("Arial", 20));
         loadSelectedButton.setOnAction(e -> {
-            String selectedGame = savedGamesList.getSelectionModel().getSelectedItem();
+            String selectedGame =
+                    savedGamesList.getSelectionModel().getSelectedItem();
             if (selectedGame != null) {
                 System.out.println("Loading selected game: " + selectedGame);
                 loadSelectedGame(selectedGame);
@@ -691,7 +730,8 @@ public class GameManager extends Application {
         backButton.setFont(new Font("Arial", 20));
         backButton.setOnAction(e -> primaryStage.setScene(homeScene));
 
-        savedGamesScreen.getChildren().addAll(savedGamesLabel, savedGamesList, loadSelectedButton, backButton);
+        savedGamesScreen.getChildren().addAll(savedGamesLabel,
+                savedGamesList, loadSelectedButton, backButton);
 
         Scene savedGamesScene = new Scene(savedGamesScreen);
         primaryStage.setScene(savedGamesScene);
@@ -725,32 +765,33 @@ public class GameManager extends Application {
         grid.setHgap(0);
         grid.setVgap(0);
 
-        diamondCountIcon.setFitHeight(tileSize*0.5);
-        diamondCountIcon.setFitWidth(tileSize*0.5);
-        clockIcon.setFitHeight(tileSize*0.5);
-        clockIcon.setFitWidth(tileSize*0.4);
-        keyIconBlue.setFitHeight(tileSize*0.5);
-        keyIconBlue.setFitWidth(tileSize*0.5);
-        keyIconRed.setFitHeight(tileSize*0.5);
-        keyIconRed.setFitWidth(tileSize*0.5);
-        keyIconGreen.setFitHeight(tileSize*0.5);
-        keyIconGreen.setFitWidth(tileSize*0.5);
-        keyIconYellow.setFitHeight(tileSize*0.5);
-        keyIconYellow.setFitWidth(tileSize*0.5);
-        infoBar.getChildren().addAll(clockIcon, timeLabel, diamondCountIcon,
-                diamondsLabel, keyIconBlue, keyLabelBlue,
-                keyIconRed, keyLabelRed, keyIconGreen, keyLabelGreen,
-                keyIconYellow, keyLabelYellow);
-        infoBar.setPrefHeight(tileSize*0.7);
+        DIAMOND_COUNT_ICON.setFitHeight(tileSize * 0.5);
+        DIAMOND_COUNT_ICON.setFitWidth(tileSize * 0.5);
+        CLOCK_ICON.setFitHeight(tileSize * 0.5);
+        CLOCK_ICON.setFitWidth(tileSize * 0.4);
+        KEY_ICON_BLUE.setFitHeight(tileSize * 0.5);
+        KEY_ICON_BLUE.setFitWidth(tileSize * 0.5);
+        KEY_ICON_RED.setFitHeight(tileSize * 0.5);
+        KEY_ICON_RED.setFitWidth(tileSize * 0.5);
+        KEY_ICON_GREEN.setFitHeight(tileSize * 0.5);
+        KEY_ICON_GREEN.setFitWidth(tileSize * 0.5);
+        KEY_ICON_YELLOW.setFitHeight(tileSize * 0.5);
+        KEY_ICON_YELLOW.setFitWidth(tileSize * 0.5);
+        infoBar.getChildren().addAll(CLOCK_ICON, timeLabel, DIAMOND_COUNT_ICON,
+                diamondsLabel, KEY_ICON_BLUE, keyLabelBlue,
+                KEY_ICON_RED, keyLabelRed, KEY_ICON_GREEN, keyLabelGreen,
+                KEY_ICON_YELLOW, keyLabelYellow);
+        infoBar.setPrefHeight(tileSize * 0.7);
         infoBar.setAlignment(javafx.geometry.Pos.CENTER);
-        infoBar.setStyle("-fx-padding: 5; -fx-background-color: #333; -fx-text-fill: white;");
+        infoBar.setStyle("-fx-padding: 5; "
+                + "-fx-background-color: #333; -fx-text-fill: white;");
         timeLabel.setStyle("-fx-text-fill: white;");
         diamondsLabel.setStyle("-fx-text-fill: white;");
         keyLabelBlue.setStyle("-fx-text-fill: white;");
         keyLabelRed.setStyle("-fx-text-fill: white;");
         keyLabelGreen.setStyle("-fx-text-fill: white;");
         keyLabelYellow.setStyle("-fx-text-fill: white;");
-        diamondCountIcon.setStyle("-fx-padding: 10;");
+        DIAMOND_COUNT_ICON.setStyle("-fx-padding: 10;");
 
         stackPane.setStyle("-fx-background-color: #333;");
 
@@ -774,13 +815,15 @@ public class GameManager extends Application {
         for (Object user : users) {
             JSONObject userObj = (JSONObject) playerProfileObj.get(user);
             JSONObject highScoresObj = (JSONObject) userObj.get("HighScores");
-            List<Long> scores = (List<Long>) highScoresObj.get("Level"+ currentLevel);
+            List<Long> scores =
+                    (List<Long>) highScoresObj.get("Level"+ currentLevel);
             System.out.println(scores);
-            if (scores != null){
-                for (long scoreLong : scores){
+            if (scores != null) {
+                for (long scoreLong : scores) {
                     Integer score = (int) scoreLong;
-                    if (highScores.containsKey(score)){
-                        highScores.put(score, highScores.get(score) + ", " + user.toString());
+                    if (highScores.containsKey(score)) {
+                        highScores.put(score, highScores.get(score)
+                                + ", " + user.toString());
                     } else {
                         highScores.put(score, user.toString());
                     }
@@ -792,7 +835,8 @@ public class GameManager extends Application {
         Map<Integer, String> sortedHighScores = new LinkedHashMap<>();
         highScores.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
-                .forEachOrdered(x -> sortedHighScores.put(x.getKey(), x.getValue()));
+                .forEachOrdered(x
+                        -> sortedHighScores.put(x.getKey(), x.getValue()));
         highScores = sortedHighScores;
     }
     /**
@@ -812,11 +856,13 @@ public class GameManager extends Application {
             noScoresLabel.setStyle("-fx-text-fill: grey;");
             highScoreBoard.getChildren().add(noScoresLabel);
         } else {
-            List<Integer> highScoresInt = new ArrayList<>(this.highScores.keySet());
+            List<Integer> highScoresInt =
+                    new ArrayList<>(this.highScores.keySet());
             List<String> byUser = new ArrayList<>(this.highScores.values());
             for (int i = 0; i < Math.min(highScoresInt.size(), 10); i++) {
                 Label scoreLabel = new Label(highScoresInt.get(i).toString());
-                Label userLabel = new Label((i + 1) + ". " + byUser.get(i) + "  - ");
+                Label userLabel =
+                        new Label((i + 1) + ". " + byUser.get(i) + "  - ");
                 scoreLabel.setFont(new Font("Arial", 18));
                 scoreLabel.setStyle("-fx-text-fill: white;");
                 userLabel.setFont(new Font("Arial", 18));
@@ -839,8 +885,9 @@ public class GameManager extends Application {
      */
     private void startNewGame() {
         deathCause = "";
-        currentLevel = userProfileObj.get("CurrentLevel") != null ?
-                Integer.parseInt(userProfileObj.get("CurrentLevel").toString()) : 1;
+        currentLevel = userProfileObj.get("CurrentLevel") != null
+                ? Integer.parseInt(userProfileObj.get("CurrentLevel").
+                toString()) : 1;
 
         level = new Level(currentLevel);
         player = level.getPlayer();
@@ -863,17 +910,19 @@ public class GameManager extends Application {
     /**
      * Loads the player's profile from a JSON file.
      */
-    private void getPlayerProfile(){
+    private void getPlayerProfile() {
         JSONParser parser = new JSONParser();
         try {
-            playerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            playerProfileObj = (JSONObject) parser.parse(
+                    new FileReader("PlayerProfile.json"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Removes all actors that have been marked for removal in the current game tick
+     * Removes all actors that have been marked for removal
+     * in the current game tick.
      */
     private void removeActors() {
         for (Actor actor : deadActors) {
@@ -881,7 +930,8 @@ public class GameManager extends Application {
         }
         deadActors = new ArrayList<>();
     }
-    private void createNewActors(){
+
+    private void createNewActors() {
         level.addActors(newBorns);
         newBorns = new ArrayList<>();
     }
@@ -914,21 +964,23 @@ public class GameManager extends Application {
         if (!stackPane.getChildren().contains(pauseMenu)) {
             pauseMenu.setLayoutX((scene.getWidth() - 200) / 2);
             pauseMenu.setLayoutY((scene.getHeight() - 200) / 2);
-            stackPane.getChildren().add(pauseMenu); // Add the pause menu to the grid
+            // Add the pause menu to the grid
+            stackPane.getChildren().add(pauseMenu);
         }
     }
 
     /**
-     * Hides the pause menu
+     * Hides the pause menu.
      */
     private void hidePauseMenu() {
         if (pauseMenu != null) {
-            stackPane.getChildren().remove(pauseMenu); // Remove the pause menu from the grid
+            // Remove the pause menu from the grid
+            stackPane.getChildren().remove(pauseMenu);
         }
     }
 
     /**
-     * Creates the pause menu
+     * Creates the pause menu.
      */
     private void createPauseMenu() {
         pauseMenu = new VBox(5);
@@ -937,10 +989,10 @@ public class GameManager extends Application {
         pauseMenu.setAlignment(javafx.geometry.Pos.CENTER);
 
         double buttonWidth = 150;
-        String buttonStyle =  "-fx-border-color: white darkgrey darkgrey white;" +
-                "-fx-border-width: 4; -fx-text-fill: black; " +
-                "-fx-font-family: monospace; -fx-font-size: 12; " +
-                "-fx-cursor: hand;";
+        String buttonStyle =  "-fx-border-color: white darkgrey darkgrey white;"
+                + "-fx-border-width: 4; -fx-text-fill: black; "
+                + "-fx-font-family: monospace; -fx-font-size: 12; "
+                + "-fx-cursor: hand;";
 
         Button resumeButton = new Button("Resume");
         Button saveButton = new Button("Save Game");
@@ -968,10 +1020,11 @@ public class GameManager extends Application {
             togglePause();
         });
 
-        pauseMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);" +
-                "-fx-padding: 20;");
+        pauseMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);"
+                + "-fx-padding: 20;");
 
-        pauseMenu.getChildren().addAll(resumeButton, saveButton, loadButton, restartButton, exitButton);
+        pauseMenu.getChildren().addAll(resumeButton, saveButton,
+                loadButton, restartButton, exitButton);
 
     }
 
@@ -986,11 +1039,14 @@ public class GameManager extends Application {
         dialog.setHeaderText("Save Your Progress");
         dialog.setContentText("Enter a name for your save:");
 
-        // set the background color of the dialog and the header to match the game
+        // set the background color of dialog & the header to match the game
         dialog.getDialogPane().setStyle("-fx-background-color: #333;");
-        dialog.getDialogPane().lookup(".content .label").setStyle("-fx-text-fill: white;");
-        dialog.getDialogPane().lookup(".header-panel").setStyle("-fx-background-color: #333;");
-        dialog.getDialogPane().lookup(".header-panel .label").setStyle("-fx-text-fill: white;");
+        dialog.getDialogPane().lookup(".content .label").
+                setStyle("-fx-text-fill: white;");
+        dialog.getDialogPane().lookup(".header-panel").
+                setStyle("-fx-background-color: #333;");
+        dialog.getDialogPane().lookup(".header-panel .label").
+                setStyle("-fx-text-fill: white;");
         dialog.getDialogPane().setGraphic(null);
 
         // does not save if nothing entered / cancel is pressed
@@ -1005,7 +1061,8 @@ public class GameManager extends Application {
 
 
     /**
-     * Loads a previously saved game state
+     * Loads a previously saved game state.
+     * @param gameName the name of the game to load.
      */
     private void loadGame(String gameName) {
         if (!Objects.equals(gameName, "")) {
@@ -1027,7 +1084,7 @@ public class GameManager extends Application {
     }
 
     /**
-     * Exits the game, saving the state before closing
+     * Exits the game, saving the state before closing.
      */
     private void exitGame() {
         saveGame();
@@ -1036,13 +1093,15 @@ public class GameManager extends Application {
     }
 
     /**
-     * Shows the game over screen to the user and provides options to restart or exit application.
+     * Shows the game over screen to the user and provides options to
+     * restart or exit application.
      */
     private void showGameOverScreen() {
         drawGame();
         if (gameOverMenu == null) {
             gameOverMenu = new StackPane();
-            gameOverMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);");
+            gameOverMenu.setStyle(
+                    "-fx-background-color: rgba(51, 51, 51, 0.9);");
             gameOverMenu.setPrefSize(scene.getWidth(), scene.getHeight());
 
             VBox gameOverBox = new VBox(20);
@@ -1050,34 +1109,34 @@ public class GameManager extends Application {
             gameOverBox.setAlignment(Pos.CENTER);
 
             Label messageLabel = new Label("Game Over!");
-            messageLabel.setStyle("-fx-text-fill: red;" +
-                    " -fx-font-size: 48; " +
-                    "-fx-font-family: monospace;");
+            messageLabel.setStyle("-fx-text-fill: red;"
+                    + " -fx-font-size: 48; "
+                    + "-fx-font-family: monospace;");
 
 
             Label causeLabel = new Label(deathCause);
-            causeLabel.setStyle("-fx-text-fill: darkred;" +
-                    " -fx-font-size: 24; " +
-                    "-fx-font-family: monospace;");
+            causeLabel.setStyle("-fx-text-fill: darkred;"
+                    + " -fx-font-size: 24; "
+                    + "-fx-font-family: monospace;");
 
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
 
 
             Button exitButton = new Button("Exit Game");
-            exitButton.setStyle("-fx-background-color: grey; " +
-                    "-fx-border-color: white darkgrey darkgrey white; " +
-                    "-fx-border-width: 4; -fx-text-fill: white; " +
-                    "-fx-font-family: monospace; -fx-font-size: 16;" +
-                    "-fx-cursor: hand;");
+            exitButton.setStyle("-fx-background-color: grey; "
+                    + "-fx-border-color: white darkgrey darkgrey white; "
+                    + "-fx-border-width: 4; -fx-text-fill: white; "
+                    + "-fx-font-family: monospace; -fx-font-size: 16;"
+                    + "-fx-cursor: hand;");
 
 
             Button restartButton = new Button("Restart Game");
-            restartButton.setStyle("-fx-background-color: grey; " +
-                    "-fx-border-color: white darkgrey darkgrey white; " +
-                    "-fx-border-width: 4; -fx-text-fill: white; " +
-                    "-fx-font-family: monospace; -fx-font-size: 16;" +
-                    "-fx-cursor: hand;");
+            restartButton.setStyle("-fx-background-color: grey; "
+                    + "-fx-border-color: white darkgrey darkgrey white; "
+                    + "-fx-border-width: 4; -fx-text-fill: white; "
+                    + "-fx-font-family: monospace; -fx-font-size: 16;"
+                    + "-fx-cursor: hand;");
 
             restartButton.setPrefWidth(buttonWidth);
             exitButton.setPrefWidth(buttonWidth);
@@ -1085,9 +1144,12 @@ public class GameManager extends Application {
             exitButton.setOnAction(e -> exitGame());
             restartButton.setOnAction(e -> restartGame());
 
-            gameOverBox.getChildren().addAll(messageLabel, causeLabel, scoreBoard, restartButton, exitButton);
-            gameOverBox.setLayoutX(scene.getWidth() / 2 - gameOverBox.getPrefWidth() / 2);
-            gameOverBox.setLayoutY(scene.getHeight() / 2 - gameOverBox.getPrefHeight() / 2);
+            gameOverBox.getChildren().addAll(messageLabel,
+                    causeLabel, scoreBoard, restartButton, exitButton);
+            gameOverBox.setLayoutX(scene.getWidth() / 2
+                    - gameOverBox.getPrefWidth() / 2);
+            gameOverBox.setLayoutY(scene.getHeight() / 2
+                    - gameOverBox.getPrefHeight() / 2);
 
             gameOverMenu.getChildren().add(gameOverBox);
         }
@@ -1104,7 +1166,7 @@ public class GameManager extends Application {
         stackPane.getChildren().remove(gameOverMenu);
         tickTimeline.stop();
         dead = false;
-        deathCause ="";
+        deathCause = "";
         timeElapsed = 0;
         level = new Level(currentLevel);
         player = level.getPlayer();  // maintain current level / player prof
@@ -1127,22 +1189,24 @@ public class GameManager extends Application {
      */
     private void showLevelCompleteScreen() {
         tickTimeline.pause();
-        int score = player.getDiamondsCollected() * 10 + timeRemaining()*2;
+        int score = player.getDiamondsCollected() * 10 + timeRemaining() * 2;
         if (levelCompleteMenu == null) {
             levelCompleteMenu = new StackPane();
-            levelCompleteMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);");
+            levelCompleteMenu.setStyle(
+                    "-fx-background-color: rgba(51, 51, 51, 0.9);");
             levelCompleteMenu.setPrefSize(scene.getWidth(), scene.getHeight());
 
             VBox levelCompleteBox = new VBox(20);
             levelCompleteBox.setAlignment(Pos.CENTER);
 
             Label messageLabel = new Label("Level Complete!");
-            messageLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 48;" +
-                    " -fx-font-family: monospace;");
+            messageLabel.setStyle("-fx-text-fill: lightgreen;"
+                    + " -fx-font-size: 48;"
+                    + " -fx-font-family: monospace;");
 
             Label scoreLabel = new Label("You Scored: " + score);
-            scoreLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 48;" +
-                    " -fx-font-family: monospace;");
+            scoreLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 48;"
+                    + " -fx-font-family: monospace;");
 
             saveScore(score);
 
@@ -1150,23 +1214,24 @@ public class GameManager extends Application {
             scoreBoard.setStyle("-fx-padding: 20;");
 
             Button nextLevelButton = new Button("Next Level");
-            nextLevelButton.setStyle("-fx-background-color: grey; " +
-                    "-fx-border-color: white darkgrey darkgrey white; " +
-                    "-fx-border-width: 4; -fx-text-fill: white;" +
-                    " -fx-font-family: monospace; -fx-font-size: 16;" +
-                    "-fx-cursor: hand;");
+            nextLevelButton.setStyle("-fx-background-color: grey; "
+                    + "-fx-border-color: white darkgrey darkgrey white; "
+                    + "-fx-border-width: 4; -fx-text-fill: white;"
+                    + " -fx-font-family: monospace; -fx-font-size: 16;"
+                    + "-fx-cursor: hand;");
 
             Button exitButton = new Button("Exit Game");
-            exitButton.setStyle("-fx-background-color: grey; " +
-                    "-fx-border-color: white darkgrey darkgrey white; " +
-                    "-fx-border-width: 4; -fx-text-fill: white;" +
-                    "-fx-font-family: monospace; -fx-font-size: 16;" +
-                    "-fx-cursor: hand;");
+            exitButton.setStyle("-fx-background-color: grey; "
+                    + "-fx-border-color: white darkgrey darkgrey white; "
+                    + "-fx-border-width: 4; -fx-text-fill: white;"
+                    + "-fx-font-family: monospace; -fx-font-size: 16;"
+                    + "-fx-cursor: hand;");
 
             nextLevelButton.setOnAction(e -> loadNextLevel());
             exitButton.setOnAction(e -> exitGame());
 
-            levelCompleteBox.getChildren().addAll(messageLabel, scoreLabel, scoreBoard, nextLevelButton, exitButton);
+            levelCompleteBox.getChildren().addAll(messageLabel,
+                    scoreLabel, scoreBoard, nextLevelButton, exitButton);
 
             levelCompleteMenu.getChildren().add(levelCompleteBox);
         }
@@ -1191,14 +1256,14 @@ public class GameManager extends Application {
         drawGame();
 
     }
-    private void updateCurrentLevel(){
+    private void updateCurrentLevel() {
         userProfileObj.put("CurrentLevel", currentLevel);
         try {
             JSONParser parser = new JSONParser();
-            JSONObject PlayerProfileObj = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
+            JSONObject playerProfileJSON = (JSONObject) parser.parse(new FileReader("PlayerProfile.json"));
             FileWriter file = new FileWriter("PlayerProfile.json");
-            PlayerProfileObj.put(currentUser, userProfileObj);
-            file.write(PlayerProfileObj.toJSONString());
+            playerProfileJSON.put(currentUser, userProfileObj);
+            file.write(playerProfileJSON.toJSONString());
             file.close();
         } catch (Exception e) {
             e.printStackTrace();
