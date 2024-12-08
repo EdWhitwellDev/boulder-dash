@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Class to represent a Player, subclass of Actor. It inherits basic movement and
  * position handling from the Actor class, and it's movement is controlled by the keyboard.
- * */
+ */
 public class Player extends Actor {
 
     //A Map of all Directions to their corresponding Images with the correct orientation

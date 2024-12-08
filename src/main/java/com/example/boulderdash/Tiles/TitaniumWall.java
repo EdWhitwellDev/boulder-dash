@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
      *
      * @author Ed Whitwell
      */
-public class TitaniumWall extends Tile{
+public class TitaniumWall extends Tile {
 
     /**
      * This is the constructor for a Titanium Wall Tile. It sets the tile's row and column
@@ -18,11 +18,18 @@ public class TitaniumWall extends Tile{
      * @param row An integer representing the Grid Row that the tile is in.
      * @param col An integer representing the Grid Column that the tile is in.
      */
-    public TitaniumWall(int row, int col){
+    public TitaniumWall(int row, int col) {
         super(row, col, false);
         image = new Image("Tile Images/titanium_wall.png");
     }
-        public String toString(){
+
+        /**
+         * Returns a string of the tile.
+         * This is set to "T".
+         *
+         * @return The string "T".
+         */
+        public String toString() {
             return "T";
         }
 }

@@ -11,7 +11,7 @@ import javafx.scene.image.Image;
  *
  * @author Ed Whitwell
  */
-public class Exit extends Floor{
+public class Exit extends Floor {
 
     /**
      * This is the sole constructor of this class. It sets the tile's row, column and the
@@ -20,19 +20,28 @@ public class Exit extends Floor{
      * @param row An integer representing the Grid Row that the tile is in.
      * @param col An integer representing the Grid Column that the tile  is in.
      */
-    public Exit(int row, int col){
-        super(row, col, false);
-        image = new Image("Tile Images/Exit.png");
+      public Exit(int row, int col) {
+       super(row, col, false);
+       image = new Image("Tile Images/Exit.png");
     }
 
     /**
-     * This method allows the */
+     * This method sets the occupier of the Exit Tile. If the occupier is the player,
+     * the game is won.
+     *
+     * @param occupant The actor occupying this tile.
+     */
     @Override
     public void setOccupier(Actor occupant) {
-        super.setOccupier(occupant);
-        GameState.manager.winGame();
+         super.setOccupier(occupant);
+         GameState.manager.winGame();
     }
 
+    /**
+     * Returns a string of the Exit tile.
+     *
+     * @return The string "E".
+     */
     public String toString(){
         return "E";
     }

@@ -12,10 +12,9 @@ import java.util.Map;
  *
  * @author Ed Whitwell
  */
-public class LockedDoor extends Floor{
+public class LockedDoor extends Floor {
 
-    //A Map of the KeyColours (Enum) and their corresponding door image.
-    //Colours: [Red, Blue, Green, Yellow]
+    //A mapping of KeyColours to their corresponding door images.
     private static final Map<KeyColours, Image> colours = Map.of(
             KeyColours.RED, new Image("Tile Images/Locked Doors/red_door.png"),
             KeyColours.BLUE, new Image("Tile Images/Locked Doors/blue_door.png"),
@@ -23,7 +22,6 @@ public class LockedDoor extends Floor{
             KeyColours.YELLOW, new Image("Tile Images/Locked Doors/yellow_door.png")
     );
 
-    //The Door's colour
     private final KeyColours colour;
 
     /**
@@ -34,8 +32,8 @@ public class LockedDoor extends Floor{
      * @param row An integer representing the Grid Row that the tile is in.
      * @param col An integer representing the Grid Column that the tile is in.
      * @param doorColour The Colour of the Door
-     * */
-    public LockedDoor(int row, int col, KeyColours doorColour){
+     */
+    public LockedDoor(int row, int col, KeyColours doorColour) {
         super(row, col, false);
         image = colours.get(doorColour);
         colour = doorColour;
@@ -45,18 +43,28 @@ public class LockedDoor extends Floor{
      * The accessor method for the Door's colour.
      *
      * @return The Door's colour (The colour of the key required to unlock it).
-     * */
-    public KeyColours getColour(){
+     */
+    public KeyColours getColour() {
         return colour;
     }
 
-    public void unLock(){
+    /**
+     * Unlocks the locked door, replaced with path.
+     * The new tile uses the same occupier as the current tile.
+     */
+    public void unLock() {
         Floor newTile = new Floor(row, column, true);
         newTile.setOccupier(this.getOccupier());
         GameState.level.replaceTile(newTile, this);
     }
 
-    public String toString(){
+    /**
+     * Returns a string of the tile's color.
+     * This shows the first letter of the color's name.
+     *
+     * @return The first letter of the tile's color as a string.
+     */
+    public String toString() {
         return colour.toString().substring(0, 1);
     }
 }

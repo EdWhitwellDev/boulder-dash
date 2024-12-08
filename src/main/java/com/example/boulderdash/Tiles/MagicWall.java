@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
  * @author Ed Whitwell
  */
 
-public class MagicWall extends Tile{
+public class MagicWall extends Tile {
 
     /**
      * This is the constructor for a Magic Wall Tile. It sets the tile's row and column, and
@@ -20,11 +20,18 @@ public class MagicWall extends Tile{
      * @param row An integer representing the Grid Row that the tile object is in.
      * @param col An integer representing the Grid Column that the tile object is in.
      */
-    public MagicWall(int row, int col){
+    public MagicWall(int row, int col) {
         super(row, col, false);
         image = new Image("Tile Images/magic_wall.png");
     }
-    public String toString(){
+
+    /**
+     * Returns representation of the tile.
+     * This is set to "M".
+     *
+     * @return The string "M".
+     */
+    public String toString() {
         return "M";
     }
 }

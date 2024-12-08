@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
  *
  * @author Ed Whitwell
  */
-public class Floor extends Tile{
+public class Floor extends Tile {
 
     /**
      * This is the constructor for the Floor Tile (either Dirt or Path). It sets the tile's
@@ -26,7 +26,6 @@ public class Floor extends Tile{
         this.isPath = isPath;
 
         //Sets the Tile's image based on whether it is
-        // dirt (isPath==false) or path (isPath==true)
         image = isPath ? new Image("Tile Images/path.png") : new Image("Tile Images/dirt.png");
     }
 
@@ -36,19 +35,18 @@ public class Floor extends Tile{
      * occupies the tile.
      *
      * @param occupant The Actor being occupying in the tile.
-     * */
+     */
     @Override
     public void setOccupier(Actor occupant) {
-        //Sets the tile's occupant to the incoming occupant
         super.setOccupier(occupant);
 
-        //This changes the isPath value and the tile's image when a Dirt tile (isPath==false)
-        // is occupied by the Player.
-        if (this instanceof LockedDoor){
+        // Unlock the tile if it is a LockedDoor.
+        if (this instanceof LockedDoor) {
             ((LockedDoor) this).unLock();
         }
 
-        if (!isPath && occupant instanceof Player){
+        // Transform Dirt to Path if occupied by a Player.
+        if (!isPath && occupant instanceof Player) {
             isPath = true;
             image = new Image("Tile Images/path.png");
         }
@@ -60,12 +58,18 @@ public class Floor extends Tile{
      * is a Path Tile, if it is false it is a Dirt Tile.
      *
      * @return Whether the tile is a Path tile or not.
-     * */
-    public boolean getIsPath(){
+     */
+    public boolean getIsPath() {
         return isPath;
     }
 
-    public String toString(){
+    /**
+     * Returns a string of the tile.
+     * If the tile is a path, it returns "P". Otherwise, it returns "D".
+     *
+     * @return "P" if the tile is a path, otherwise "D".
+     */
+    public String toString() {
         return isPath ? "P" : "D";
     }
 
