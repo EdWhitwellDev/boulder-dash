@@ -190,7 +190,7 @@ public class Player extends Actor {
                     Audio.getInstance().playSoundEffect(
                             "/Music/DiamondCollect.mp3",
                             1.0);
-                    GameState.manager.killActor(occupier);
+                    GameState.getManager().killActor(occupier);
 
                     //If the tile holds a Boulder. If the Boulder
                     // cannot be pushed, the Player's movement is
@@ -223,7 +223,7 @@ public class Player extends Actor {
             // the number of Diamonds required to exit. Otherwise,
             // the Player's movement is blocked.
             if (nextTile instanceof Exit) {
-                if (diamondsCollected < GameState.level.getDiamondsRequired()) {
+                if (diamondsCollected < GameState.getLevel().getDiamondsRequired()) {
                     return;
                 }
 

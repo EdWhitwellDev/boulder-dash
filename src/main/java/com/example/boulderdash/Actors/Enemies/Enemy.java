@@ -84,14 +84,14 @@ public class Enemy extends Actor {
      * diamonds in the remaining space.
      */
     public void explode() {
-        GameState.manager.killActor(this);
+        GameState.getManager().killActor(this);
 
         List<Tile> surroundingTiles = getPosition().get3x3();
         for (Tile tile : surroundingTiles) {
             if (!(tile instanceof TitaniumWall)) {
                 Tile remains = tile.destroy();
                 Explosion explosion = new Explosion(remains, buttery);
-                GameState.manager.addActor(explosion);
+                GameState.getManager().addActor(explosion);
             }
         }
     }
@@ -103,7 +103,7 @@ public class Enemy extends Actor {
      * */
     public void explodeSingle() {
         Explosion explosion = new Explosion(getPosition(), false);
-        GameState.manager.addActor(explosion);
-        GameState.manager.killActor(this);
+        GameState.getManager().addActor(explosion);
+        GameState.getManager().killActor(this);
     }
 }

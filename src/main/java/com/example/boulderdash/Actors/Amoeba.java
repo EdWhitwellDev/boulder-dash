@@ -129,7 +129,7 @@ public class Amoeba extends Actor {
 
             Amoeba newAmoeba = new Amoeba(growthTile, growthRate, maxSize);
             growthTile.setOccupier(newAmoeba);
-            GameState.manager.addActor(newAmoeba);
+            GameState.getManager().addActor(newAmoeba);
         }
     }
 
@@ -232,8 +232,8 @@ public class Amoeba extends Actor {
                         : new Diamond(getPosition());
         getPosition().setOccupier(fallingObject);
 
-        GameState.manager.addActor(fallingObject);
-        GameState.manager.killActor(this);
+        GameState.getManager().addActor(fallingObject);
+        GameState.getManager().killActor(this);
     }
 
     /**

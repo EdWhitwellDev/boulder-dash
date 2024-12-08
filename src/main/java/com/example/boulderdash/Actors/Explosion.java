@@ -55,11 +55,11 @@ public class Explosion extends Actor {
     public void move() {
         ticksOld++;
         if (ticksOld == LIFE_TIME) {
-            GameState.manager.killActor(this);
+            GameState.getManager().killActor(this);
             if (dropDiamond) {
                 Tile remains = getPosition().destroy();
                 Diamond drops = new Diamond(remains);
-                GameState.manager.addActor(drops);
+                GameState.getManager().addActor(drops);
             }
         }
         setImage(getExplosionVariant());

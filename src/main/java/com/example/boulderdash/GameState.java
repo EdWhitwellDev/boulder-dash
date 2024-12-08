@@ -11,22 +11,13 @@ import java.util.List;
  */
 public class GameState {
 
-    // Responsible for controlling the game loop and rendering
-    public static GameManager manager;
 
-    // Current level being played
-    public static Level level;
-
-    // Player character in the game
-    public static Player player;
-
-    public static void setActors(List<Actor> actorList) {
-        actors = actorList;
-    }
-    public static List<Actor> getActors() {
-        return actors;
-    }
+    private static GameManager manager; // Responsible for controlling the game loop and rendering
+    private static Level level; // Current level being played
+    private static Player player; // Player character in the game
     private static List<Actor> actors; // Global list of actors
+
+
 
     /**
      * Sets up the game state with the current level, player, and game manager.
@@ -41,5 +32,25 @@ public class GameState {
         level = currentLevel;
         player = currentPlayer;
         manager = management;
+    }
+
+    public static GameManager getManager() {
+        return manager;
+    }
+
+    public static Level getLevel() {
+        return level;
+    }
+
+    public static Player getPlayer() {
+        return player;
+    }
+
+    public static void setActors(List<Actor> actorList) {
+        actors = actorList;
+    }
+
+    public static List<Actor> getActors() {
+        return actors;
     }
 }

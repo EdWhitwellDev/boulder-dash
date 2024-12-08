@@ -105,7 +105,7 @@ public abstract class FallingObject extends Actor {
      */
     public void fall() {
         if (exploded) {
-            GameState.manager.killActor(this);
+            GameState.getManager().killActor(this);
         } else {
             if (fallDelay > 0) {
                 fallDelay--;
@@ -196,7 +196,7 @@ public abstract class FallingObject extends Actor {
                     return true;
                 }
                 if (occupant instanceof Player) {
-                    GameState.manager.looseGame(
+                    GameState.getManager().looseGame(
                             "Crushed by a "
                                     + this.getClass().getSimpleName());
                     Audio.getInstance().playSoundEffect(

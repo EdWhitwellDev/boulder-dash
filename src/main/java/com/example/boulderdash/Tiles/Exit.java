@@ -34,7 +34,7 @@ public class Exit extends Floor {
     @Override
     public void setOccupier(Actor occupant) {
          super.setOccupier(occupant);
-         GameState.manager.winGame();
+         GameState.getManager().winGame();
     }
 
     /**

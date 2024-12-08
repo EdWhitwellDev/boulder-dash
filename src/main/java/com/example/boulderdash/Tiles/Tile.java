@@ -252,14 +252,14 @@ public class Tile {
         //If the tile is occupied, kills the occupant.
         if (occupier != null) {
             if (occupier instanceof Player) {
-                GameState.manager.looseGame("Killed by Explosion");
+                GameState.getManager().looseGame("Killed by Explosion");
             }
-            GameState.manager.killActor(occupier);
+            GameState.getManager().killActor(occupier);
         }
 
         //Creates a new Path tile, replaces the current tile with this new tile and returns the new tile.
         Tile remains = new Floor(row, column, true);
-        GameState.level.replaceTile(remains, this);
+        GameState.getLevel().replaceTile(remains, this);
         return remains;
     }
 

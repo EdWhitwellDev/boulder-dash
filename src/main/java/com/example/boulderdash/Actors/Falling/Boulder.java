@@ -53,8 +53,8 @@ public class Boulder extends FallingObject {
      * interacting with a {@link MagicWall}.
      */
     public void transform() {
-        GameState.manager.killActor(this);
-        GameState.manager.addActor(new Diamond(getPosition()));
+        GameState.getManager().killActor(this);
+        GameState.getManager().addActor(new Diamond(getPosition()));
     }
 
     /**

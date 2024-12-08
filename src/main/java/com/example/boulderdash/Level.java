@@ -182,7 +182,7 @@ public class Level {
         levelObj.put("Actors", actorsArrayJson);
         levelObj.put("Tiles", tilesArrayJson);
         levelObj.put("DiamondsRequired", diamondsRequired);
-        levelObj.put("TimeRemaining", GameState.manager.timeRemaining());
+        levelObj.put("TimeRemaining", GameState.getManager().timeRemaining());
         levelObj.put("TileSize", tileSize);
         levelObj.put("AmoebaGrowthRate", amoebaGrowthRate);
         levelObj.put("AmoebaMaxSize", amoebaMaxSize);

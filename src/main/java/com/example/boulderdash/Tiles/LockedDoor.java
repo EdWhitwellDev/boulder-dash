@@ -55,7 +55,7 @@ public class LockedDoor extends Floor {
     public void unLock() {
         Floor newTile = new Floor(row, column, true);
         newTile.setOccupier(this.getOccupier());
-        GameState.level.replaceTile(newTile, this);
+        GameState.getLevel().replaceTile(newTile, this);
     }
 
     /**

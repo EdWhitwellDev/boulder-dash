@@ -79,7 +79,7 @@ public abstract class Actor {
                     Class<?> enemyClass = collider.getClass();
                     String enemyType = enemyClass.getSimpleName();
                     if (collider instanceof Fly fly) {
-                        GameState.manager.looseGame(
+                        GameState.getManager().looseGame(
                                 "Killed by a "
                                         + (fly.isButtery() ? "Butterfly"
                                         : "Firefly"));
@@ -87,7 +87,7 @@ public abstract class Actor {
                                 "/Music/MinecraftDeath.mp3",
                                 1.0);
                     } else {
-                        GameState.manager.looseGame(
+                        GameState.getManager().looseGame(
                                 "Killed by a "
                                         + enemyType);
                         Audio.getInstance().playSoundEffect(
@@ -101,7 +101,7 @@ public abstract class Actor {
                     Class<?> enemyClass = this.getClass();
                     String enemyType = enemyClass.getSimpleName();
                     if (this instanceof Fly fly) {
-                        GameState.manager.looseGame(
+                        GameState.getManager().looseGame(
                                 "Killed by a "
                                         + (fly.isButtery() ? "Butterfly"
                                         : "Firefly"));
@@ -109,7 +109,7 @@ public abstract class Actor {
                                 "/Music/MinecraftDeath.mp3",
                                         1.0);
                     } else {
-                        GameState.manager.looseGame(
+                        GameState.getManager().looseGame(
                                 "Killed by a "
                                         + enemyType);
                         Audio.getInstance().playSoundEffect(

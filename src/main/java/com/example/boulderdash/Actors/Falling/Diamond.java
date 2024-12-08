@@ -28,8 +28,8 @@ public class Diamond extends FallingObject {
      * interacting with a {@link MagicWall}.
      */
     public void transform() {
-        GameState.manager.killActor(this);
-        GameState.manager.addActor(new Boulder(getPosition()));
+        GameState.getManager().killActor(this);
+        GameState.getManager().addActor(new Boulder(getPosition()));
     }
 
     /**
