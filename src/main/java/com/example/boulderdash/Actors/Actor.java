@@ -227,6 +227,12 @@ public abstract class Actor {
     public void setImage(final Image newImage) {
         this.image = newImage;
     }
+    public void setTransferring(boolean transferring) {
+        isTransferring = transferring;
+    }
+    public void setPreviousPosition(Tile newPreviousPosition) {
+        previousPosition = newPreviousPosition;
+    }
 
     /**
      * Changes the position of an Actor to a new tile and detects any

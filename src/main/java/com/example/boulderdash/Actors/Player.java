@@ -132,6 +132,7 @@ public class Player extends Actor {
      * @param direction The new direction of the Player
      * */
     public void setDirection(final Direction direction) {
+        tickCoolDown = 0;
         setCurrentDirection(direction);
         if (getCurrentDirection() != Direction.STATIONARY) {
             setImage(ORIENTATION.get(getCurrentDirection()));
@@ -151,6 +152,7 @@ public class Player extends Actor {
                 processMove(nextTile);
                 Audio.getInstance().playSoundEffect("/Music/Move.mp3", 1.0);
             }
+            tickCoolDown = 2;
         }
     }
 

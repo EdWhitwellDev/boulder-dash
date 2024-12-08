@@ -1,6 +1,7 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+import com.example.boulderdash.Actors.Falling.FallingObject;
 import com.example.boulderdash.enums.KeyColours;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;

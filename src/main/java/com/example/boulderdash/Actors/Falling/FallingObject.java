@@ -87,6 +87,9 @@ public abstract class FallingObject extends Actor {
      * @param newTile is the new {@link Tile} to move to.
      */
     public void setPosition(final Tile newTile) {
+        setPreviousPosition(getPosition());
+        setTransferring(true);
+
         if (getPosition() != null) {
             getPosition().setOccupier(null);
         }
