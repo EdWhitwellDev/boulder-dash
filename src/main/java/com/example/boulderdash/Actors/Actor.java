@@ -227,9 +227,19 @@ public abstract class Actor {
     public void setImage(final Image newImage) {
         this.image = newImage;
     }
+
+    /**
+     * Sets the state of the transferring flag.
+     * @param transferring {@code True} if transferring is occuring.
+     */
     public void setTransferring(boolean transferring) {
         isTransferring = transferring;
     }
+
+    /**
+     * Sets the previous position of an entity.
+     * @param newPreviousPosition the new position set as the previous position.
+     */
     public void setPreviousPosition(Tile newPreviousPosition) {
         previousPosition = newPreviousPosition;
     }
