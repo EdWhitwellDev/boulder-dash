@@ -1,6 +1,9 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.Cursor;
 import com.example.boulderdash.Actors.Falling.FallingObject;
 import com.example.boulderdash.enums.KeyColours;
 import com.example.boulderdash.Actors.Player;
@@ -45,6 +48,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Comparator;
+
+import static javafx.scene.control.PopupControl.USE_PREF_SIZE;
 
 /**
  * Main controller for the game. This class handles game initialisation,
@@ -623,57 +628,98 @@ public class GameManager extends Application {
         userMenuLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_USER_MENU));
         userMenuLabel.setStyle("-fx-text-fill: white;");
 
-        // ListView to display users
-        ListView<String> userList = new ListView<>();
-        userList.setStyle("-fx-background-color: #222;" +
-                "-fx-control-inner-background: #222;" +
-                "-fx-border-color: #222;" +
-                "-fx-border-width: 1;" +
-                "-fx-border-radius: 10;" +
-                "-fx-background-radius: 10;" +
-                "-fx-text-fill: white;" +
-                "-fx-selection-bar: #505050;" +
-                "-fx-selection-bar-non-focused: #404040"
-        );
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setStyle("-fx-background: #222; " +
+                "-fx-background-color: transparent; " +
+                "-fx-border-color: transparent;");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        HBox profilesContainer = new HBox(20);
+        profilesContainer.setStyle("-fx-background-color: transparent; -fx-padding: 20;");
+        profilesContainer.setAlignment(Pos.CENTER);
+
+        StringProperty selectedUser = new SimpleStringProperty(null);
 
         JSONArray users = (JSONArray) playerProfileObj.get("Users");
         if (users != null) {
-            users.forEach(user -> userList.getItems().add(user.toString()));
+            int[] userCount = {1}; // Array to allow modification in lambda
+            users.forEach(user -> {
+                VBox profileCard = new VBox(10);
+                profileCard.setStyle("-fx-background-color: #3a3a3a;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-padding: 15;" +
+                        "-fx-min-width: 150;" +
+                        "-fx-max-width: 150;" +
+                        "-fx-min-height: 150;" +
+                        "-fx-alignment: center;");
+
+                Label numberLabel = new Label(String.valueOf(userCount[0]));
+                numberLabel.setStyle("-fx-text-fill: white; -fx-font-size: 32; -fx-font-weight: bold;");
+
+                Label nameLabel = new Label(user.toString());
+                nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
+
+                profileCard.getChildren().addAll(numberLabel, nameLabel);
+
+                profileCard.setOnMouseEntered(e -> {
+                    profileCard.setStyle("-fx-background-color: #4a4a4a;" +
+                            "-fx-background-radius: 10;" +
+                            "-fx-padding: 15;" +
+                            "-fx-min-width: 150;" +
+                            "-fx-max-width: 150;" +
+                            "-fx-min-height: 150;" +
+                            "-fx-alignment: center;" +
+                            "-fx-scale-x: 1.1;" +
+                            "-fx-scale-y: 1.1;");
+                    profileCard.setCursor(Cursor.HAND);
+                });
+
+                profileCard.setOnMouseExited(e -> {
+                    if (selectedUser.get() == null ||
+                            !selectedUser.get().equals(user.toString())) {
+                        profileCard.setStyle("-fx-background-color: #3a3a3a;" +
+                                "-fx-background-radius: 10;" +
+                                "-fx-padding: 15;" +
+                                "-fx-min-width: 150;" +
+                                "-fx-max-width: 150;" +
+                                "-fx-min-height: 150;" +
+                                "-fx-alignment: center;" +
+                                "-fx-scale-x: 1;" +
+                                "-fx-scale-y: 1;");
+                    }
+                });
+
+                profileCard.setOnMouseClicked(e -> {
+                    profilesContainer.getChildren().forEach(node -> {
+                        if (node instanceof VBox) {
+                            node.setStyle("-fx-background-color: #3a3a3a;" +
+                                    "-fx-background-radius: 10;" +
+                                    "-fx-padding: 15;" +
+                                    "-fx-min-width: 150;" +
+                                    "-fx-max-width: 150;" +
+                                    "-fx-min-height: 150;" +
+                                    "-fx-alignment: center;");
+                        }
+                    });
+                    profileCard.setStyle("-fx-background-color: #4a4a4a;" +
+                            "-fx-background-radius: 10;" +
+                            "-fx-padding: 15;" +
+                            "-fx-min-width: 150;" +
+                            "-fx-max-width: 150;" +
+                            "-fx-min-height: 150;" +
+                            "-fx-alignment: center;");
+                    selectedUser.set(user.toString());
+                });
+
+                profilesContainer.getChildren().add(profileCard);
+                userCount[0]++;
+            });
         }
 
-        int userCount = users != null ? users.size() : 0;
-        userList.setPrefHeight(Math.min(userCount
-                * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
-        userList.setMaxWidth(USER_LIST_MAX_WIDTH);
-
-        userList.setCellFactory(lv -> new ListCell<String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setStyle(null);
-                } else {
-                    setText(item);
-                    setStyle("-fx-text-fill: white;" +
-                            "-fx-padding: 8 12 8 12;");
-                    setOnMouseEntered(e-> {
-                        if (!isSelected()) {
-                            setStyle("-fx-background-color: #3d3d3d;" +
-                                    "-fx-text-fill: white;" +
-                                    "-fx-padding: 8 12 8 12;");
-                        }
-                    });
-                    setOnMouseExited(e-> {
-                        if (!isSelected()) {
-                            setStyle("-fx-background-color: transparent;" +
-                                    "-fx-text-fill: white;" +
-                                    "-fx-padding: 8 12 8 12;");
-                        }
-                    });
-                }
-            }
-        });
+        scrollPane.setContent(profilesContainer);
+        scrollPane.setPrefHeight(200);
+        scrollPane.setMaxWidth(USE_PREF_SIZE);
 
         String buttonStyle = "-fx-background-color: #3a3a3a;" +
                 "-fx-text-fill: white;" +
@@ -695,8 +741,25 @@ public class GameManager extends Application {
             dialogPane.lookup(".header-panel").setStyle("-fx-background-color: #222;");
 
             String newUser = dialog.showAndWait().orElse("").trim();
-            if (!newUser.isEmpty() && !userList.getItems().contains(newUser)) {
-                userList.getItems().add(newUser);
+            if (!newUser.isEmpty() && !users.contains(newUser)) {
+                int newNumber = profilesContainer.getChildren().size() + 1;
+                VBox profileCard = new VBox(10);
+                profileCard.setStyle("-fx-background-color: #3a3a3a;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-padding: 15;" +
+                        "-fx-min-width: 150;" +
+                        "-fx-max-width: 150;" +
+                        "-fx-min-height: 150;" +
+                        "-fx-alignment: center;");
+
+                Label numberLabel = new Label(String.valueOf(newNumber));
+                numberLabel.setStyle("-fx-text-fill: white; -fx-font-size: 32; -fx-font-weight: bold;");
+
+                Label nameLabel = new Label(newUser);
+                nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
+
+                profileCard.getChildren().addAll(numberLabel, nameLabel);
+
                 users.add(newUser);
                 JSONObject newUserObj = new JSONObject();
                 newUserObj.put("HighScores", new JSONObject());
@@ -705,8 +768,8 @@ public class GameManager extends Application {
                 newUserObj.put("CompletedLevels", new JSONArray());
                 playerProfileObj.put(newUser, newUserObj);
                 savePlayerProfile();
-                userList.setPrefHeight(Math.min(users.size()
-                        * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
+
+                profilesContainer.getChildren().add(profileCard);
             }
         });
 
@@ -714,10 +777,8 @@ public class GameManager extends Application {
         removeUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         removeUserButton.setStyle(buttonStyle);
         removeUserButton.setOnAction(e -> {
-            String selectedUser = userList.getSelectionModel().
-                    getSelectedItem();
-            if (selectedUser != null) {
-                if (selectedUser.equals(currentUser)) {
+            if (selectedUser.get() != null) {
+                if (selectedUser.get().equals(currentUser)) {
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                     errorAlert.setTitle("Error");
                     errorAlert.setHeaderText("Current user cannot be removed!");
@@ -725,12 +786,26 @@ public class GameManager extends Application {
                             "Please switch to a different user and try again.");
                     errorAlert.showAndWait();
                 } else {
-                    userList.getItems().remove(selectedUser);
-                    users.remove(selectedUser);
-                    playerProfileObj.remove(selectedUser);
+                    profilesContainer.getChildren().removeIf(node -> {
+                        if (node instanceof VBox) {
+                            Label label = (Label) ((VBox) node).getChildren().get(1);
+                            return label.getText().equals(selectedUser.get());
+                        }
+                        return false;
+                    });
+                    users.remove(selectedUser.get());
+                    playerProfileObj.remove(selectedUser.get());
                     savePlayerProfile();
-                    userList.setPrefHeight(Math.min(users.size()
-                            * USER_LIST_ITEM_HEIGHT, LEVELS_LIST_HEIGHT));
+                    selectedUser.set(null);
+
+                    // Renumber remaining profiles
+                    int[] newCount = {1};
+                    profilesContainer.getChildren().forEach(node -> {
+                        if (node instanceof VBox) {
+                            Label numberLabel = (Label) ((VBox) node).getChildren().get(0);
+                            numberLabel.setText(String.valueOf(newCount[0]++));
+                        }
+                    });
                 }
             }
         });
@@ -739,10 +814,8 @@ public class GameManager extends Application {
         selectUserButton.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         selectUserButton.setStyle(buttonStyle);
         selectUserButton.setOnAction(e -> {
-            String selectedUser =
-                    userList.getSelectionModel().getSelectedItem();
-            if (selectedUser != null) {
-                changeCurrentUser(selectedUser);
+            if (selectedUser.get() != null) {
+                changeCurrentUser(selectedUser.get());
                 setupHomeScreen();
                 primaryStage.setScene(homeScene);
             }
@@ -757,7 +830,7 @@ public class GameManager extends Application {
                 removeUserButton, selectUserButton, backButton);
         buttonBox.setStyle("-fx-alignment: center; -fx-padding: 15 0 0 0");
 
-        userMenuScreen.getChildren().addAll(userMenuLabel, userList, buttonBox);
+        userMenuScreen.getChildren().addAll(userMenuLabel, scrollPane, buttonBox);
 
         Scene userMenuScene = new Scene(userMenuScreen);
         primaryStage.setScene(userMenuScene);
