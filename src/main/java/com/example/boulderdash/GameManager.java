@@ -99,6 +99,7 @@ public class GameManager extends Application {
     private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
     private static final int USER_LIST_ITEM_HEIGHT = 35;
     private static final int PAUSE_MENU_SPACING = 5;
+
     // Attributes
     private String deathCause = "";
     private List<Actor> deadActors = new ArrayList<>();
