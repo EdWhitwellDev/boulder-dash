@@ -99,6 +99,7 @@ public abstract class FallingObject extends Actor {
             getPosition().setOccupier(null);
         }
         super.setPosition(newTile);
+        // Handle interactions with the new tile
         if (newTile != null) {
             newTile.setOccupier(this);
             if (newTile instanceof MagicWall) {
@@ -115,12 +116,15 @@ public abstract class FallingObject extends Actor {
         if (exploded) {
             GameState.getManager().killActor(this);
         } else {
+            // Delay to control speed
             if (fallDelay > 0) {
                 fallDelay--;
                 return;
             }
             fallDelay = 2;
+            // Get the tile directly below
             Tile underTile = getPosition().getDown();
+            // Check if the object can fall onto the tile below
             if (isAbleToFall(underTile)) {
                 setPosition(underTile);
                 isFalling = true;
@@ -132,7 +136,6 @@ public abstract class FallingObject extends Actor {
                 roll();
             }
         }
-
     }
 
     /**
@@ -154,14 +157,17 @@ public abstract class FallingObject extends Actor {
      * If an object can roll, it's position is updated either left or right.
      */
     private void roll() {
+        // Delay to control speed
         if (rollDelay > 0) {
             rollDelay--;
             return;
         }
         rollDelay = DELAY;
+        // Check the tiles to the left and right
         Tile leftTile = getPosition().getLeft();
         Tile rightTile = getPosition().getRight();
 
+        // Roll to the first available direction
         if (isAbleToRollTo(leftTile)) {
             setPosition(leftTile);
         } else if (isAbleToRollTo(rightTile)) {
