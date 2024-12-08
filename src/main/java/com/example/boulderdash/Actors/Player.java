@@ -220,6 +220,7 @@ public class Player extends Actor {
                 if (noKeys <= 0) {
                     return;
                 }
+                Audio.getInstance().playSoundEffect("/Music/DoorOpen.mp3", 1);
                 keys.put(requiredKey, keys.get(requiredKey) - 1);
             }
 
