@@ -166,6 +166,7 @@ public class Player extends Actor {
      * */
     public void collectKey(final KeyColours keyColour) {
         keys.put(keyColour, keys.get(keyColour) + 1);
+        Audio.getInstance().playSoundEffect("/Music/Key.mp3", 1);
     }
 
     /**
@@ -219,6 +220,7 @@ public class Player extends Actor {
                 if (noKeys <= 0) {
                     return;
                 }
+                Audio.getInstance().playSoundEffect("/Music/DoorOpen.mp3", 1);
                 keys.put(requiredKey, keys.get(requiredKey) - 1);
             }
 
