@@ -343,6 +343,7 @@ public class GameManager extends Application {
         dead = true;
         drawGame();
         showLevelCompleteScreen();
+        Audio.getInstance().playSoundEffect("/Music/Victory.mp3", 1);
     }
 
     /**
