@@ -138,6 +138,9 @@ public class Level {
             }
             player.setKeys(keys);
 
+            rows = tiles.size();
+            cols = tiles.get(0).size();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

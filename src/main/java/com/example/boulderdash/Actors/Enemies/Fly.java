@@ -142,7 +142,7 @@ public class Fly extends Enemy {
                 symbol + ","
                         + getPosition().getRow()
                         + "," + getPosition().getColumn()
-                        + "," + isButtery() + ","
+                        + "," + rightHanded + ","
                         + getCurrentDirection().toString();
     }
 
