@@ -57,6 +57,7 @@ public class Fly extends Enemy {
                 new Image("Actor Images/Firefly/firefly_right.png")
     );
     private static final int TICK_COOL_DOWN_RESET = 3;
+    private static final int MAX_TURN = 5;
 
     /**
      * Boolean to check if the 'Fly' is moving Right or Left.
@@ -107,7 +108,7 @@ public class Fly extends Enemy {
             tickCoolDown--;
         } else {
             boolean turnFlag = false;
-            if (consecutiveTurning > 5) {
+            if (consecutiveTurning > MAX_TURN) {
                 //TODO Make into a Constant, not a Magic Number!
                 explodeSingle();
             } else {
