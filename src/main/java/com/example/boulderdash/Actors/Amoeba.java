@@ -127,6 +127,7 @@ public class Amoeba extends Actor {
         FallingObject fallingObject =
                 isBoulder ? new Boulder(getPosition())
                         : new Diamond(getPosition());
+        getPosition().setIsPath(true);
         getPosition().setOccupier(fallingObject);
 
         GameState.getManager().addActor(fallingObject);

@@ -195,6 +195,9 @@ public class Tile {
      * */
     public void setIsPath(final boolean ifIsPath) {
         this.isPath = ifIsPath;
+        if (isPath) {
+            setImage(new Image("Tile Images/path.png"));
+        }
     }
     /**
      * This method sets a tile's occupier to the one inputted, and sets the
