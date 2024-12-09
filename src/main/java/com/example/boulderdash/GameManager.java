@@ -488,6 +488,12 @@ public class GameManager extends Application {
         saveScore(score);
         tickTimeline.stop();
         currentLevel++;
+
+        if (currentLevel == NUMBER_OF_LEVELS + 1){
+            userProfileObj.put("CompletedTheGame", true);
+            savePlayerProfile();
+
+        }
         updateCurrentLevel();
         drawGame();
         showLevelCompleteScreen();
@@ -1944,8 +1950,6 @@ public class GameManager extends Application {
             scoreLabel.setStyle("-fx-text-fill: lightgreen; -fx-font-size: 48;"
                     + " -fx-font-family: monospace;");
 
-            saveScore(score);
-
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
 
@@ -2015,6 +2019,9 @@ public class GameManager extends Application {
         }
     }
     private void updateCurrentLevel() {
+        if (currentLevel == NUMBER_OF_LEVELS + 1) {
+            currentLevel = 1;
+        }
         userProfileObj.put("CurrentLevel", currentLevel);
         try {
             JSONParser parser = new JSONParser();
