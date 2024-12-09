@@ -185,6 +185,10 @@ public class GameManager extends Application {
     private static final int PAUSE_MENU_SPACING = 5;
     private static final int KEY_AMOUNT = 4;
     private static final int KEY_IMAGE_SIZE = 50;
+    private static final int BACKGROUND_SIZE = 100;
+    private static final int IMAGE_SIZE = 60;
+    private static final double STEP_SIZE = 0.05;
+    private static final int CYCLE_COUNT = 1000;
     // Attributes
     /**
      * The reason the player died in the game. Displayed to the user
@@ -695,8 +699,8 @@ public class GameManager extends Application {
 
             ImageView levelImage = new ImageView(new Image(
                     getClass().getResourceAsStream(levelImages[i - 1])));
-            levelImage.setFitWidth(60);
-            levelImage.setFitHeight(60);
+            levelImage.setFitWidth(IMAGE_SIZE);
+            levelImage.setFitHeight(IMAGE_SIZE);
             levelImage.setPreserveRatio(true);
 
             Label numberLabel = new Label("Level " + i);
@@ -762,7 +766,7 @@ public class GameManager extends Application {
         }
 
         scrollPane.setContent(levelsContainer);
-        scrollPane.setPrefHeight(200);
+        scrollPane.setPrefHeight(PAUSE_MENU_MAX_HEIGHT);
         scrollPane.setMaxWidth(USE_PREF_SIZE);
 
         String buttonStyle = "-fx-background-color: #3a3a3a;"
@@ -936,7 +940,7 @@ public class GameManager extends Application {
         }
 
         scrollPane.setContent(profilesContainer);
-        scrollPane.setPrefHeight(200);
+        scrollPane.setPrefHeight(PAUSE_MENU_MAX_HEIGHT);
         scrollPane.setMaxWidth(USE_PREF_SIZE);
 
         String buttonStyle = "-fx-background-color: #3a3a3a;"
@@ -1366,14 +1370,15 @@ public class GameManager extends Application {
         StackPane storyPane = new StackPane();
         Text storyText = new Text();
         storyText.setText(readChapter(chapter));
-        storyText.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        storyText.setFont(Font.font("Arial", FontWeight.BOLD, FONT_SIZE_TITLE));
         storyText.setFill(Paint.valueOf("white"));
         storyText.setTextAlignment(TextAlignment.CENTER);
         BackgroundImage backgroundImageView =
                 new BackgroundImage(new Image("StoryImage.png"),
                         BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
                         BackgroundPosition.DEFAULT,
-                        new BackgroundSize(100, 100, true, true, false, true));
+                        new BackgroundSize(BACKGROUND_SIZE,
+                                BACKGROUND_SIZE, true, true, false, true));
         Background background = new Background(backgroundImageView);
         storyPane.setBackground(background);
         storyPane.getChildren().add(storyText);
@@ -1395,12 +1400,13 @@ public class GameManager extends Application {
         // create a timeline that will move the text up the screen
         // the text should move up the screen and get smaller as it goes up
         Timeline storyTimeline =
-                new Timeline(new KeyFrame(Duration.seconds(0.05), event -> {
+                new Timeline(new KeyFrame(Duration.seconds(STEP_SIZE),
+                        event -> {
             storyText.setTranslateY(storyText.getTranslateY() - 1);
             storyText.setFont(Font.font("Arial", FontWeight.BOLD,
-                    storyText.getFont().getSize() - 0.05));
+                    storyText.getFont().getSize() - STEP_SIZE));
         }));
-        storyTimeline.setCycleCount(1000);
+        storyTimeline.setCycleCount(CYCLE_COUNT);
         storyTimeline.play();
 
 
