@@ -488,7 +488,7 @@ public class GameManager extends Application {
         saveScore(score);
         tickTimeline.stop();
         currentLevel++;
-
+        updateCurrentLevel();
         drawGame();
         showLevelCompleteScreen();
         Audio.getInstance().playSoundEffect("/Music/Victory.mp3", 1);
@@ -1419,7 +1419,15 @@ public class GameManager extends Application {
         Scene storyScene = new Scene(storyPane);
         // add a button to the scene to go to next scene
         Button nextButton = new Button("Next");
-        nextButton.setOnAction(e -> startNewGame());
+        nextButton.setOnAction(e -> {
+            if (chapter == NUMBER_OF_LEVELS + 1) {
+                restartGame();
+                primaryStage.setScene(homeScene);
+            } else {
+                startNewGame();
+            }
+                }
+                );
         storyPane.getChildren().add(nextButton);
 
         // put the button in the bottom right corner and make it transparent
@@ -1442,6 +1450,12 @@ public class GameManager extends Application {
                     storyText.getFont().getSize() - STEP_SIZE));
             if (storyText.getTranslateY() < -storyText.getBoundsInLocal().getHeight()) {
                 storyTimeline.stop();
+                if (chapter == NUMBER_OF_LEVELS + 1) {
+                    primaryStage.setScene(homeScene);
+                } else {
+                    loadNextLevel();
+                }
+
                 primaryStage.setScene(homeScene);
             }
         }));
