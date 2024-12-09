@@ -1453,12 +1453,21 @@ public class GameManager extends Application {
                 if (chapter == NUMBER_OF_LEVELS + 1) {
                     primaryStage.setScene(homeScene);
                 } else {
-                    loadNextLevel();
+                    startNewGame();
                 }
 
                 primaryStage.setScene(homeScene);
             }
         }));
+        nextButton.setOnAction(e -> {
+            storyTimeline.stop();
+            if (chapter == NUMBER_OF_LEVELS + 1) {
+                restartGame();
+                primaryStage.setScene(homeScene);
+            } else {
+                startNewGame();
+            }
+        });
         storyTimeline.setCycleCount(CYCLE_COUNT);
         storyTimeline.play();
     }
