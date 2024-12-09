@@ -1701,7 +1701,9 @@ public class GameManager extends Application {
             dead = false;
             timeElapsed = 0;
             GameState.setupSate(level, player, this);
-            tickTimeline.play();
+            if (!tickTimeline.getStatus().equals(Timeline.Status.RUNNING)) {
+                tickTimeline.play();
+            }
             stackPane.getChildren().remove(levelCompleteMenu);
             drawGame();
         }
