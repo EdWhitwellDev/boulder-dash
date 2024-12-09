@@ -1539,6 +1539,14 @@ public class GameManager extends Application {
                 hidePauseMenu();
                 primaryStage.setScene(homeScene);
     });
+        loadButton.setOnAction(e -> {
+            if (tickTimeline != null) {
+                tickTimeline.stop();
+                tickTimeline = null;
+            }
+            showSavedGamesScreen();
+            togglePause();
+        });
 
         pauseMenu.setStyle("-fx-background-color: rgba(51, 51, 51, 0.9);"
                 + "-fx-padding: 20;");
