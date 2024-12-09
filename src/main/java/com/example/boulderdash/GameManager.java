@@ -213,6 +213,7 @@ public class GameManager extends Application {
     private static final int IMAGE_SIZE = 60;
     private static final double STEP_SIZE = 0.05;
     private static final int CYCLE_COUNT = 1000;
+    private static final double BACKGROUND_VOLUME = 0.5;
     // Attributes
     /**
      * The reason the player died in the game. Displayed to the user
@@ -850,7 +851,8 @@ public class GameManager extends Application {
         drawGame();
         primaryStage.setScene(scene);
 
-        Audio.getInstance().playMusic("/Music/MinecraftChill.mp3", true, 1);
+        Audio.getInstance().playMusic("/Music/MinecraftChill.mp3",
+                true, BACKGROUND_VOLUME);
     }
 
     /**
@@ -1562,7 +1564,8 @@ public class GameManager extends Application {
         primaryStage.setScene(scene);
         // center the scene on the screen
 
-        Audio.getInstance().playMusic("/Music/MinecraftChill.mp3", true, 1.0);
+        Audio.getInstance().playMusic("/Music/MinecraftChill.mp3",
+                true, BACKGROUND_VOLUME);
     }
 
     /**
