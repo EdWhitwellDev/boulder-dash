@@ -648,12 +648,9 @@ public class GameManager extends Application {
      */
     private void levelsMenu() {
         VBox levelsScreen = new VBox(VBOX_SPACING);
-        levelsScreen.setStyle("-fx-padding: 20;"
-                + "-fx-alignment: center;"
-                + "-fx-background-color: #222;"
-                + "-fx-background-radius: 10;"
-                + "-fx-border-color: #333;"
-                + "-fx-border-width: 1;"
+        levelsScreen.setStyle("-fx-padding: 20;" + "-fx-alignment: center;"
+                + "-fx-background-color: #222;" + "-fx-background-radius: 10;"
+                + "-fx-border-color: #333;" + "-fx-border-width: 1;"
                 + "-fx-border-radius: 10;");
 
         Label levelsLabel = new Label("Select a Level to Play");
@@ -680,7 +677,6 @@ public class GameManager extends Application {
         for (Object doneLevel : completedLevels) {
             completedLevelsList.add(Integer.parseInt(doneLevel.toString()));
         }
-        
         String[] levelImages = {
                 "/Tile Images/dirt.png",
                 "/Tile Images/normal_wall.png",
@@ -693,12 +689,9 @@ public class GameManager extends Application {
             final int levelNum = i;
             VBox levelCard = new VBox(HBOX_SPACING);
             levelCard.setStyle("-fx-background-color: #3a3a3a;"
-                    + "-fx-background-radius: 10;"
-                    + "-fx-padding: 15;"
-                    + "-fx-min-width: 150;"
-                    + "-fx-max-width: 150;"
-                    + "-fx-min-height: 150;"
-                    + "-fx-alignment: center;");
+                    + "-fx-background-radius: 10;" + "-fx-padding: 15;"
+                    + "-fx-min-width: 150;" + "-fx-max-width: 150;"
+                    + "-fx-min-height: 150;" + "-fx-alignment: center;");
 
             ImageView levelImage = new ImageView(new Image(
                     getClass().getResourceAsStream(levelImages[i - 1])));
@@ -722,14 +715,10 @@ public class GameManager extends Application {
             if (completedLevelsList.contains(i)) {
                 levelCard.setOnMouseEntered(e -> {
                     levelCard.setStyle("-fx-background-color: #4a4a4a;"
-                            + "-fx-background-radius: 10;"
-                            + "-fx-padding: 15;"
-                            + "-fx-min-width: 150;"
-                            + "-fx-max-width: 150;"
-                            + "-fx-min-height: 150;"
-                            + "-fx-alignment: center;"
-                            + "-fx-scale-x: 1.1;"
-                            + "-fx-scale-y: 1.1;");
+                            + "-fx-background-radius: 10;" + "-fx-padding: 15;"
+                            + "-fx-min-width: 150;" + "-fx-max-width: 150;"
+                            + "-fx-min-height: 150;" + "-fx-alignment: center;"
+                            + "-fx-scale-x: 1.1;" + "-fx-scale-y: 1.1;");
                     levelCard.setCursor(Cursor.HAND);
                 });
 
@@ -740,12 +729,10 @@ public class GameManager extends Application {
                         levelCard.setStyle("-fx-background-color: #3a3a3a;"
                                 + "-fx-background-radius: 10;"
                                 + "-fx-padding: 15;"
-                                + "-fx-min-width: 150;"
-                                + "-fx-max-width: 150;"
+                                + "-fx-min-width: 150;" + "-fx-max-width: 150;"
                                 + "-fx-min-height: 150;"
                                 + "-fx-alignment: center;"
-                                + "-fx-scale-x: 1;"
-                                + "-fx-scale-y: 1;");
+                                + "-fx-scale-x: 1;" + "-fx-scale-y: 1;");
                     }
                 });
 
@@ -754,18 +741,15 @@ public class GameManager extends Application {
                         if (node instanceof VBox) {
                             node.setStyle("-fx-background-color: #3a3a3a;"
                                     + "-fx-background-radius: 10;"
-                                    + "-fx-padding: 15;"
-                                    + "-fx-min-width: 150;"
+                                    + "-fx-padding: 15;" + "-fx-min-width: 150;"
                                     + "-fx-max-width: 150;"
                                     + "-fx-min-height: 150;"
                                     + "-fx-alignment: center;");
                         }
                     });
                     levelCard.setStyle("-fx-background-color: #4a4a4a;"
-                            + "-fx-background-radius: 10;"
-                            + "-fx-padding: 15;"
-                            + "-fx-min-width: 150;"
-                            + "-fx-max-width: 150;"
+                            + "-fx-background-radius: 10;" + "-fx-padding: 15;"
+                            + "-fx-min-width: 150;" + "-fx-max-width: 150;"
                             + "-fx-min-height: 150;"
                             + "-fx-alignment: center;");
                     selectedLevel.set("Level " + levelNum);
@@ -782,8 +766,7 @@ public class GameManager extends Application {
         scrollPane.setMaxWidth(USE_PREF_SIZE);
 
         String buttonStyle = "-fx-background-color: #3a3a3a;"
-                + "-fx-text-fill: white;"
-                + "-fx-background-radius: 5;"
+                + "-fx-text-fill: white;" + "-fx-background-radius: 5;"
                 + "-fx-padding: 8 15 8 15;";
 
         Button playLevelButton = new Button("Play Selected Level");
@@ -820,8 +803,6 @@ public class GameManager extends Application {
         Scene levelsScene = new Scene(levelsScreen);
         primaryStage.setScene(levelsScene);
     }
-
-
     /**
      * Loads a specified level.
      * @param levelNumber The level number to load.
@@ -1014,7 +995,8 @@ public class GameManager extends Application {
                 });
 
                 profileCard.setOnMouseExited(ev -> {
-                    if (selectedUser.get() == null || !selectedUser.get().equals(newUser)) {
+                    if (selectedUser.get() == null
+                            || !selectedUser.get().equals(newUser)) {
                         profileCard.setStyle("-fx-background-color: #3a3a3a;"
                                 + "-fx-background-radius: 10;"
                                 + "-fx-padding: 15;"
@@ -1375,32 +1357,36 @@ public class GameManager extends Application {
         tickTimeline.setCycleCount(Animation.INDEFINITE);
     }
 
-    private void storyScreen(final int Chapter){
-        // create a scene that will be like the intro to starwars displaying the story
-        // it should consist of a block of text that will scroll up the screen and get smaller as it goes up
-        // the text should be in a font that looks like the starwars font
+    private void storyScreen(final int chapter) {
+        /* create a starwars line scene to displaying the story.
+           it should consist of a block of text that will
+           scroll up the screen and get smaller as it goes up.
+           the text should be in a font that looks like the starwars font.
+         */
         StackPane storyPane = new StackPane();
         Text storyText = new Text();
-        storyText.setText(readChapter(Chapter));
+        storyText.setText(readChapter(chapter));
         storyText.setFont(Font.font("Arial", FontWeight.BOLD, 40));
         storyText.setFill(Paint.valueOf("white"));
         storyText.setTextAlignment(TextAlignment.CENTER);
-        BackgroundImage backgroundImageView = new BackgroundImage (new Image("StoryImage.png"),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-                new BackgroundSize(100, 100, true, true, false, true));
+        BackgroundImage backgroundImageView =
+                new BackgroundImage(new Image("StoryImage.png"),
+                        BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                        BackgroundPosition.DEFAULT,
+                        new BackgroundSize(100, 100, true, true, false, true));
         Background background = new Background(backgroundImageView);
         storyPane.setBackground(background);
         storyPane.getChildren().add(storyText);
         Scene storyScene = new Scene(storyPane);
-        // add a button to the scene that will allow the user to go to the next scene
+        // add a button to the scene to go to next scene
         Button nextButton = new Button("Next");
         nextButton.setOnAction(e -> startNewGame());
         storyPane.getChildren().add(nextButton);
 
         // put the button in the bottom right corner and make it transparent
         StackPane.setAlignment(nextButton, Pos.BOTTOM_RIGHT);
-        nextButton.setStyle("-fx-background-color: transparent; " +
-                "-fx-text-fill: white; -fx-font-size: 20;");
+        nextButton.setStyle("-fx-background-color: transparent; "
+                + "-fx-text-fill: white; -fx-font-size: 20;");
 
 
         primaryStage.setScene(storyScene);
@@ -1408,9 +1394,11 @@ public class GameManager extends Application {
 
         // create a timeline that will move the text up the screen
         // the text should move up the screen and get smaller as it goes up
-        Timeline storyTimeline = new Timeline(new KeyFrame(Duration.seconds(0.05), event -> {
+        Timeline storyTimeline =
+                new Timeline(new KeyFrame(Duration.seconds(0.05), event -> {
             storyText.setTranslateY(storyText.getTranslateY() - 1);
-            storyText.setFont(Font.font("Arial", FontWeight.BOLD, storyText.getFont().getSize() - 0.05));
+            storyText.setFont(Font.font("Arial", FontWeight.BOLD,
+                    storyText.getFont().getSize() - 0.05));
         }));
         storyTimeline.setCycleCount(1000);
         storyTimeline.play();
@@ -1419,17 +1407,17 @@ public class GameManager extends Application {
 
     }
 
-    private String readChapter(int Chapter){
+    private String readChapter(int chapter) {
         // read the text from the file that corresponds to the chapter
         // return the text
-        try(InputStream inputStream =
+        try (InputStream inputStream =
                 GameManager.class.getClassLoader().
-                        getResourceAsStream("Chapter"+ Chapter +".txt"))
-        {
+                        getResourceAsStream("Chapter" + chapter + ".txt")) {
             if (inputStream == null) {
                 throw new IllegalArgumentException("File not found");
             }
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+            try (BufferedReader reader =
+                         new BufferedReader(new InputStreamReader(
                     inputStream, StandardCharsets.UTF_8))) {
                 return reader.lines().collect(Collectors.joining("\n"));
             } catch (IOException e) {
@@ -1781,7 +1769,8 @@ public class GameManager extends Application {
                     + " -fx-font-size: 48; "
                     + "-fx-font-family: monospace;");
 
-            ImageView deathCauseImage = new ImageView(new Image(deathCause + ".png"));
+            ImageView deathCauseImage = new
+                    ImageView(new Image(deathCause + ".png"));
 
             Label causeLabel = new Label(deathCause);
             causeLabel.setStyle("-fx-text-fill: darkred;"
