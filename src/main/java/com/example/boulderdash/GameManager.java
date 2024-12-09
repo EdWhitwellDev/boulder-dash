@@ -71,6 +71,7 @@ import static javafx.scene.control.PopupControl.USE_PREF_SIZE;
  */
 public class GameManager extends Application {
 
+
     // Constants
     /**
      * Icon used to represent the player's diamond count.
