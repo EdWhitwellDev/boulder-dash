@@ -1,12 +1,12 @@
 [WIN CONDITIONS]
-13,400,17,17,10,5
+13,400,17,17,5,1
 [TILES]
 T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T
 T,D,P,D,P,P,P,P,N,P,P,P,P,P,P,P,T
 T,P,D,P,P,P,P,P,N,P,N,P,D,P,P,P,T
 T,E,P,P,P,P,D,P,N,P,D,g,D,P,P,P,T
 T,D,P,D,P,D,P,D,N,P,P,P,P,P,P,P,T
-T,P,D,P,P,D,P,P,N,P,P,P,P,P,P,P,T
+T,P,D,P,P,D,P,P,N,P,P,P,P,P,P,D,T
 T,N,N,N,N,R,N,N,N,N,N,M,N,N,N,G,T
 T,P,P,P,P,P,P,P,P,P,P,P,D,P,D,P,T
 T,P,P,P,P,P,P,P,P,P,P,P,P,D,P,P,T

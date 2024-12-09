@@ -44,52 +44,170 @@ import static javafx.scene.control.PopupControl.USE_PREF_SIZE;
  * user input, game state management, and the main game loop.
  */
 public class GameManager extends Application {
+
     // Constants
+    /**
+     * Icon used to represent the player's diamond count.
+     * */
     private static final ImageView DIAMOND_COUNT_ICON =
             new ImageView(new Image("Actor Images/diamond.png"));
+    /**
+     * Icon used to represent the player's time countdown.
+     * */
     private static final ImageView CLOCK_ICON =
             new ImageView(new Image("clock.png"));
+    /**
+     * Icon used to represent the player's blue-key count.
+     * */
     private static final ImageView KEY_ICON_BLUE =
             new ImageView(new Image("Key Icon Images/blue_key_icon.png"));
+    /**
+     * Icon used to represent the player's red-key count.
+     * */
     private static final ImageView KEY_ICON_RED =
             new ImageView(new Image("Key Icon Images/red_key_icon.png"));
+    /**
+     * Icon used to represent the player's green-key count.
+     * */
     private static final ImageView KEY_ICON_GREEN =
             new ImageView(new Image("Key Icon Images/green_key_icon.png"));
+    /**
+     * Icon used to represent the player's yellow-key count.
+     * */
     private static final ImageView KEY_ICON_YELLOW =
             new ImageView(new Image("Key Icon Images/yellow_key_icon.png"));
+    /**
+     * The Number of levels available in the game.
+     * */
     private static final int NUMBER_OF_LEVELS = 5;
+    /**
+     * How much of the tile any object, placed inside it, should
+     * occupy.
+     * */
     private static final double TILE_SIZE_SCALE_FACTOR = 0.8;
+    /**
+     * The number of all the user scores saved that is displayed on the
+     * home-screen.
+     */
     private static final int MAX_SCORES_AMOUNT = 10;
+    /**
+     * Variable used to reference the Arial font used.
+     * */
     private static final String FONT_ARIAL = "Arial";
+    /**
+     * The size of the Font used to Display the 'Game Over' message.
+     * */
     private static final int FONT_SIZE_GAME_OVER = 75;
+    /**
+     * The size of the Font used to Display the game's Title.
+     * */
     private static final int FONT_SIZE_TITLE = 40;
+    /**
+     * The size of the Font used to Display the name of the game's
+     * current User.
+     * */
     private static final int FONT_SIZE_CURRENT_USER = 20;
+    /**
+     * The size of the Font used to Display the 'High Score' message.
+     * */
     private static final int FONT_SIZE_HIGH_SCORE = 25;
+    /**
+     * The size of the Font used to Display each Level's label.
+     * */
     private static final int FONT_SIZE_LEVELS_LABEL = 20;
+    /**
+     * The size of the Font used for the User Menu.
+     * */
     private static final int FONT_SIZE_USER_MENU = 30;
+    /**
+     * The size of the Font used to display when there are No
+     * Scores available.
+     * */
     private static final int FONT_SIZE_NO_SCORES = 18;
+    /**
+     * The size of the Font used to display a User's Name and Score.
+     * */
     private static final int FONT_SIZE_SCORE_LABEL = 18;
+    /**
+     * The spacing for Vertical Boxes on the stage.
+     * */
     private static final int VBOX_SPACING = 20;
+    /**
+     * The spacing for Horizontal Boxes on the stage.
+     * */
     private static final int HBOX_SPACING = 10;
+    /**
+     * The height of the game's logo.
+     * */
     private static final int LOGO_HEIGHT = 200;
+    /**
+     * The width of the game's logo.
+     * */
     private static final int LOGO_WIDTH = 400;
+    private static final int LEVELS_LIST_WIDTH = 400;
+    private static final int LEVELS_LIST_HEIGHT = 300;
+    /**
+     * How big, in comparison to the tile's size, the Icons displayed are.
+     * (to show the counts)
+     * */
     private static final double ICON_SCALE = 0.5;
+    /**
+     * How big, in comparison to the tile's size, the clock icon's width is.
+     * */
     private static final double ICON_WIDTH_SCALE_CLOCK = 0.4;
+    /**
+     * The height of the info bar (containing icons and key,diamond,time counts)
+     * on the screen when the game is being played.
+     * */
     private static final double INFO_BAR_HEIGHT_RATIO = 0.7;
     private static final int PAUSE_MENU_LAYOUT_OFFSET = 200;
+    /**
+     * The largest width that the Pause menu can get to.
+     * */
     private static final int PAUSE_MENU_MAX_WIDTH = 250;
+    /**
+     * The largest height that the Pause menu can get to.
+     * */
     private static final int PAUSE_MENU_MAX_HEIGHT = 200;
+    /**
+     * The width of the buttons in the game.
+     * */
     private static final int BUTTON_WIDTH = 150;
+    /**
+     * The number of points added to User's score per diamond
+     * collected.
+     * */
     private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
+    private static final int USER_LIST_ITEM_HEIGHT = 35;
+    /**
+     * The spacing for the game's Pause menu.
+     * */
     private static final int PAUSE_MENU_SPACING = 5;
     private static final int KEY_AMOUNT = 4;
     private static final int KEY_IMAGE_SIZE = 50;
     // Attributes
+    /**
+     * The reason the player died in the game. Displayed to the user
+     * when they lose the round.
+     * */
     private String deathCause = "";
+    /**
+     * The list of all the actors that have died in the User's game.
+     * */
     private List<Actor> deadActors = new ArrayList<>();
+    /**
+     * The list of actors to be added to the User's game.*/
     private List<Actor> newBorns = new ArrayList<>();
     private Timeline tickTimeline;
+    /**
+     * Represents a level in the Game. This includes the Conditions that
+     * must be met to win, the tile layout and the positions of all the
+     * actors (both Enemy and Player) in the game.
+     * */
     private Level level;
+    /**
+     * The game's Player object present in each level.
+     * */
     private Player player;
     private Scene scene;
     private Scene homeScene;
@@ -114,7 +232,12 @@ public class GameManager extends Application {
     private final Label keyLabelYellow = new Label();
     private final float tickTime = 0.1f;
     private float timeElapsed;
+    /**
+     * The size of each tile on the game stage.
+     * */
     private int tileSize;
+    /**
+     * The Level currently being played by a User.*/
     private int currentLevel = 1;
     private boolean dead = false;
     private boolean isPaused = false;
@@ -134,6 +257,7 @@ public class GameManager extends Application {
         currentLevel = userProfileObj.get("CurrentLevel") != null
                 ? Integer.parseInt(userProfileObj.get("CurrentLevel").
                         toString()) : 1;
+        this.primaryStage = newPrimaryStage;
         highScores = new HashMap<>();
 
         setupHomeScreen();
@@ -176,12 +300,13 @@ public class GameManager extends Application {
         Map<ImageView, Actor> actorsToAnimate = new HashMap<>();
 
         // Iterate through each tile and render it
-
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 Tile tile = tiles.get(row).get(col);
+
                 // Allows stacking multiple visuals
                 StackPane stackPane = new StackPane();
+
                 // Tile background
                 ImageView imageView = new ImageView(tile.getImage());
 
@@ -200,8 +325,10 @@ public class GameManager extends Application {
                             * TILE_SIZE_SCALE_FACTOR);
                     actorImageView.setFitWidth(tileSize
                             * TILE_SIZE_SCALE_FACTOR);
+
                     // if the actor is transferring animate the transfer
                     if (occupier.getIsTransferring()) {
+
                         // add the actor to the offset map
                         actorsToAnimate.put(actorImageView, occupier);
                         occupier.stopTransferring();
@@ -455,13 +582,16 @@ public class GameManager extends Application {
         Object completedTheGame = userProfileObj.get("CompletedTheGame");
 
         if (completedTheGame instanceof Boolean && (Boolean) completedTheGame) {
-            Label completedGameLabel = new Label("You have completed the game!");
-            completedGameLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+            Label completedGameLabel = new Label(
+                    "You have completed the game!");
+            completedGameLabel.setFont(
+                    new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
             completedGameLabel.setStyle("-fx-text-fill: white;");
             homeScreen.getChildren().add(completedGameLabel);
         } else {
             // Optionally, handle the case where the game isn't completed
-            System.out.println("The game is not completed or the value is missing.");
+            System.out.println(
+                    "The game is not completed or the value is missing.");
         }
 
         HBox buttonBox = new HBox(VBOX_SPACING);
@@ -547,8 +677,8 @@ public class GameManager extends Application {
         JSONArray completedLevels = (JSONArray)
                 userProfileObj.get("CompletedLevels");
         List<Integer> completedLevelsList = new ArrayList<>();
-        for (Object level : completedLevels) {
-            completedLevelsList.add(Integer.parseInt(level.toString()));
+        for (Object doneLevel : completedLevels) {
+            completedLevelsList.add(Integer.parseInt(doneLevel.toString()));
         }
         
         String[] levelImages = {
@@ -570,7 +700,8 @@ public class GameManager extends Application {
                     + "-fx-min-height: 150;"
                     + "-fx-alignment: center;");
 
-            ImageView levelImage = new ImageView(new Image(getClass().getResourceAsStream(levelImages[i-1])));
+            ImageView levelImage = new ImageView(new Image(
+                    getClass().getResourceAsStream(levelImages[i - 1])));
             levelImage.setFitWidth(60);
             levelImage.setFitHeight(60);
             levelImage.setPreserveRatio(true);
@@ -585,7 +716,8 @@ public class GameManager extends Application {
                     + (completedLevelsList.contains(i)
                     ? "#90EE90" : "#FF6B6B") + "; -fx-font-size: 14;");
 
-            levelCard.getChildren().addAll(levelImage, numberLabel, statusLabel);
+            levelCard.getChildren().addAll(
+                    levelImage, numberLabel, statusLabel);
 
             if (completedLevelsList.contains(i)) {
                 levelCard.setOnMouseEntered(e -> {
@@ -667,7 +799,9 @@ public class GameManager extends Application {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText("Level Locked");
-                    alert.setContentText("Please complete previous levels to unlock this one.");
+                    alert.setContentText(
+                            "Please complete previous levels "
+                                    + "to unlock this one.");
                     alert.showAndWait();
                 }
             }
@@ -692,7 +826,7 @@ public class GameManager extends Application {
      * Loads a specified level.
      * @param levelNumber The level number to load.
      */
-    private void loadLevel(int levelNumber) {
+    private void loadLevel(final int levelNumber) {
         currentLevel = levelNumber;
         level = new Level(currentLevel);
         player = level.getPlayer();
@@ -994,7 +1128,7 @@ public class GameManager extends Application {
         primaryStage.setScene(userMenuScene);
     }
 
-    private void changeCurrentUser(String newUser) {
+    private void changeCurrentUser(final String newUser) {
         currentUser = newUser;
         userProfileObj = (JSONObject) playerProfileObj.get(currentUser);
         currentUserLabel.setText("Current User: " + currentUser);
@@ -1182,7 +1316,7 @@ public class GameManager extends Application {
      * Loads the specific save file.
      * @param gameName is the name of the save.
      */
-    private void loadSelectedGame(String gameName) {
+    private void loadSelectedGame(final String gameName) {
         loadGame(gameName);
     }
 
@@ -1357,8 +1491,13 @@ public class GameManager extends Application {
         } else {
             List<Integer> highScoresInt =
                     new ArrayList<>(this.highScores.keySet());
-            List<String> byUser = new ArrayList<>(this.highScores.values());
-            for (int i = 0; i < Math.min(highScoresInt.size(), MAX_SCORES_AMOUNT); i++) {
+            List<String> byUser = new ArrayList<>(
+                    this.highScores.values());
+
+            for (int i = 0;
+                    i < Math.min(highScoresInt.size(), MAX_SCORES_AMOUNT);
+                    i++) {
+
                 Label scoreLabel = new Label(highScoresInt.get(i).toString());
                 Label userLabel =
                         new Label((i + 1) + ". " + byUser.get(i) + "  - ");
@@ -1583,7 +1722,7 @@ public class GameManager extends Application {
      * Loads a previously saved game state.
      * @param gameName the name of the game to load.
      */
-    private void loadGame(String gameName) {
+    private void loadGame(final String gameName) {
         if (!Objects.equals(gameName, "")) {
             level = new Level(currentUser, gameName);
             player = level.getPlayer();

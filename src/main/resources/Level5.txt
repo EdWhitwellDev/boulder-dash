@@ -20,8 +20,8 @@ T,P,P,N,P,P,P,P,P,P,P,N,P,D,D,D,P,N,T,P,P,T
 T,P,P,N,P,P,P,P,P,P,P,N,P,P,P,P,P,N,T,P,P,T
 T,P,P,N,P,P,P,P,P,P,P,N,N,N,N,N,N,N,T,P,P,T
 T,P,P,N,T,N,T,N,T,N,B,N,T,N,T,N,T,N,T,P,P,T
-T,P,P,P,P,P,P,P,P,P,P,D,P,P,P,P,b,P,P,D,P,T
-T,P,P,P,P,P,P,P,P,P,P,P,D,P,D,P,D,P,D,P,P,T
+T,P,P,P,P,P,P,P,P,P,P,D,P,D,P,D,b,D,P,D,P,T
+T,P,P,P,P,P,P,P,P,P,P,P,D,P,D,P,P,P,D,P,P,T
 T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T,T
 [ACTORS]
 B,4,15
@@ -37,8 +37,8 @@ D,20,9
 D,20,13
 D,20,15
 D,20,17
+A,17,4
 BF,19,10,true,LEFT
 F,16,14,true,LEFT
-A,17,4
 P,20,20
 R,1,20

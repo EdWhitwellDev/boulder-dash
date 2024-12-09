@@ -5,8 +5,8 @@ T,T,T,T,T,T,T,T,T,T,T,T
 T,P,P,P,D,P,P,P,D,D,N,T
 T,N,N,P,N,D,P,D,D,P,D,T
 T,g,P,P,P,D,D,D,D,D,D,T
-T,P,P,D,P,P,P,P,P,P,D,T
-T,P,D,P,D,P,P,P,P,P,P,T
+T,P,P,P,P,P,P,P,P,P,D,T
+T,P,D,P,D,P,D,P,P,P,P,T
 T,P,r,P,D,P,P,D,D,P,P,T
 T,P,D,D,P,P,P,P,P,P,D,T
 T,P,P,P,P,P,P,D,D,P,M,T

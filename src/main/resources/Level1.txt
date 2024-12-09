@@ -1,15 +1,15 @@
 [WIN CONDITIONS]
-0,60,10,10,10,5
+3,60,10,10,20,3
 [TILES]
 T,T,T,T,T,T,T,T,T,T
 T,D,D,D,D,D,D,D,P,T
+T,D,D,D,P,P,P,D,P,T
+T,r,D,r,D,D,D,P,P,T
 T,D,D,D,P,P,P,P,P,T
-T,r,D,r,P,P,P,P,P,T
-T,D,D,D,P,P,P,P,P,T
-T,R,R,D,P,P,P,P,P,T
-T,N,N,N,N,P,P,N,P,T
-T,T,T,N,N,P,P,N,P,T
-T,T,T,N,N,M,D,E,P,T
+T,R,R,D,P,M,P,P,P,T
+T,N,D,N,N,P,P,N,P,T
+T,T,D,D,N,D,N,N,P,T
+T,T,T,D,D,P,D,E,P,T
 T,T,T,T,T,T,T,T,T,T
 [ACTORS]
 D,2,4

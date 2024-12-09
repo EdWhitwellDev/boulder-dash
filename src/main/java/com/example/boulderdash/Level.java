@@ -393,7 +393,7 @@ public class Level {
         diamondsRequired = Integer.parseInt(winConditions[0]);
         timeLimit = Integer.parseInt(winConditions[1]);
         rows = Integer.parseInt(winConditions[2]);
-        cols = Integer.parseInt(winConditions[COLS_INDEX]);
+        cols = Integer.parseInt(winConditions[3]);
         amoebaGrowthRate = Integer.parseInt(winConditions
                 [AMOEBA_GROWTH_RATE_INDEX]);
         amoebaMaxSize = Integer.parseInt(winConditions[AMOEBA_MAX_SIZE_INDEX]);
