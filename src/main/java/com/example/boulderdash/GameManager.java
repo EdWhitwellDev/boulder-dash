@@ -556,8 +556,7 @@ public class GameManager extends Application {
         for (Object level : completedLevels) {
             completedLevelsList.add(Integer.parseInt(level.toString()));
         }
-
-        // Define image paths for each level
+        
         String[] levelImages = {
                 "/Tile Images/dirt.png",
                 "/Tile Images/normal_wall.png",
@@ -577,7 +576,6 @@ public class GameManager extends Application {
                     + "-fx-min-height: 150;"
                     + "-fx-alignment: center;");
 
-            // Use the corresponding image for each level
             ImageView levelImage = new ImageView(new Image(getClass().getResourceAsStream(levelImages[i-1])));
             levelImage.setFitWidth(60);
             levelImage.setFitHeight(60);
@@ -873,6 +871,55 @@ public class GameManager extends Application {
                 nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16;");
 
                 profileCard.getChildren().addAll(numberLabel, nameLabel);
+
+                profileCard.setOnMouseEntered(ev -> {
+                    profileCard.setStyle("-fx-background-color: #4a4a4a;"
+                            + "-fx-background-radius: 10;"
+                            + "-fx-padding: 15;"
+                            + "-fx-min-width: 150;"
+                            + "-fx-max-width: 150;"
+                            + "-fx-min-height: 150;"
+                            + "-fx-alignment: center;"
+                            + "-fx-scale-x: 1.1;"
+                            + "-fx-scale-y: 1.1;");
+                    profileCard.setCursor(Cursor.HAND);
+                });
+
+                profileCard.setOnMouseExited(ev -> {
+                    if (selectedUser.get() == null || !selectedUser.get().equals(newUser)) {
+                        profileCard.setStyle("-fx-background-color: #3a3a3a;"
+                                + "-fx-background-radius: 10;"
+                                + "-fx-padding: 15;"
+                                + "-fx-min-width: 150;"
+                                + "-fx-max-width: 150;"
+                                + "-fx-min-height: 150;"
+                                + "-fx-alignment: center;"
+                                + "-fx-scale-x: 1;"
+                                + "-fx-scale-y: 1;");
+                    }
+                });
+
+                profileCard.setOnMouseClicked(ev -> {
+                    profilesContainer.getChildren().forEach(node -> {
+                        if (node instanceof VBox) {
+                            node.setStyle("-fx-background-color: #3a3a3a;"
+                                    + "-fx-background-radius: 10;"
+                                    + "-fx-padding: 15;"
+                                    + "-fx-min-width: 150;"
+                                    + "-fx-max-width: 150;"
+                                    + "-fx-min-height: 150;"
+                                    + "-fx-alignment: center;");
+                        }
+                    });
+                    profileCard.setStyle("-fx-background-color: #4a4a4a;"
+                            + "-fx-background-radius: 10;"
+                            + "-fx-padding: 15;"
+                            + "-fx-min-width: 150;"
+                            + "-fx-max-width: 150;"
+                            + "-fx-min-height: 150;"
+                            + "-fx-alignment: center;");
+                    selectedUser.set(newUser);
+                });
 
                 users.add(newUser);
                 JSONObject newUserObj = new JSONObject();
