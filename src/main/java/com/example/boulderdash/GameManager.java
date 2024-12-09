@@ -1,7 +1,10 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
-import javafx.animation.*;
+import javafx.animation.Animation;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Cursor;
@@ -9,16 +12,28 @@ import com.example.boulderdash.enums.KeyColours;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
 import com.example.boulderdash.enums.Direction;
-import javafx.scene.control.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -32,10 +47,21 @@ import javafx.util.Duration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import java.io.*;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 import static javafx.scene.control.PopupControl.USE_PREF_SIZE;
 
@@ -144,8 +170,6 @@ public class GameManager extends Application {
      * The width of the game's logo.
      * */
     private static final int LOGO_WIDTH = 400;
-    private static final int LEVELS_LIST_WIDTH = 400;
-    private static final int LEVELS_LIST_HEIGHT = 300;
     /**
      * How big, in comparison to the tile's size, the Icons displayed are.
      * (to show the counts)
@@ -309,7 +333,7 @@ public class GameManager extends Application {
                 Tile tile = tiles.get(row).get(col);
 
                 // Allows stacking multiple visuals
-                StackPane stackPane = new StackPane();
+                StackPane tileStackPane = new StackPane();
 
                 // Tile background
                 ImageView imageView = new ImageView(tile.getImage());
@@ -318,7 +342,7 @@ public class GameManager extends Application {
                 imageView.setFitWidth(tileSize);
                 imageView.setFitHeight(tileSize);
 
-                stackPane.getChildren().add(imageView);
+                tileStackPane.getChildren().add(imageView);
 
                 // If a tile is occupied, draw the actor occupying it
                 if (tile.isOccupied()) {
@@ -338,12 +362,12 @@ public class GameManager extends Application {
                         occupier.stopTransferring();
 
                     } else {
-                        stackPane.getChildren().add(actorImageView);
+                        tileStackPane.getChildren().add(actorImageView);
                     }
                 }
 
                 // Place the visual representation in the grid
-                grid.add(stackPane, col, row);
+                grid.add(tileStackPane, col, row);
             }
         }
         transitionPane.getChildren().clear();
@@ -1408,7 +1432,7 @@ public class GameManager extends Application {
         storyTimeline.play();
     }
 
-    private String readChapter(int chapter) {
+    private String readChapter(final int chapter) {
         // read the text from the file that corresponds to the chapter
         // return the text
         try (InputStream inputStream =
