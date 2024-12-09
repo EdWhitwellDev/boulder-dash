@@ -1,2 +1,2 @@
-package com.example.boulderdash;public class FileReaderExample {
+package com.example.boulderdash; public class FileReaderExample {
 }
