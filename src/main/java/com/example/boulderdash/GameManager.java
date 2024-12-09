@@ -482,6 +482,13 @@ public class GameManager extends Application {
      */
     public void winGame() {
         dead = true;
+        int score = player.getDiamondsCollected()
+                * SCORE_MULTIPLIER_DIAMONDS + timeRemaining() * 2;
+
+        saveScore(score);
+        tickTimeline.stop();
+        currentLevel++;
+
         drawGame();
         showLevelCompleteScreen();
         Audio.getInstance().playSoundEffect("/Music/Victory.mp3", 1);
@@ -1424,12 +1431,19 @@ public class GameManager extends Application {
 
         // create a timeline that will move the text up the screen
         // the text should move up the screen and get smaller as it goes up
-        Timeline storyTimeline =
-                new Timeline(new KeyFrame(Duration.seconds(STEP_SIZE),
+        storyText.setTranslateY(scene.getHeight()-400);
+
+        Timeline storyTimeline = new Timeline();
+        storyTimeline.getKeyFrames().add(
+                new KeyFrame(Duration.seconds(STEP_SIZE),
                         event -> {
             storyText.setTranslateY(storyText.getTranslateY() - 1);
             storyText.setFont(Font.font("Arial", FontWeight.BOLD,
                     storyText.getFont().getSize() - STEP_SIZE));
+            if (storyText.getTranslateY() < -storyText.getBoundsInLocal().getHeight()) {
+                storyTimeline.stop();
+                primaryStage.setScene(homeScene);
+            }
         }));
         storyTimeline.setCycleCount(CYCLE_COUNT);
         storyTimeline.play();
@@ -1956,7 +1970,7 @@ public class GameManager extends Application {
      */
     private void loadNextLevel() {
         storyScreen(currentLevel);
-        if (currentLevel == NUMBER_OF_LEVELS) {
+        if (currentLevel == NUMBER_OF_LEVELS+1) {
             currentLevel = 1;
             userProfileObj.put("CompletedTheGame", true);
             updateCurrentLevel();
@@ -1965,8 +1979,6 @@ public class GameManager extends Application {
             primaryStage.setScene(homeScene);
         } else {
 
-            currentLevel++;
-            updateCurrentLevel();
             level = new Level(currentLevel);
             player = level.getPlayer();
             dead = false;
