@@ -29,17 +29,14 @@ import javafx.geometry.Rectangle2D;
 import javafx.geometry.Pos;
 import javafx.stage.Screen;
 import javafx.util.Duration;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static javafx.scene.control.PopupControl.USE_PREF_SIZE;
 
 /**
