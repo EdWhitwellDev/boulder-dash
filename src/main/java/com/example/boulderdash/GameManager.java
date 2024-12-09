@@ -76,8 +76,6 @@ public class GameManager extends Application {
     private static final int HBOX_SPACING = 10;
     private static final int LOGO_HEIGHT = 200;
     private static final int LOGO_WIDTH = 400;
-    private static final int LEVELS_LIST_WIDTH = 400;
-    private static final int LEVELS_LIST_HEIGHT = 300;
     private static final double ICON_SCALE = 0.5;
     private static final double ICON_WIDTH_SCALE_CLOCK = 0.4;
     private static final double INFO_BAR_HEIGHT_RATIO = 0.7;
@@ -86,7 +84,6 @@ public class GameManager extends Application {
     private static final int PAUSE_MENU_MAX_HEIGHT = 200;
     private static final int BUTTON_WIDTH = 150;
     private static final int SCORE_MULTIPLIER_DIAMONDS = 10;
-    private static final int USER_LIST_ITEM_HEIGHT = 35;
     private static final int PAUSE_MENU_SPACING = 5;
     private static final int KEY_AMOUNT = 4;
     private static final int KEY_IMAGE_SIZE = 50;
@@ -341,7 +338,7 @@ public class GameManager extends Application {
      * in their user profile.
      * If the current level is newly completed,
      * it gets added to the completed levels.
-     * @param score
+     * @param score achieved by the player in the current level.
      */
     public void saveScore(final int score) {
         JSONObject highScoresObj =
