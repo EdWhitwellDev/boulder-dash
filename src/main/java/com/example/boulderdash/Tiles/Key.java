@@ -2,6 +2,7 @@ package com.example.boulderdash.Tiles;
 
 import com.example.boulderdash.Actors.Actor;
 import com.example.boulderdash.Actors.Player;
+import com.example.boulderdash.GameState;
 import com.example.boulderdash.enums.KeyColours;
 import javafx.scene.image.Image;
 
@@ -72,6 +73,9 @@ public class Key extends Floor {
             ((Player) occupant).collectKey(colour);
             collected = true;
         }
+        Floor newTile = new Floor(getRow(), getColumn(), true);
+        newTile.setOccupier(this.getOccupier());
+        GameState.getLevel().replaceTile(newTile, this);
     }
 
     /**

@@ -1,10 +1,10 @@
 package com.example.boulderdash;
 
 import com.example.boulderdash.Actors.Actor;
+import javafx.animation.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Cursor;
-import com.example.boulderdash.Actors.Falling.FallingObject;
 import com.example.boulderdash.enums.KeyColours;
 import com.example.boulderdash.Actors.Player;
 import com.example.boulderdash.Tiles.Tile;
@@ -12,21 +12,18 @@ import com.example.boulderdash.enums.Direction;
 import javafx.scene.control.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.Pos;
@@ -37,17 +34,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.stream.Collectors;
 
 import static javafx.scene.control.PopupControl.USE_PREF_SIZE;
 
@@ -117,7 +108,7 @@ public class GameManager extends Application {
     private Map<Integer, String> highScores;
     private JSONObject playerProfileObj;
     private JSONObject userProfileObj;
-    StackPane stackPane = new StackPane();
+    private StackPane stackPane = new StackPane();
     private final GridPane grid = new GridPane();
     private final Pane transitionPane = new Pane();
     private final HBox infoBar = new HBox(20);
@@ -136,11 +127,11 @@ public class GameManager extends Application {
 
     /**
      * Starts the application, sets up home screen and displays it.
-     * @param primaryStage is the main stage of the application.
+     * @param newPrimaryStage is the main stage of the application.
      */
     @Override
-    public void start(Stage primaryStage) {
-        // Set the title of the window
+    public void start(final Stage newPrimaryStage) {
+        this.primaryStage = newPrimaryStage;
         primaryStage.setTitle("Boulder Dash");
 
         getPlayerProfile();
@@ -149,7 +140,6 @@ public class GameManager extends Application {
         currentLevel = userProfileObj.get("CurrentLevel") != null
                 ? Integer.parseInt(userProfileObj.get("CurrentLevel").
                         toString()) : 1;
-        this.primaryStage = primaryStage;
         highScores = new HashMap<>();
 
         setupHomeScreen();
@@ -275,7 +265,7 @@ public class GameManager extends Application {
      *
      * @param event the KeyEvent triggered by a key press.
      */
-    public void processKeyEvent(KeyEvent event) {
+    public void processKeyEvent(final KeyEvent event) {
         switch (event.getCode()) {
             case RIGHT:
                 player.setDirection(Direction.RIGHT);
@@ -325,7 +315,7 @@ public class GameManager extends Application {
      * Ends the game, marked it as a loss.
      * @param cause is the reason of death.
      */
-    public void looseGame(String cause) {
+    public void looseGame(final String cause) {
         if (!dead) {
             Text gameOverText = new Text("Game Over");
             gameOverText.setFont(new Font(FONT_ARIAL, FONT_SIZE_GAME_OVER));
@@ -353,7 +343,7 @@ public class GameManager extends Application {
      * it gets added to the completed levels.
      * @param score
      */
-    public void saveScore(int score) {
+    public void saveScore(final int score) {
         JSONObject highScoresObj =
                 (JSONObject) userProfileObj.get("HighScores");
         JSONArray completedLevels =
@@ -403,7 +393,7 @@ public class GameManager extends Application {
      * Marks an actor for removal from the game.
      * @param actor to be removed.
      */
-    public void killActor(Actor actor) {
+    public void killActor(final Actor actor) {
         deadActors.add(actor);
     }
 
@@ -411,7 +401,7 @@ public class GameManager extends Application {
      * Adds an actor to the game.
      * @param actor to be added.
      */
-    public void addActor(Actor actor) {
+    public void addActor(final Actor actor) {
         newBorns.add(actor);
     }
 
@@ -429,7 +419,7 @@ public class GameManager extends Application {
      * @param args command-line arguments.
      */
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         // Launch the JavaFX application
         launch(args);
     }
@@ -1210,6 +1200,72 @@ public class GameManager extends Application {
         tickTimeline.setCycleCount(Animation.INDEFINITE);
     }
 
+    private void storyScreen(final int Chapter){
+        // create a scene that will be like the intro to starwars displaying the story
+        // it should consist of a block of text that will scroll up the screen and get smaller as it goes up
+        // the text should be in a font that looks like the starwars font
+        StackPane storyPane = new StackPane();
+        Text storyText = new Text();
+        storyText.setText(readChapter(Chapter));
+        storyText.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        storyText.setFill(Paint.valueOf("white"));
+        storyText.setTextAlignment(TextAlignment.CENTER);
+        BackgroundImage backgroundImageView = new BackgroundImage (new Image("StoryImage.png"),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+                new BackgroundSize(100, 100, true, true, false, true));
+        Background background = new Background(backgroundImageView);
+        storyPane.setBackground(background);
+        storyPane.getChildren().add(storyText);
+        Scene storyScene = new Scene(storyPane);
+        // add a button to the scene that will allow the user to go to the next scene
+        Button nextButton = new Button("Next");
+        nextButton.setOnAction(e -> startNewGame());
+        storyPane.getChildren().add(nextButton);
+
+        // put the button in the bottom right corner and make it transparent
+        StackPane.setAlignment(nextButton, Pos.BOTTOM_RIGHT);
+        nextButton.setStyle("-fx-background-color: transparent; " +
+                "-fx-text-fill: white; -fx-font-size: 20;");
+
+
+        primaryStage.setScene(storyScene);
+
+
+        // create a timeline that will move the text up the screen
+        // the text should move up the screen and get smaller as it goes up
+        Timeline storyTimeline = new Timeline(new KeyFrame(Duration.seconds(0.05), event -> {
+            storyText.setTranslateY(storyText.getTranslateY() - 1);
+            storyText.setFont(Font.font("Arial", FontWeight.BOLD, storyText.getFont().getSize() - 0.05));
+        }));
+        storyTimeline.setCycleCount(1000);
+        storyTimeline.play();
+
+
+
+    }
+
+    private String readChapter(int Chapter){
+        // read the text from the file that corresponds to the chapter
+        // return the text
+        try(InputStream inputStream =
+                GameManager.class.getClassLoader().
+                        getResourceAsStream("Chapter"+ Chapter +".txt"))
+        {
+            if (inputStream == null) {
+                throw new IllegalArgumentException("File not found");
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    inputStream, StandardCharsets.UTF_8))) {
+                return reader.lines().collect(Collectors.joining("\n"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     private void getHighScores() {
         highScores = new HashMap<>();
         JSONArray users = (JSONArray) playerProfileObj.get("Users");
@@ -1305,6 +1361,7 @@ public class GameManager extends Application {
         UISetUp();
 
         GameState.setupSate(level, player, this);
+
         tickTimeline.play();
 
         drawGame();
@@ -1524,6 +1581,9 @@ public class GameManager extends Application {
                     "-fx-background-color: rgba(51, 51, 51, 0.9);");
             gameOverMenu.setPrefSize(scene.getWidth(), scene.getHeight());
 
+            HBox deathCauseBox = new HBox(HBOX_SPACING);
+            deathCauseBox.setAlignment(Pos.CENTER);
+
             VBox gameOverBox = new VBox(VBOX_SPACING);
             double buttonWidth = BUTTON_WIDTH;
             gameOverBox.setAlignment(Pos.CENTER);
@@ -1533,10 +1593,14 @@ public class GameManager extends Application {
                     + " -fx-font-size: 48; "
                     + "-fx-font-family: monospace;");
 
+            ImageView deathCauseImage = new ImageView(new Image(deathCause + ".png"));
+
             Label causeLabel = new Label(deathCause);
             causeLabel.setStyle("-fx-text-fill: darkred;"
                     + " -fx-font-size: 24; "
                     + "-fx-font-family: monospace;");
+
+
 
             VBox scoreBoard = createHighScoreBoard();
             scoreBoard.setStyle("-fx-padding: 20;");
@@ -1580,8 +1644,8 @@ public class GameManager extends Application {
                     - gameOverBox.getPrefWidth() / 2);
             gameOverBox.setLayoutY(scene.getHeight() / 2
                     - gameOverBox.getPrefHeight() / 2);
-
-            gameOverMenu.getChildren().add(gameOverBox);
+            deathCauseBox.getChildren().addAll(deathCauseImage, gameOverBox);
+            gameOverMenu.getChildren().add(deathCauseBox);
         }
 
         gameOverMenu.setPrefSize(scene.getWidth(), scene.getHeight());
@@ -1685,6 +1749,7 @@ public class GameManager extends Application {
      * Loads the next level once current level has been completed.
      */
     private void loadNextLevel() {
+        storyScreen(currentLevel);
         if (currentLevel == NUMBER_OF_LEVELS) {
             currentLevel = 1;
             userProfileObj.put("CompletedTheGame", true);
