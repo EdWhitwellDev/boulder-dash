@@ -1393,9 +1393,7 @@ public class GameManager extends Application {
         nextButton.setStyle("-fx-background-color: transparent; "
                 + "-fx-text-fill: white; -fx-font-size: 20;");
 
-
         primaryStage.setScene(storyScene);
-
 
         // create a timeline that will move the text up the screen
         // the text should move up the screen and get smaller as it goes up
@@ -1408,9 +1406,6 @@ public class GameManager extends Application {
         }));
         storyTimeline.setCycleCount(CYCLE_COUNT);
         storyTimeline.play();
-
-
-
     }
 
     private String readChapter(int chapter) {
