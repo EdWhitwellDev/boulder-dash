@@ -468,15 +468,16 @@ public class GameManager extends Application {
         currentUserLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
         currentUserLabel.setStyle("-fx-text-fill: white;");
 
-        JSONObject completedTheGame = (JSONObject)
-                userProfileObj.get("CompletedTheGame");
-        if (completedTheGame != null) {
-            Label completedGameLabel = new
-                    Label("Congratulations! You have completed the game!");
-            completedGameLabel.setFont(new
-                    Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
+        Object completedTheGame = userProfileObj.get("CompletedTheGame");
+
+        if (completedTheGame instanceof Boolean && (Boolean) completedTheGame) {
+            Label completedGameLabel = new Label("You have completed the game!");
+            completedGameLabel.setFont(new Font(FONT_ARIAL, FONT_SIZE_CURRENT_USER));
             completedGameLabel.setStyle("-fx-text-fill: white;");
             homeScreen.getChildren().add(completedGameLabel);
+        } else {
+            // Optionally, handle the case where the game isn't completed
+            System.out.println("The game is not completed or the value is missing.");
         }
 
         HBox buttonBox = new HBox(VBOX_SPACING);
